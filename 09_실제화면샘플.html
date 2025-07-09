@@ -997,8 +997,50 @@
             각 화면을 클릭하여 인터랙티브한 데모를 경험해보세요.
         </div>
 
-        <!-- 메인 키오스크 화면 -->
+        <!-- 동영상 데모: 최상단으로 이동 -->
         <div class="kiosk-container">
+            <div class="video-viewer" style="position: relative; background: #000000; border-radius: 15px; overflow: hidden; margin: 0 auto; max-width: 100%; box-shadow: inset 0 0 20px rgba(0,0,0,0.3);">
+                <video id="demoVideo" controls preload="auto" style="width: 100%; height: auto; display: block; border-radius: 15px;">
+                    <source src="./wwwroot/KakaoTalk_20250625_161447255.mp4" type="video/mp4">
+                    <source src="./wwwroot/images/KakaoTalk_20250625_161447255.mp4" type="video/mp4">
+                    <source src="./wwwroot/videos/KakaoTalk_20250625_161447255.mp4" type="video/mp4">
+                    <source src="KakaoTalk_20250625_161447255.mp4" type="video/mp4">
+                    브라우저가 비디오를 지원하지 않습니다.
+                </video>
+                <div id="videoLoading" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #00d4ff; font-size: 1.2rem; display: none;">
+                    🎬 동영상 로딩 중...
+                </div>
+                <div id="videoError" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #ffffff; font-size: 1.2rem; text-align: center; background: rgba(0,0,0,0.8); padding: 20px; border-radius: 10px; z-index: 10; display: none;">
+                    <div>🎬 시연 동영상</div>
+                    <div style="margin-top: 10px; font-size: 1rem; color: #cccccc;">
+                        동영상 파일을 찾을 수 없습니다.<br>
+                        파일명: KakaoTalk_20250625_161447255.mp4
+                    </div>
+                    <div style="margin-top: 15px; font-size: 0.9rem; color: #ff6b6b;">
+                        파일이 wwwroot 폴더에 있는지 확인해주세요.
+                    </div>
+                </div>
+            </div>
+            <div class="screen-info">
+                <div class="screen-title">시연 동영상</div>
+                <div class="screen-desc">
+                    POKA 키오스크 시스템의 실제 시연 동영상입니다. 키오스크의 전체적인 사용 과정을 확인할 수 있습니다.
+                </div>
+                <div class="file-path">
+                    📁 파일 경로: ./wwwroot/KakaoTalk_20250625_161447255.mp4
+                </div>
+                <div style="margin-top: 15px; padding: 10px; background: rgba(0, 212, 255, 0.1); border-radius: 10px; border: 1px solid rgba(0, 212, 255, 0.3);">
+                    <strong>💡 팁:</strong> 동영상이 재생되지 않는 경우, 파일이 wwwroot 폴더에 있는지 확인해주세요.
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: rgba(255, 107, 107, 0.1); border-radius: 10px; border: 1px solid rgba(255, 107, 107, 0.3);">
+                    <strong>🔧 문제 해결:</strong> 
+                    <button onclick="retryVideoLoad()" style="background: #00d4ff; color: #000; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; margin-left: 10px;">동영상 다시 로드</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 메인 키오스크 화면 -->
+        <div class="kiosk-container" style="margin-top: 30px;">
             <div class="kiosk-screen" id="mainScreen">
                 <div class="kiosk-screen-content" id="screenContent">
                     <!-- 배경 동영상 -->
@@ -1078,7 +1120,7 @@
             </div>
             
             <!-- 모바일용 플로팅 컨트롤 -->
-            <div class="mobile-controls" id="mobileControls">
+            <div class="mobile-controls" id="mobileControls" style="position: static; margin: 20px 0 0 0; z-index: auto;">
                 <div class="mobile-control-header">
                     <span>🎮 화면 전환</span>
                 </div>
@@ -1099,7 +1141,7 @@
         </div>
 
         <!-- 키오스크 해상도 정보 -->
-        <div class="kiosk-functionality">
+        <div class="kiosk-functionality" style="margin-bottom: 0;">
             <div class="functionality-title">📱 키오스크 해상도 정보</div>
             <div class="functionality-grid">
                 <div class="function-item">
@@ -1197,49 +1239,6 @@
                 <h4>🖨️ 추가 인쇄</h4>
                 <p>추가 인쇄 옵션 선택</p>
                 <div class="file-path">AddPrint/interface.png</div>
-            </div>
-        </div>
-
-        <!-- 동영상 데모 -->
-        <h3>🎬 동영상 데모</h3>
-        <div class="kiosk-container">
-            <div class="video-viewer" style="position: relative; background: #000000; border-radius: 15px; overflow: hidden; margin: 0 auto; max-width: 100%; box-shadow: inset 0 0 20px rgba(0,0,0,0.3);">
-                <video id="demoVideo" controls preload="auto" style="width: 100%; height: auto; display: block; border-radius: 15px;">
-                    <source src="./wwwroot/KakaoTalk_20250625_161447255.mp4" type="video/mp4">
-                    <source src="./wwwroot/images/KakaoTalk_20250625_161447255.mp4" type="video/mp4">
-                    <source src="./wwwroot/videos/KakaoTalk_20250625_161447255.mp4" type="video/mp4">
-                    <source src="KakaoTalk_20250625_161447255.mp4" type="video/mp4">
-                    브라우저가 비디오를 지원하지 않습니다.
-                </video>
-                <div id="videoLoading" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #00d4ff; font-size: 1.2rem; display: none;">
-                    🎬 동영상 로딩 중...
-                </div>
-                <div id="videoError" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #ffffff; font-size: 1.2rem; text-align: center; background: rgba(0,0,0,0.8); padding: 20px; border-radius: 10px; z-index: 10; display: none;">
-                    <div>🎬 시연 동영상</div>
-                    <div style="margin-top: 10px; font-size: 1rem; color: #cccccc;">
-                        동영상 파일을 찾을 수 없습니다.<br>
-                        파일명: KakaoTalk_20250625_161447255.mp4
-                    </div>
-                    <div style="margin-top: 15px; font-size: 0.9rem; color: #ff6b6b;">
-                        파일이 wwwroot 폴더에 있는지 확인해주세요.
-                    </div>
-                </div>
-            </div>
-            <div class="screen-info">
-                <div class="screen-title">시연 동영상</div>
-                <div class="screen-desc">
-                    POKA 키오스크 시스템의 실제 시연 동영상입니다. 키오스크의 전체적인 사용 과정을 확인할 수 있습니다.
-                </div>
-                <div class="file-path">
-                    📁 파일 경로: ./wwwroot/KakaoTalk_20250625_161447255.mp4
-                </div>
-                <div style="margin-top: 15px; padding: 10px; background: rgba(0, 212, 255, 0.1); border-radius: 10px; border: 1px solid rgba(0, 212, 255, 0.3);">
-                    <strong>💡 팁:</strong> 동영상이 재생되지 않는 경우, 파일이 wwwroot 폴더에 있는지 확인해주세요.
-                </div>
-                <div style="margin-top: 10px; padding: 10px; background: rgba(255, 107, 107, 0.1); border-radius: 10px; border: 1px solid rgba(255, 107, 107, 0.3);">
-                    <strong>🔧 문제 해결:</strong> 
-                    <button onclick="retryVideoLoad()" style="background: #00d4ff; color: #000; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; margin-left: 10px;">동영상 다시 로드</button>
-                </div>
             </div>
         </div>
 
