@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POKA 결제/업로드</title>
+    <style>
+        body { 
+            font-family: 'Malgun Gothic', Arial, sans-serif; 
+            margin: 0; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #222; 
+            min-height: 100vh;
+        }
+        .header {
+            background: rgba(255,255,255,0.95);
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 2.5em;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            color: #7f8c8d;
+            font-size: 1.1em;
+        }
+        .nav {
+            background: rgba(255,255,255,0.95);
+            padding: 15px 0;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .nav a {
+            color: #3498db;
+            text-decoration: none;
+            margin: 0 15px;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .nav a:hover {
+            background: #3498db;
+            color: white;
+        }
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto 40px auto; 
+            background: #fff; 
+            border-radius: 15px; 
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1); 
+            padding: 40px;
+            overflow: hidden;
+        }
+        h2 { 
+            color: #3498db; 
+            border-bottom: 3px solid #e9ecef; 
+            padding-bottom: 10px; 
+            margin-top: 0; 
+            font-size: 1.8em;
+        }
+        h3 { 
+            color: #2c3e50; 
+            margin-top: 30px; 
+            font-size: 1.4em;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .feature-card {
+            background: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .feature-card h4 {
+            color: #3498db;
+            margin-top: 0;
+        }
+        .code-block {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        .payment-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .payment-table th {
+            background: #3498db;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+        }
+        .payment-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e9ecef;
+            vertical-align: top;
+        }
+        .payment-table tr:hover {
+            background: #f8f9fa;
+        }
+        .payment-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        .status.pending { background: #ffc107; color: black; }
+        .status.completed { background: #28a745; color: white; }
+        .status.failed { background: #dc3545; color: white; }
+        .status.cancelled { background: #6c757d; color: white; }
+        ul {
+            margin: 0 0 20px 20px;
+            line-height: 1.6;
+        }
+        .desc {
+            color: #555;
+            font-size: 1.1em;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        .flow-diagram {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            text-align: center;
+        }
+        .image-section {
+            margin: 30px 0;
+            text-align: center;
+        }
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .image-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .image-item img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+        .image-caption {
+            margin-top: 10px;
+            font-weight: bold;
+            color: #495057;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            .payment-table {
+                font-size: 0.9em;
+            }
+            .payment-table th,
+            .payment-table td {
+                padding: 8px;
+            }
+            .image-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>POKA 결제/업로드</h1>
+        <p>포토카드 제작 키오스크 시스템 - 결제 모듈 및 업로드 시스템</p>
+    </div>
+
+    <div class="nav">
+        <a href="index.html">🏠 홈</a>
+        <a href="01_시스템개요.html">🏗️ 시스템 개요</a>
+        <a href="02_주요기능화면.html">📱 주요 기능/화면</a>
+        <a href="03_URL_API목록.html">🌐 URL/API 목록</a>
+        <a href="04_데이터구조.html">🗄️ 데이터 구조</a>
+        <a href="05_로그인보안.html">🔐 로그인/보안</a>
+        <a href="07_운영관리.html">⚙️ 운영/관리</a>
+        <a href="08_참고부록.html">📚 참고/부록</a>
+    </div>
+
+    <div class="container">
+        <h2>결제/업로드</h2>
+        <div class="desc">
+            POKA 시스템은 <b>다양한 결제 수단</b>과 <b>QR코드 기반 업로드 시스템</b>을 통해<br>
+            사용자 편의성을 극대화하고 안전한 거래를 보장합니다.
+        </div>
+
+        <h3>결제 시스템 개요</h3>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h4>💳 결제 수단</h4>
+                <ul>
+                    <li><strong>현금 결제:</strong> 호퍼 자동 제어</li>
+                    <li><strong>LinePay:</strong> 모바일 결제 연동</li>
+                    <li><strong>쿠폰:</strong> 할인 코드 적용</li>
+                    <li><strong>혼합 결제:</strong> 쿠폰 + 현금/LinePay</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h4>🔒 보안 기능</h4>
+                <ul>
+                    <li><strong>암호화 통신:</strong> HTTPS 강제</li>
+                    <li><strong>결제 검증:</strong> 이중 검증 시스템</li>
+                    <li><strong>거래 로그:</strong> 상세 거래 기록</li>
+                    <li><strong>오류 처리:</strong> 자동 복구 메커니즘</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h4>📊 모니터링</h4>
+                <ul>
+                    <li><strong>실시간 상태:</strong> 결제 진행 상황</li>
+                    <li><strong>성공률 분석:</strong> 결제 성공 통계</li>
+                    <li><strong>오류 추적:</strong> 실패 원인 분석</li>
+                    <li><strong>수익 관리:</strong> 매출 통계</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3>결제 모듈 상세 분석</h3>
+
+        <h4>현금 결제 시스템</h4>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h4>🪙 호퍼 제어</h4>
+                <ul>
+                    <li><strong>시리얼 통신:</strong> RS-232/RS-485</li>
+                    <li><strong>프로토콜:</strong> MDB (Multi-Drop Bus)</li>
+                    <li><strong>지폐 인식:</strong> 1,000원, 5,000원, 10,000원</li>
+                    <li><strong>잔돈 지급:</strong> 자동 계산 및 지급</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h4>💰 금액 관리</h4>
+                <ul>
+                    <li><strong>투입 금액:</strong> 실시간 모니터링</li>
+                    <li><strong>잔돈 계산:</strong> 자동 계산</li>
+                    <li><strong>최소 잔액:</strong> 10,000원 유지</li>
+                    <li><strong>오버플로우:</strong> 자동 경고</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h4>🔧 하드웨어 제어</h4>
+                <ul>
+                    <li><strong>연결 상태:</strong> 실시간 확인</li>
+                    <li><strong>오류 감지:</strong> 자동 진단</li>
+                    <li><strong>재시작:</strong> 오류 시 자동 재시작</li>
+                    <li><strong>로깅:</strong> 모든 거래 기록</li>
+                </ul>
+            </div>
+        </div>
+
+        <h4>LinePay 결제 시스템</h4>
+        <div class="code-block">
+<b>LinePay 결제 플로우:</b>
+
+1. 결제 요청 생성
+   ↓
+2. LinePay API 호출
+   ↓
+3. 결제 URL 생성
+   ↓
+4. 사용자 QR코드 스캔
+   ↓
+5. 모바일에서 결제 완료
+   ↓
+6. 결제 상태 확인 (폴링)
+   ↓
+7. 결제 완료 처리
+
+<b>LinePay API 통신:</b>
+
+POST https://sandbox-api-pay.line.me/v3/payments/request
+{
+    "amount": 5000,
+    "currency": "TWD",
+    "orderId": "ORDER_20241201_001",
+    "packages": [{
+        "id": "package-1",
+        "amount": 5000,
+        "products": [{
+            "name": "포토카드 제작",
+            "quantity": 1,
+            "price": 5000
+        }]
+    }],
+    "redirectUrls": {
+        "confirmUrl": "https://pkapi.ting.ovh/payment/confirm",
+        "cancelUrl": "https://pkapi.ting.ovh/payment/cancel"
+    }
+}
+        </div>
+
+        <h4>쿠폰 시스템</h4>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h4>🎫 쿠폰 유형</h4>
+                <ul>
+                    <li><strong>정액 할인:</strong> 고정 금액 할인</li>
+                    <li><strong>정률 할인:</strong> 퍼센트 할인</li>
+                    <li><strong>무료 제작:</strong> 100% 할인</li>
+                    <li><strong>첫 구매 할인:</strong> 신규 고객 전용</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h4>🔍 쿠폰 검증</h4>
+                <ul>
+                    <li><strong>유효성 검사:</strong> 코드 형식 확인</li>
+                    <li><strong>사용 기간:</strong> 시작일/종료일 확인</li>
+                    <li><strong>사용 횟수:</strong> 중복 사용 방지</li>
+                    <li><strong>적용 조건:</strong> 최소 금액 등</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h4>📝 쿠폰 관리</h4>
+                <ul>
+                    <li><strong>발급 관리:</strong> 일괄 발급/개별 발급</li>
+                    <li><strong>사용 통계:</strong> 사용률 분석</li>
+                    <li><strong>만료 관리:</strong> 자동 만료 처리</li>
+                    <li><strong>재발급:</strong> 분실 시 재발급</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3>결제 상태 관리</h3>
+        <table class="payment-table">
+            <tr>
+                <th>상태</th>
+                <th>설명</th>
+                <th>처리 방식</th>
+                <th>다음 단계</th>
+            </tr>
+            <tr>
+                <td><span class="payment-status status.pending">PENDING</span></td>
+                <td>결제 대기 중</td>
+                <td>사용자 결제 진행 대기</td>
+                <td>결제 완료 또는 취소</td>
+            </tr>
+            <tr>
+                <td><span class="payment-status status.completed">COMPLETED</span></td>
+                <td>결제 완료</td>
+                <td>주문 생성 및 프린트 진행</td>
+                <td>프린트 완료</td>
+            </tr>
+            <tr>
+                <td><span class="payment-status status.failed">FAILED</span></td>
+                <td>결제 실패</td>
+                <td>오류 로그 기록 및 사용자 알림</td>
+                <td>재시도 또는 취소</td>
+            </tr>
+            <tr>
+                <td><span class="payment-status status.cancelled">CANCELLED</span></td>
+                <td>결제 취소</td>
+                <td>주문 취소 및 환불 처리</td>
+                <td>메인 메뉴로 복귀</td>
+            </tr>
+        </table>
+
+        <h3>업로드 시스템</h3>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h4>📱 QR코드 시스템</h4>
+                <ul>
+                    <li><strong>고유 URL 생성:</strong> 업로드 ID 기반</li>
+                    <li><strong>QR코드 생성:</strong> QRCoder 라이브러리</li>
+                    <li><strong>만료 시간:</strong> 30분 자동 만료</li>
+                    <li><strong>재생성:</strong> 만료 시 자동 재생성</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h4>📸 이미지 업로드</h4>
+                <ul>
+                    <li><strong>파일 형식:</strong> JPG, PNG, HEIC</li>
+                    <li><strong>파일 크기:</strong> 최대 10MB</li>
+                    <li><strong>이미지 처리:</strong> SixLabors.ImageSharp</li>
+                    <li><strong>자동 리사이징:</strong> 최적화된 크기로 변환</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h4>🔄 동기화 시스템</h4>
+                <ul>
+                    <li><strong>실시간 동기화:</strong> 업로드 즉시 반영</li>
+                    <li><strong>상태 확인:</strong> 업로드 진행률 표시</li>
+                    <li><strong>오류 처리:</strong> 업로드 실패 시 재시도</li>
+                    <li><strong>타임아웃:</strong> 5분 후 자동 취소</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3>업로드 플로우</h3>
+        <div class="flow-diagram">
+1. 키오스크에서 업로드 URL 요청
+   ↓
+2. 서버에서 고유 업로드 ID 생성
+   ↓
+3. QR코드 생성 (업로드 페이지 URL)
+   ↓
+4. 사용자가 스마트폰으로 QR코드 스캔
+   ↓
+5. 모바일 업로드 페이지 접속
+   ↓
+6. 카메라로 사진 촬영 또는 갤러리에서 선택
+   ↓
+7. 얼굴/배경 이미지 업로드
+   ↓
+8. 서버에서 이미지 처리 및 저장
+   ↓
+9. 키오스크에서 업로드 완료 확인
+   ↓
+10. 편집 화면으로 자동 전환
+        </div>
+
+        <h3>이미지 처리 엔진</h3>
+        <div class="code-block">
+<b>이미지 처리 파이프라인:</b>
+
+1. 파일 업로드 검증
+   - 파일 형식 확인
+   - 파일 크기 검증
+   - 바이러스 스캔
+
+2. 이미지 최적화
+   - 해상도 조정 (최대 1920x1080)
+   - 압축률 조정 (품질 85%)
+   - 메타데이터 제거
+
+3. 얼굴 인식 및 크롭
+   - 얼굴 영역 자동 감지
+   - 적절한 크기로 크롭
+   - 비율 유지
+
+4. 배경 이미지 처리
+   - 해상도 맞춤
+   - 투명도 처리
+   - 색상 보정
+
+<b>SixLabors.ImageSharp 사용 예시:</b>
+
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
+
+// 이미지 리사이징
+using (var image = Image.Load(inputStream))
+{
+    image.Mutate(x => x
+        .Resize(new ResizeOptions
+        {
+            Size = new Size(800, 600),
+            Mode = ResizeMode.Max
+        })
+        .Quality(85));
+    
+    image.Save(outputStream, new JpegEncoder());
+}
+        </div>
+
+        <h3>결제 화면 구성</h3>
+        <div class="image-section">
+            <div class="image-grid">
+                <div class="image-item">
+                    <img src="wwwroot/images/ANIMAL/Payment/Cash.png" alt="현금 결제" onerror="this.style.display='none'">
+                    <div class="image-caption">현금 결제 화면</div>
+                </div>
+                <div class="image-item">
+                    <img src="wwwroot/images/ANIMAL/Payment/Coupon.png" alt="쿠폰 결제" onerror="this.style.display='none'">
+                    <div class="image-caption">쿠폰 결제 화면</div>
+                </div>
+                <div class="image-item">
+                    <img src="wwwroot/images/ANIMAL/Payment/LinePay.png" alt="LinePay 결제" onerror="this.style.display='none'">
+                    <div class="image-caption">LinePay 결제 화면</div>
+                </div>
+            </div>
+        </div>
+
+        <h3>오류 처리 및 복구</h3>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h4>💳 결제 오류</h4>
+                <ul>
+                    <li><strong>네트워크 오류:</strong> 자동 재시도 (3회)</li>
+                    <li><strong>호퍼 오류:</strong> 수동 모드 전환</li>
+                    <li><strong>LinePay 오류:</strong> 결제 취소 및 환불</li>
+                    <li><strong>쿠폰 오류:</strong> 유효성 재검증</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h4>📱 업로드 오류</h4>
+                <ul>
+                    <li><strong>파일 크기 초과:</strong> 사용자에게 알림</li>
+                    <li><strong>형식 오류:</strong> 지원 형식 안내</li>
+                    <li><strong>업로드 실패:</strong> 재시도 버튼 제공</li>
+                    <li><strong>타임아웃:</strong> QR코드 재생성</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h4>🔧 시스템 오류</h4>
+                <ul>
+                    <li><strong>서버 오류:</strong> 자동 재시작</li>
+                    <li><strong>데이터베이스 오류:</strong> 연결 재시도</li>
+                    <li><strong>하드웨어 오류:</strong> 관리자 알림</li>
+                    <li><strong>메모리 부족:</strong> 캐시 정리</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3>성능 최적화</h3>
+        <div class="code-block">
+<b>결제 성능 최적화:</b>
+
+1. 비동기 처리
+   - 결제 요청 비동기 처리
+   - 상태 확인 폴링 최적화
+   - UI 블로킹 방지
+
+2. 캐싱 전략
+   - 쿠폰 정보 캐싱
+   - 결제 상태 캐싱
+   - 이미지 썸네일 캐싱
+
+3. 데이터베이스 최적화
+   - 인덱스 최적화
+   - 쿼리 최적화
+   - 연결 풀링
+
+<b>업로드 성능 최적화:</b>
+
+1. 이미지 압축
+   - WebP 형식 지원
+   - 적응형 품질 조정
+   - 프로그레시브 JPEG
+
+2. 병렬 처리
+   - 다중 이미지 동시 처리
+   - 백그라운드 처리
+   - 메모리 효율적 관리
+
+3. CDN 활용
+   - 이미지 전송 최적화
+   - 지역별 서버 분산
+   - 캐시 헤더 설정
+        </div>
+
+        <h3>모니터링 및 분석</h3>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h4>📊 결제 통계</h4>
+                <ul>
+                    <li><strong>일별 매출:</strong> 결제 수단별 통계</li>
+                    <li><strong>성공률:</strong> 결제 성공/실패 비율</li>
+                    <li><strong>평균 거래액:</strong> 주문별 평균 금액</li>
+                    <li><strong>피크 시간:</strong> 이용률 분석</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h4>📈 업로드 통계</h4>
+                <ul>
+                    <li><strong>업로드 성공률:</strong> 성공/실패 비율</li>
+                    <li><strong>평균 파일 크기:</strong> 업로드 파일 크기</li>
+                    <li><strong>처리 시간:</strong> 이미지 처리 소요 시간</li>
+                    <li><strong>사용자 행동:</strong> 업로드 패턴 분석</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h4>🔍 오류 분석</h4>
+                <ul>
+                    <li><strong>오류 유형:</strong> 발생 빈도별 분류</li>
+                    <li><strong>원인 분석:</strong> 오류 발생 원인</li>
+                    <li><strong>해결 시간:</strong> 평균 해결 소요 시간</li>
+                    <li><strong>예방 조치:</strong> 재발 방지 대책</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

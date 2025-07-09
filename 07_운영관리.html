@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POKA 운영/관리</title>
+    <style>
+        body { 
+            font-family: 'Malgun Gothic', Arial, sans-serif; 
+            margin: 0; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #222; 
+            min-height: 100vh;
+        }
+        .header {
+            background: rgba(255,255,255,0.95);
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 2.5em;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            color: #7f8c8d;
+            font-size: 1.1em;
+        }
+        .nav {
+            background: rgba(255,255,255,0.95);
+            padding: 15px 0;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .nav a {
+            color: #3498db;
+            text-decoration: none;
+            margin: 0 15px;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .nav a:hover {
+            background: #3498db;
+            color: white;
+        }
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto 40px auto; 
+            background: #fff; 
+            border-radius: 15px; 
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1); 
+            padding: 40px;
+            overflow: hidden;
+        }
+        h2 { 
+            color: #3498db; 
+            border-bottom: 3px solid #e9ecef; 
+            padding-bottom: 10px; 
+            margin-top: 0; 
+            font-size: 1.8em;
+        }
+        h3 { 
+            color: #2c3e50; 
+            margin-top: 30px; 
+            font-size: 1.4em;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .feature-card {
+            background: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .feature-card h4 {
+            color: #3498db;
+            margin-top: 0;
+        }
+        .code-block {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        .config-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .config-table th {
+            background: #3498db;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+        }
+        .config-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e9ecef;
+            vertical-align: top;
+        }
+        .config-table tr:hover {
+            background: #f8f9fa;
+        }
+        .config-type {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        .type.string { background: #28a745; color: white; }
+        .type.int { background: #007bff; color: white; }
+        .type.bool { background: #ffc107; color: black; }
+        .type.json { background: #6f42c1; color: white; }
+        ul {
+            margin: 0 0 20px 20px;
+            line-height: 1.6;
+        }
+        .desc {
+            color: #555;
+            font-size: 1.1em;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        .dashboard {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            .config-table {
+                font-size: 0.9em;
+            }
+            .config-table th,
+            .config-table td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>POKA 운영/관리</h1>
+        <p>포토카드 제작 키오스크 시스템 - 운영 및 관리 시스템</p>
+    </div>
+
+    <div class="nav">
+        <a href="index.html">🏠 홈</a>
+        <a href="01_시스템개요.html">🏗️ 시스템 개요</a>
+        <a href="02_주요기능화면.html">📱 주요 기능/화면</a>
+        <a href="03_URL_API목록.html">🌐 URL/API 목록</a>
+        <a href="04_데이터구조.html">🗄️ 데이터 구조</a>
+        <a href="05_로그인보안.html">🔐 로그인/보안</a>
+        <a href="06_결제업로드.html">💳 결제/업로드</a>
+        <a href="08_참고부록.html">📚 참고/부록</a>
+    </div>
+
+    <div class="container">
+        <h2>운영/관리</h2>
+        <div class="desc">
+            POKA 시스템의 <b>일상적인 운영</b>과 <b>시스템 관리</b>를 위한<br>
+            종합적인 도구와 가이드를 제공합니다.
+        </div>
+
+        <h3>환경설정 관리</h3>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h4>⚙️ 시스템 설정</h4>
+                <ul>
+                    <li><strong>언어 설정:</strong> 한국어/영어/중국어</li>
+                    <li><strong>시간대 설정:</strong> Asia/Seoul</li>
+                    <li><strong>날짜 형식:</strong> YYYY-MM-DD</li>
+                    <li><strong>통화 설정:</strong> KRW (₩)</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h4>🖨️ 프린터 설정</h4>
+                <ul>
+                    <li><strong>프린터 모델:</strong> EPSON TM-T88VI</li>
+                    <li><strong>포트 설정:</strong> COM1 (9600 baud)</li>
+                    <li><strong>용지 크기:</strong> 80mm</li>
+                    <li><strong>인쇄 품질:</strong> 고품질</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h4>💰 호퍼 설정</h4>
+                <ul>
+                    <li><strong>호퍼 모델:</strong> MEI AE2000</li>
+                    <li><strong>포트 설정:</strong> COM2 (9600 baud)</li>
+                    <li><strong>지폐 인식:</strong> 1,000/5,000/10,000원</li>
+                    <li><strong>최소 잔액:</strong> 10,000원</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3>설정 파일 구조</h3>
+        <table class="config-table">
+            <tr>
+                <th>설정 키</th>
+                <th>데이터 타입</th>
+                <th>기본값</th>
+                <th>설명</th>
+            </tr>
+            <tr>
+                <td>Language</td>
+                <td><span class="config-type type.string">STRING</span></td>
+                <td>ko</td>
+                <td>시스템 언어 설정 (ko/en/zh)</td>
+            </tr>
+            <tr>
+                <td>Timezone</td>
+                <td><span class="config-type type.string">STRING</span></td>
+                <td>Asia/Seoul</td>
+                <td>시스템 시간대</td>
+            </tr>
+            <tr>
+                <td>Currency</td>
+                <td><span class="config-type type.string">STRING</span></td>
+                <td>KRW</td>
+                <td>통화 단위</td>
+            </tr>
+            <tr>
+                <td>PrinterPort</td>
+                <td><span class="config-type type.string">STRING</span></td>
+                <td>COM1</td>
+                <td>프린터 연결 포트</td>
+            </tr>
+            <tr>
+                <td>PrinterBaudRate</td>
+                <td><span class="config-type type.int">INT</span></td>
+                <td>9600</td>
+                <td>프린터 통신 속도</td>
+            </tr>
+            <tr>
+                <td>HopperPort</td>
+                <td><span class="config-type type.string">STRING</span></td>
+                <td>COM2</td>
+                <td>호퍼 연결 포트</td>
+            </tr>
+            <tr>
+                <td>HopperBaudRate</td>
+                <td><span class="config-type type.int">INT</span></td>
+                <td>9600</td>
+                <td>호퍼 통신 속도</td>
+            </tr>
+            <tr>
+                <td>MinHopperBalance</td>
+                <td><span class="config-type type.int">INT</span></td>
+                <td>10000</td>
+                <td>호퍼 최소 잔액 (원)</td>
+            </tr>
+            <tr>
+                <td>AutoRestart</td>
+                <td><span class="config-type type.bool">BOOLEAN</span></td>
+                <td>true</td>
+                <td>오류 시 자동 재시작</td>
+            </tr>
+            <tr>
+                <td>LogLevel</td>
+                <td><span class="config-type type.string">STRING</span></td>
+                <td>INFO</td>
+                <td>로그 레벨 (DEBUG/INFO/WARN/ERROR)</td>
+            </tr>
+            <tr>
+                <td>LogRetentionDays</td>
+                <td><span class="config-type type.int">INT</span></td>
+                <td>30</td>
+                <td>로그 보관 기간 (일)</td>
+            </tr>
+        </table>
+
+        <h3>appsettings.json 구성</h3>
+        <div class="code-block">
+<b>기본 설정 파일:</b>
+
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*",
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=localhost;Database=poka_db;Trusted_Connection=true;"
+  },
+  "Settings": {
+    "Language": "ko",
+    "Timezone": "Asia/Seoul",
+    "Currency": "KRW",
+    "PrinterPort": "COM1",
+    "PrinterBaudRate": 9600,
+    "HopperPort": "COM2",
+    "HopperBaudRate": 9600,
+    "MinHopperBalance": 10000,
+    "AutoRestart": true,
+    "LogLevel": "INFO",
+    "LogRetentionDays": 30
+  },
+  "API": {
+    "BaseUrl": "https://pkapi.ting.ovh",
+    "Timeout": 30,
+    "RetryCount": 3
+  },
+  "Security": {
+    "JwtSecret": "your-secret-key-here",
+    "TokenExpirationMinutes": 20,
+    "PasswordMinLength": 8
+  }
+}
+        </div>
+
+        <h3>로그 관리 시스템</h3>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h4>📝 로그 유형</h4>
+                <ul>
+                    <li><strong>시스템 로그:</strong> 애플리케이션 실행 로그</li>
+                    <li><strong>보안 로그:</strong> 인증/권한 관련 로그</li>
+                    <li><strong>결제 로그:</strong> 거래 및 결제 로그</li>
+                    <li><strong>오류 로그:</strong> 예외 및 오류 로그</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h4>🔍 로그 분석</h4>
+                <ul>
+                    <li><strong>실시간 모니터링:</strong> 로그 실시간 추적</li>
+                    <li><strong>패턴 분석:</strong> 오류 패턴 감지</li>
+                    <li><strong>성능 분석:</strong> 응답 시간 분석</li>
+                    <li><strong>사용자 행동:</strong> 사용 패턴 분석</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h4>🗂️ 로그 보관</h4>
+                <ul>
+                    <li><strong>자동 보관:</strong> 30일 자동 보관</li>
+                    <li><strong>압축 저장:</strong> GZIP 압축</li>
+                    <li><strong>백업 정책:</strong> 일별/주별 백업</li>
+                    <li><strong>복구 시스템:</strong> 로그 복구 도구</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3>로그 형식 및 예시</h3>
+        <div class="code-block">
+<b>시스템 로그 형식:</b>
+
+{
+  "timestamp": "2024-12-01T10:30:00.000Z",
+  "level": "INFO",
+  "category": "System",
+  "message": "Application started successfully",
+  "details": {
+    "version": "1.0.0",
+    "environment": "Production",
+    "startupTime": "2.5s"
+  }
+}
+
+<b>보안 로그 형식:</b>
+
+{
+  "timestamp": "2024-12-01T10:35:00.000Z",
+  "level": "WARNING",
+  "category": "Security",
+  "message": "Multiple failed login attempts detected",
+  "details": {
+    "ipAddress": "192.168.1.100",
+    "username": "kiosk_user",
+    "attempts": 5,
+    "action": "ACCOUNT_LOCKED"
+  }
+}
+
+<b>결제 로그 형식:</b>
+
+{
+  "timestamp": "2024-12-01T10:40:00.000Z",
+  "level": "INFO",
+  "category": "Payment",
+  "message": "Payment completed successfully",
+  "details": {
+    "orderId": "ORDER_20241201_001",
+    "amount": 5000,
+    "paymentType": "cash",
+    "status": "completed",
+    "processingTime": "1.2s"
+  }
+}
+        </div>
+
+        <h3>모니터링 대시보드</h3>
+        <div class="dashboard">
+┌─────────────────────────────────────────────────────────────┐
+│                    POKA 시스템 모니터링 대시보드              │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  📊 시스템 상태: ● 정상    🖨️ 프린터: ● 연결됨    💰 호퍼: ● 정상 │
+│                                                             │
+│  📈 오늘 매출: ₩125,000    📱 주문 수: 25건    ⏱️ 평균 처리시간: 2.3초 │
+│                                                             │
+│  🔄 CPU 사용률: 45%    💾 메모리: 2.1GB/8GB    💿 디스크: 45GB/500GB │
+│                                                             │
+│  🌐 네트워크: ● 정상    🔐 보안: ● 안전    📝 로그: ● 정상 │
+│                                                             │
+│  ⚠️ 경고: 0건    ❌ 오류: 0건    🔧 유지보수: 예정 없음 │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+        </div>
+
+        <h3>하드웨어 모니터링</h3>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h4>🖨️ 프린터 모니터링</h4>
+                <ul>
+                    <li><strong>연결 상태:</strong> 실시간 연결 확인</li>
+                    <li><strong>용지 상태:</strong> 용지 잔량 모니터링</li>
+                    <li><strong>잉크 상태:</strong> 잉크 잔량 확인</li>
+                    <li><strong>오류 감지:</strong> 자동 오류 진단</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h4>💰 호퍼 모니터링</h4>
+                <ul>
+                    <li><strong>현금 잔액:</strong> 실시간 잔액 확인</li>
+                    <li><strong>수납 상태:</strong> 지폐 수납 상태</li>
+                    <li><strong>지급 상태:</strong> 잔돈 지급 상태</li>
+                    <li><strong>오류 알림:</strong> 하드웨어 오류 알림</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h4>💻 시스템 모니터링</h4>
+                <ul>
+                    <li><strong>CPU 사용률:</strong> 실시간 CPU 모니터링</li>
+                    <li><strong>메모리 사용률:</strong> RAM 사용량 추적</li>
+                    <li><strong>디스크 공간:</strong> 저장공간 모니터링</li>
+                    <li><strong>네트워크 상태:</strong> 연결 상태 확인</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3>백업 및 복구</h3>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h4>💾 데이터 백업</h4>
+                <ul>
+                    <li><strong>자동 백업:</strong> 일일 자동 백업</li>
+                    <li><strong>백업 위치:</strong> 로컬 + 클라우드</li>
+                    <li><strong>백업 보관:</strong> 90일 보관</li>
+                    <li><strong>백업 검증:</strong> 자동 무결성 검사</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h4>🔄 복구 시스템</h4>
+                <ul>
+                    <li><strong>전체 복구:</strong> 시스템 전체 복구</li>
+                    <li><strong>부분 복구:</strong> 특정 데이터 복구</li>
+                    <li><strong>시점 복구:</strong> 특정 시점으로 복구</li>
+                    <li><strong>복구 테스트:</strong> 정기 복구 테스트</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h4>🛡️ 재해 복구</h4>
+                <ul>
+                    <li><strong>RTO (복구 목표 시간):</strong> 4시간</li>
+                    <li><strong>RPO (복구 목표 지점):</strong> 1시간</li>
+                    <li><strong>백업 사이트:</strong> 클라우드 백업</li>
+                    <li><strong>복구 절차:</strong> 자동화된 복구 스크립트</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3>유지보수 가이드</h3>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h4>🔧 일일 점검</h4>
+                <ul>
+                    <li><strong>시스템 상태:</strong> 모든 서비스 정상 동작 확인</li>
+                    <li><strong>하드웨어 점검:</strong> 프린터/호퍼 상태 확인</li>
+                    <li><strong>로그 확인:</strong> 오류 로그 검토</li>
+                    <li><strong>백업 확인:</strong> 백업 완료 상태 확인</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h4>📅 주간 점검</h4>
+                <ul>
+                    <li><strong>성능 분석:</strong> 시스템 성능 지표 분석</li>
+                    <li><strong>보안 점검:</strong> 보안 로그 분석</li>
+                    <li><strong>용량 확인:</strong> 디스크/메모리 사용량 확인</li>
+                    <li><strong>업데이트 확인:</strong> 시스템 업데이트 검토</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h4>📋 월간 점검</h4>
+                <ul>
+                    <li><strong>전체 백업:</strong> 전체 시스템 백업</li>
+                    <li><strong>성능 최적화:</strong> 시스템 최적화</li>
+                    <li><strong>보안 감사:</strong> 보안 정책 검토</li>
+                    <li><strong>하드웨어 점검:</strong> 물리적 하드웨어 점검</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3>문제 해결 가이드</h3>
+        <div class="code-block">
+<b>일반적인 문제 및 해결 방법:</b>
+
+1. 프린터 연결 오류
+   - 원인: 포트 설정 오류, 케이블 연결 문제
+   - 해결: 포트 설정 확인, 케이블 재연결, 드라이버 재설치
+
+2. 호퍼 응답 없음
+   - 원인: 통신 포트 오류, 하드웨어 오류
+   - 해결: 포트 설정 확인, 전원 재시작, 하드웨어 점검
+
+3. 네트워크 연결 실패
+   - 원인: 네트워크 설정 오류, 서버 연결 문제
+   - 해결: 네트워크 설정 확인, 방화벽 설정, 서버 상태 확인
+
+4. 이미지 업로드 실패
+   - 원인: 파일 크기 초과, 형식 오류, 서버 오류
+   - 해결: 파일 크기 확인, 형식 변환, 서버 재시작
+
+5. 결제 처리 오류
+   - 원인: API 연결 오류, 하드웨어 오류
+   - 해결: 네트워크 확인, 하드웨어 점검, 로그 분석
+
+<b>긴급 상황 대응:</b>
+
+1. 시스템 다운
+   - 즉시 서비스 중단 알림
+   - 백업 시스템 활성화
+   - 원인 분석 및 복구
+
+2. 데이터 손실
+   - 최신 백업에서 복구
+   - 데이터 무결성 검증
+   - 손실 원인 분석
+
+3. 보안 침해
+   - 즉시 시스템 격리
+   - 보안 로그 분석
+   - 취약점 패치 적용
+        </div>
+
+        <h3>성능 최적화</h3>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h4>⚡ 시스템 최적화</h4>
+                <ul>
+                    <li><strong>메모리 최적화:</strong> 불필요한 프로세스 종료</li>
+                    <li><strong>디스크 최적화:</strong> 정기 디스크 정리</li>
+                    <li><strong>네트워크 최적화:</strong> 대역폭 최적화</li>
+                    <li><strong>캐시 최적화:</strong> 캐시 정책 개선</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h4>🗄️ 데이터베이스 최적화</h4>
+                <ul>
+                    <li><strong>인덱스 최적화:</strong> 쿼리 성능 개선</li>
+                    <li><strong>테이블 정리:</strong> 불필요한 데이터 삭제</li>
+                    <li><strong>쿼리 최적화:</strong> 느린 쿼리 개선</li>
+                    <li><strong>연결 풀링:</strong> 데이터베이스 연결 최적화</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h4>🌐 네트워크 최적화</h4>
+                <ul>
+                    <li><strong>CDN 활용:</strong> 이미지 전송 최적화</li>
+                    <li><strong>압축 설정:</strong> GZIP 압축 활성화</li>
+                    <li><strong>캐시 헤더:</strong> 브라우저 캐시 최적화</li>
+                    <li><strong>로드 밸런싱:</strong> 트래픽 분산</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
