@@ -721,7 +721,7 @@
             border-radius: 15px;
             padding: 15px;
             z-index: 1000;
-            display: none;
+            display: none; /* 기본적으로 숨김 (데스크톱용) */
             backdrop-filter: blur(10px);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             max-height: 60vh; /* 최대 높이 제한 */
@@ -802,7 +802,7 @@
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
             z-index: 999;
-            display: none;
+            display: none; /* 기본적으로 숨김 */
         }
         
         /* 모바일에서 키오스크 컨테이너 조정 */
@@ -851,8 +851,12 @@
                 display: none; /* 모바일에서는 숨김 */
             }
             
+            .mobile-controls {
+                display: block; /* 모바일에서는 항상 표시 */
+            }
+            
             .mobile-toggle-btn {
-                display: block; /* 모바일에서만 표시 */
+                display: none; /* 모바일에서 토글 버튼 숨김 */
             }
             
             .screen-grid {
@@ -1096,8 +1100,7 @@
             <!-- 모바일용 플로팅 컨트롤 -->
             <div class="mobile-controls" id="mobileControls">
                 <div class="mobile-control-header">
-                    <span>화면 전환</span>
-                    <button class="mobile-close-btn" onclick="toggleMobileControls()">×</button>
+                    <span>🎮 화면 전환</span>
                 </div>
                 <div class="mobile-control-buttons">
                     <button class="mobile-btn active" onclick="changeScreenMobile('standby')">⏰ 대기</button>
@@ -1109,8 +1112,8 @@
                 </div>
             </div>
             
-            <!-- 모바일용 토글 버튼 -->
-            <button class="mobile-toggle-btn" onclick="toggleMobileControls()" id="mobileToggleBtn">
+            <!-- 모바일용 토글 버튼 (현재는 사용하지 않음) -->
+            <button class="mobile-toggle-btn" onclick="toggleMobileControls()" id="mobileToggleBtn" style="display: none;">
                 🎮 화면 전환
             </button>
         </div>
@@ -1414,9 +1417,6 @@
 
         // 모바일용 화면 변경 함수
         function changeScreenMobile(screenName) {
-            // 모바일 컨트롤 닫기
-            toggleMobileControls();
-            
             // 화면 변경
             changeScreen(screenName);
             
@@ -1434,7 +1434,7 @@
             });
         }
 
-        // 모바일 컨트롤 토글
+        // 모바일 컨트롤 토글 (데스크톱용 - 현재는 사용하지 않음)
         function toggleMobileControls() {
             const mobileControls = document.getElementById('mobileControls');
             const mobileToggleBtn = document.getElementById('mobileToggleBtn');
@@ -2021,11 +2021,11 @@
             const mobileToggleBtn = document.getElementById('mobileToggleBtn');
             
             if (mobileControls) {
-                mobileControls.style.display = 'none';
+                mobileControls.style.display = window.innerWidth <= 768 ? 'block' : 'none';
             }
             
             if (mobileToggleBtn) {
-                mobileToggleBtn.style.display = window.innerWidth <= 768 ? 'block' : 'none';
+                mobileToggleBtn.style.display = 'none'; // 토글 버튼은 항상 숨김
             }
             
             // 초기 화면 설정 - 대기화면으로 시작
@@ -2131,18 +2131,17 @@
             }
             
             // 모바일 컨트롤 표시/숨김 관리
-            if (mobileToggleBtn) {
+            if (mobileControls) {
                 if (window.innerWidth <= 768) {
-                    mobileToggleBtn.style.display = 'block';
-                    if (mobileControls) {
-                        mobileControls.style.display = 'none';
-                    }
+                    mobileControls.style.display = 'block'; // 모바일에서는 항상 표시
                 } else {
-                    mobileToggleBtn.style.display = 'none';
-                    if (mobileControls) {
-                        mobileControls.style.display = 'none';
-                    }
+                    mobileControls.style.display = 'none'; // 데스크톱에서는 숨김
                 }
+            }
+            
+            // 토글 버튼은 항상 숨김
+            if (mobileToggleBtn) {
+                mobileToggleBtn.style.display = 'none';
             }
         });
     </script>
