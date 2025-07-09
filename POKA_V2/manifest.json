@@ -1,0 +1,140 @@
+{
+  "name": "POKA V2 - 포토카드 제작",
+  "short_name": "POKA V2",
+  "description": "모바일에서 편리하게 포토카드를 제작하고 키오스크에서 인화하는 서비스",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#00d4ff",
+  "theme_color": "#00d4ff",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "ko",
+  "dir": "ltr",
+  "categories": ["photo", "lifestyle", "utilities"],
+  "icons": [
+    {
+      "src": "icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "사진 업로드",
+      "short_name": "업로드",
+      "description": "갤러리에서 사진을 선택하거나 카메라로 촬영",
+      "url": "/upload.html",
+      "icons": [
+        {
+          "src": "icons/upload-96x96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "갤러리",
+      "short_name": "갤러리",
+      "description": "제작한 포토카드들을 확인",
+      "url": "/gallery.html",
+      "icons": [
+        {
+          "src": "icons/gallery-96x96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "프로필",
+      "short_name": "프로필",
+      "description": "사용자 정보 및 설정",
+      "url": "/profile.html",
+      "icons": [
+        {
+          "src": "icons/profile-96x96.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshots/mobile-1.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "메인 화면"
+    },
+    {
+      "src": "screenshots/mobile-2.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "사진 편집 화면"
+    },
+    {
+      "src": "screenshots/mobile-3.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "갤러리 화면"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
+  "handle_links": "preferred",
+  "protocol_handlers": [
+    {
+      "protocol": "web+poka",
+      "url": "/?action=%s"
+    }
+  ]
+} 

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>POKA V2 - 사진 업로드</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/upload.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#00d4ff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 헤더 -->
+        <header class="header">
+            <div class="header-content">
+                <button class="back-btn" onclick="POKA.Navigation.goBack()">←</button>
+                <h1 class="page-title">사진 업로드</h1>
+                <div class="header-spacer"></div>
+            </div>
+        </header>
+
+        <!-- 메인 컨텐츠 -->
+        <main class="main-content">
+            <!-- 업로드 영역 -->
+            <section class="upload-section">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-placeholder">
+                        <div class="upload-icon">📸</div>
+                        <h3>사진을 업로드하세요</h3>
+                        <p>갤러리에서 선택하거나 카메라로 촬영하세요</p>
+                        <div class="upload-buttons">
+                            <button class="btn btn-primary" onclick="openGallery()">
+                                <span class="btn-icon">🖼️</span>
+                                갤러리에서 선택
+                            </button>
+                            <button class="btn btn-secondary" onclick="openCamera()">
+                                <span class="btn-icon">📷</span>
+                                카메라로 촬영
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 드래그 앤 드롭 영역 -->
+                    <div class="drag-drop-overlay" id="dragDropOverlay">
+                        <div class="drag-drop-content">
+                            <div class="drag-drop-icon">⬇️</div>
+                            <p>여기에 사진을 놓으세요</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 숨겨진 파일 입력 -->
+                <input type="file" id="fileInput" accept="image/*" multiple style="display: none;">
+                <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display: none;">
+            </section>
+
+            <!-- 업로드된 이미지 미리보기 -->
+            <section class="preview-section" id="previewSection" style="display: none;">
+                <h3 class="section-title">업로드된 이미지</h3>
+                <div class="image-preview-container" id="imagePreviewContainer">
+                    <!-- 이미지 미리보기가 여기에 동적으로 추가됩니다 -->
+                </div>
+                
+                <div class="preview-actions">
+                    <button class="btn btn-secondary" onclick="clearAllImages()">
+                        <span class="btn-icon">🗑️</span>
+                        모두 삭제
+                    </button>
+                    <button class="btn btn-primary" onclick="proceedToEdit()">
+                        <span class="btn-icon">✏️</span>
+                        편집하기
+                    </button>
+                </div>
+            </section>
+
+            <!-- 업로드 가이드 -->
+            <section class="guide-section">
+                <h3 class="section-title">📋 업로드 가이드</h3>
+                <div class="guide-cards">
+                    <div class="guide-card">
+                        <div class="guide-icon">🖼️</div>
+                        <h4>갤러리에서 선택</h4>
+                        <p>기존 사진을 갤러리에서 선택하여 업로드합니다</p>
+                    </div>
+                    
+                    <div class="guide-card">
+                        <div class="guide-icon">📷</div>
+                        <h4>카메라로 촬영</h4>
+                        <p>실시간으로 사진을 촬영하여 업로드합니다</p>
+                    </div>
+                    
+                    <div class="guide-card">
+                        <div class="guide-icon">⬇️</div>
+                        <h4>드래그 앤 드롭</h4>
+                        <p>파일을 드래그하여 업로드 영역에 놓으세요</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 지원 형식 -->
+            <section class="format-section">
+                <h3 class="section-title">📄 지원 형식</h3>
+                <div class="format-info">
+                    <div class="format-item">
+                        <span class="format-icon">🖼️</span>
+                        <span class="format-text">JPEG, PNG, GIF</span>
+                    </div>
+                    <div class="format-item">
+                        <span class="format-icon">💾</span>
+                        <span class="format-text">최대 10MB</span>
+                    </div>
+                    <div class="format-item">
+                        <span class="format-icon">📏</span>
+                        <span class="format-text">최소 300x300px</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 네비게이션 바 -->
+        <nav class="bottom-nav">
+            <a href="index.html" class="nav-item">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-text">홈</span>
+            </a>
+            <a href="upload.html" class="nav-item active">
+                <span class="nav-icon">📸</span>
+                <span class="nav-text">업로드</span>
+            </a>
+            <a href="gallery.html" class="nav-item">
+                <span class="nav-icon">🖼️</span>
+                <span class="nav-text">갤러리</span>
+            </a>
+            <a href="profile.html" class="nav-item">
+                <span class="nav-icon">👤</span>
+                <span class="nav-text">프로필</span>
+            </a>
+        </nav>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/upload.js"></script>
+</body>
+</html> 
