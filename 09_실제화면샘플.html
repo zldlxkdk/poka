@@ -700,6 +700,104 @@
             font-size: clamp(0.8rem, 2.2vw, 0.9rem);
         }
 
+        /* 모바일용 플로팅 컨트롤 */
+        .mobile-controls {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid #00d4ff;
+            border-radius: 15px;
+            padding: 15px;
+            z-index: 1000;
+            display: none;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .mobile-control-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #00d4ff;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .mobile-close-btn {
+            background: none;
+            border: none;
+            color: #00d4ff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mobile-close-btn:hover {
+            background: rgba(0, 212, 255, 0.2);
+        }
+
+        .mobile-control-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .mobile-btn {
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: #000000;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 8px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+        }
+
+        .mobile-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .mobile-btn.active {
+            background: linear-gradient(135deg, #ffffff, #cccccc);
+            color: #000000;
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.4);
+        }
+
+        .mobile-toggle-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: #000000;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
+            z-index: 999;
+            display: none;
+        }
+
+        .mobile-toggle-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.6);
+        }
+
         /* 모바일 최적화 */
         @media (max-width: 768px) {
             .container {
@@ -714,13 +812,11 @@
             }
             
             .screen-controls {
-                flex-direction: column;
-                align-items: center;
+                display: none; /* 모바일에서는 숨김 */
             }
             
-            .screen-btn {
-                width: 100%;
-                max-width: 300px;
+            .mobile-toggle-btn {
+                display: block; /* 모바일에서만 표시 */
             }
             
             .screen-grid {
@@ -942,6 +1038,27 @@
                 <button class="screen-btn" onclick="changeScreen('finish')">✅ 완료 화면</button>
                 <button class="screen-btn" onclick="changeScreen('addprint')">🖨️ 추가 인쇄</button>
             </div>
+            
+            <!-- 모바일용 플로팅 컨트롤 -->
+            <div class="mobile-controls" id="mobileControls">
+                <div class="mobile-control-header">
+                    <span>화면 전환</span>
+                    <button class="mobile-close-btn" onclick="toggleMobileControls()">×</button>
+                </div>
+                <div class="mobile-control-buttons">
+                    <button class="mobile-btn active" onclick="changeScreenMobile('standby')">⏰ 대기</button>
+                    <button class="mobile-btn" onclick="changeScreenMobile('mainmenu')">🏠 메뉴</button>
+                    <button class="mobile-btn" onclick="changeScreenMobile('edit')">✏️ 편집</button>
+                    <button class="mobile-btn" onclick="changeScreenMobile('payment')">💳 결제</button>
+                    <button class="mobile-btn" onclick="changeScreenMobile('finish')">✅ 완료</button>
+                    <button class="mobile-btn" onclick="changeScreenMobile('addprint')">🖨️ 인쇄</button>
+                </div>
+            </div>
+            
+            <!-- 모바일용 토글 버튼 -->
+            <button class="mobile-toggle-btn" onclick="toggleMobileControls()" id="mobileToggleBtn">
+                🎮 화면 전환
+            </button>
         </div>
 
         <!-- 화면 정보 -->
@@ -1208,13 +1325,18 @@
                 // 해당 화면 요소들 표시
                 showScreenElements(screenName);
                 
-                // 버튼 활성화 상태 변경
+                // 버튼 활성화 상태 변경 (데스크톱)
                 document.querySelectorAll('.screen-btn').forEach(btn => {
                     btn.classList.remove('active');
                 });
                 if (event && event.target) {
                     event.target.classList.add('active');
                 }
+                
+                // 모바일 버튼 활성화 상태 변경
+                document.querySelectorAll('.mobile-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
                 
                 // 화면 정보 업데이트
                 updateScreenInfo(screen);
@@ -1233,6 +1355,42 @@
                 
                 // 실제 키오스크 기능 시뮬레이션
                 simulateKioskFunctionality(screenName);
+            }
+        }
+
+        // 모바일용 화면 변경 함수
+        function changeScreenMobile(screenName) {
+            // 모바일 컨트롤 닫기
+            toggleMobileControls();
+            
+            // 화면 변경
+            changeScreen(screenName);
+            
+            // 모바일 버튼 활성화 상태 변경
+            document.querySelectorAll('.mobile-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // 해당 버튼 활성화
+            const buttons = document.querySelectorAll('.mobile-btn');
+            buttons.forEach(btn => {
+                if (btn.textContent.includes(getScreenDisplayName(screenName))) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        // 모바일 컨트롤 토글
+        function toggleMobileControls() {
+            const mobileControls = document.getElementById('mobileControls');
+            const mobileToggleBtn = document.getElementById('mobileToggleBtn');
+            
+            if (mobileControls.style.display === 'block') {
+                mobileControls.style.display = 'none';
+                mobileToggleBtn.textContent = '🎮 화면 전환';
+            } else {
+                mobileControls.style.display = 'block';
+                mobileToggleBtn.textContent = '✕ 닫기';
             }
         }
 
@@ -1288,14 +1446,27 @@
 
         // 화면 미리보기
         function previewScreen(screenName) {
-            // 해당 버튼 활성화
+            // 해당 버튼 활성화 (데스크톱)
             document.querySelectorAll('.screen-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
             
-            // 버튼 찾기 및 활성화
+            // 버튼 찾기 및 활성화 (데스크톱)
             const buttons = document.querySelectorAll('.screen-btn');
             buttons.forEach(btn => {
+                if (btn.textContent.includes(getScreenDisplayName(screenName))) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // 모바일 버튼 활성화 상태 변경
+            document.querySelectorAll('.mobile-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // 모바일 버튼 찾기 및 활성화
+            const mobileButtons = document.querySelectorAll('.mobile-btn');
+            mobileButtons.forEach(btn => {
                 if (btn.textContent.includes(getScreenDisplayName(screenName))) {
                     btn.classList.add('active');
                 }
@@ -1304,11 +1475,14 @@
             // 화면 변경
             changeScreen(screenName);
             
-            // 화면 정보로 스크롤
-            document.getElementById('screenInfo').scrollIntoView({ 
-                behavior: 'smooth',
-                block: 'start'
-            });
+            // 모바일에서는 스크롤하지 않음 (플로팅 컨트롤 사용)
+            if (window.innerWidth > 768) {
+                // 화면 정보로 스크롤 (데스크톱에서만)
+                document.getElementById('screenInfo').scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
         }
 
         // 화면 표시 이름 가져오기
@@ -1778,6 +1952,18 @@
             kioskScreen.style.maxHeight = '90vh';
             kioskScreen.style.minHeight = '600px';
             
+            // 모바일 컨트롤 초기화
+            const mobileControls = document.getElementById('mobileControls');
+            const mobileToggleBtn = document.getElementById('mobileToggleBtn');
+            
+            if (mobileControls) {
+                mobileControls.style.display = 'none';
+            }
+            
+            if (mobileToggleBtn) {
+                mobileToggleBtn.style.display = window.innerWidth <= 768 ? 'block' : 'none';
+            }
+            
             // 초기 화면 설정 - 대기화면으로 시작
             hideAllScreenElements();
             showScreenElements('standby');
@@ -1839,11 +2025,14 @@
         window.addEventListener('scroll', requestTick);
         window.addEventListener('resize', requestTick);
         
-        // 화면 크기 변경 시 비디오 뷰어 크기 조정
+        // 화면 크기 변경 시 비디오 뷰어 크기 조정 및 모바일 컨트롤 관리
         window.addEventListener('resize', function() {
             const video = document.getElementById('demoVideo');
             const videoViewer = document.querySelector('.video-viewer');
+            const mobileToggleBtn = document.getElementById('mobileToggleBtn');
+            const mobileControls = document.getElementById('mobileControls');
             
+            // 비디오 뷰어 크기 조정
             if (video && videoViewer && video.videoWidth > 0 && video.videoHeight > 0) {
                 const aspectRatio = video.videoWidth / video.videoHeight;
                 const maxWidth = Math.min(window.innerWidth * 0.9, 1200);
@@ -1861,6 +2050,21 @@
                 videoViewer.style.height = viewerHeight + 'px';
                 
                 console.log('화면 크기 변경 - 뷰어 크기 조정:', viewerWidth + 'x' + viewerHeight);
+            }
+            
+            // 모바일 컨트롤 표시/숨김 관리
+            if (mobileToggleBtn) {
+                if (window.innerWidth <= 768) {
+                    mobileToggleBtn.style.display = 'block';
+                    if (mobileControls) {
+                        mobileControls.style.display = 'none';
+                    }
+                } else {
+                    mobileToggleBtn.style.display = 'none';
+                    if (mobileControls) {
+                        mobileControls.style.display = 'none';
+                    }
+                }
             }
         });
     </script>
