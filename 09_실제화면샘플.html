@@ -136,7 +136,7 @@
             margin: 20px 0;
             box-shadow: 0 10px 30px rgba(0,0,0,0.8);
             position: relative;
-            overflow: hidden;
+            overflow: visible; /* 모바일 컨트롤이 보이도록 변경 */
         }
 
         .kiosk-screen {
@@ -712,10 +712,10 @@
 
         /* 모바일용 플로팅 컨트롤 */
         .mobile-controls {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            right: 20px;
+            position: absolute;
+            bottom: -80px; /* 키오스크 화면 하단에 붙임 */
+            left: 0;
+            right: 0;
             background: rgba(0, 0, 0, 0.95);
             border: 2px solid #00d4ff;
             border-radius: 15px;
@@ -810,6 +810,7 @@
             .kiosk-container {
                 margin: 10px 5px;
                 padding: 10px;
+                padding-bottom: 100px; /* 모바일 컨트롤 공간 확보 */
             }
             
             /* 모바일에서 컨테이너 간격 줄이기 */
@@ -843,8 +844,8 @@
             
             .kiosk-screen {
                 aspect-ratio: 1324/1600; /* 더 짧은 비율 */
-                max-height: 45vh; /* 높이 제한 */
-                min-height: 350px;
+                max-height: 40vh; /* 높이 제한 - 컨트롤 공간 확보 */
+                min-height: 300px;
             }
             
             .screen-controls {
@@ -853,6 +854,8 @@
             
             .mobile-controls {
                 display: block; /* 모바일에서는 항상 표시 */
+                position: absolute;
+                bottom: -90px; /* 키오스크 화면 하단에 붙임 */
             }
             
             .mobile-toggle-btn {
@@ -1579,6 +1582,7 @@
             const kioskScreen = document.getElementById('mainScreen');
             if (window.innerWidth <= 768) {
                 kioskScreen.style.aspectRatio = '1324/1600'; // 모바일에서는 더 짧은 비율
+                kioskScreen.style.maxHeight = '40vh'; // 컨트롤 공간 확보
             } else {
                 kioskScreen.style.aspectRatio = '1324/2112'; // 데스크톱에서는 원래 비율
             }
@@ -2008,8 +2012,8 @@
             // 모바일과 데스크톱에 따른 해상도 설정
             if (window.innerWidth <= 768) {
                 kioskScreen.style.aspectRatio = '1324/1600'; // 모바일에서는 더 짧은 비율
-                kioskScreen.style.maxHeight = '45vh';
-                kioskScreen.style.minHeight = '350px';
+                kioskScreen.style.maxHeight = '40vh'; // 컨트롤 공간 확보
+                kioskScreen.style.minHeight = '300px';
             } else {
                 kioskScreen.style.aspectRatio = '1324/2112'; // 데스크톱에서는 원래 비율
                 kioskScreen.style.maxHeight = '90vh';
@@ -2101,8 +2105,8 @@
             if (kioskScreen) {
                 if (window.innerWidth <= 768) {
                     kioskScreen.style.aspectRatio = '1324/1600'; // 모바일에서는 더 짧은 비율
-                    kioskScreen.style.maxHeight = '45vh';
-                    kioskScreen.style.minHeight = '350px';
+                    kioskScreen.style.maxHeight = '40vh'; // 컨트롤 공간 확보
+                    kioskScreen.style.minHeight = '300px';
                 } else {
                     kioskScreen.style.aspectRatio = '1324/2112'; // 데스크톱에서는 원래 비율
                     kioskScreen.style.maxHeight = '90vh';
