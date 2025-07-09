@@ -382,6 +382,106 @@
             -webkit-overflow-scrolling: touch;
             color: #00d4ff;
         }
+
+        /* 모바일 최적화된 화면 플로우 */
+        .mobile-flow {
+            display: none;
+            flex-direction: column;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .flow-step-mobile {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border: 2px solid #00d4ff;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .flow-step-mobile:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+        }
+
+        .flow-step-mobile::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 10px solid #00d4ff;
+        }
+
+        .flow-step-mobile:first-child::before {
+            display: none;
+        }
+
+        .flow-step-mobile::after {
+            content: '▼';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #00d4ff;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .flow-step-mobile:last-child::after {
+            display: none;
+        }
+
+        .flow-step-title {
+            font-size: clamp(1rem, 3vw, 1.3rem);
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .flow-step-desc {
+            font-size: clamp(0.8rem, 2.5vw, 1rem);
+            color: #cccccc;
+            line-height: 1.4;
+        }
+
+        .flow-step-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        /* 데스크톱에서 모바일 플로우 숨김 */
+        @media (min-width: 769px) {
+            .mobile-flow {
+                display: none;
+            }
+            .flow-diagram {
+                display: block;
+            }
+        }
+
+        /* 모바일에서 데스크톱 플로우 숨김 */
+        @media (max-width: 768px) {
+            .mobile-flow {
+                display: flex;
+            }
+            .flow-diagram {
+                display: none;
+            }
+            #mobile-tech {
+                display: grid !important;
+            }
+            .flow-step {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -413,6 +513,8 @@
         </div>
 
         <h3>🖥️ 화면 플로우</h3>
+        
+        <!-- 데스크톱용 플로우 다이어그램 -->
         <div class="flow-diagram">
     ┌─────────────────────────────────────────────────────────────┐
     │                    POKA KIOSK FLOW                         │
@@ -453,6 +555,40 @@
     │                 Finish.cshtml                              │
     │              (완료 화면 - 서비스 종료)                      │
     └─────────────────────────────────────────────────────────────┘
+        </div>
+
+        <!-- 모바일용 플로우 다이어그램 -->
+        <div class="mobile-flow">
+            <div class="flow-step-mobile">
+                <span class="flow-step-icon">🌍</span>
+                <div class="flow-step-title">StandByPage.cshtml</div>
+                <div class="flow-step-desc">대기 화면 - 언어 선택</div>
+            </div>
+            <div class="flow-step-mobile">
+                <span class="flow-step-icon">🏠</span>
+                <div class="flow-step-title">MainMenu.cshtml</div>
+                <div class="flow-step-desc">메인 메뉴 - 서비스 선택</div>
+            </div>
+            <div class="flow-step-mobile">
+                <span class="flow-step-icon">🎨</span>
+                <div class="flow-step-title">EditPage.cshtml</div>
+                <div class="flow-step-desc">편집 화면 - 이미지 편집</div>
+            </div>
+            <div class="flow-step-mobile">
+                <span class="flow-step-icon">💳</span>
+                <div class="flow-step-title">Payment.cshtml</div>
+                <div class="flow-step-desc">결제 화면 - 결제 수단 선택</div>
+            </div>
+            <div class="flow-step-mobile">
+                <span class="flow-step-icon">🖨️</span>
+                <div class="flow-step-title">Print.cshtml</div>
+                <div class="flow-step-desc">프린트 화면 - 출력 진행</div>
+            </div>
+            <div class="flow-step-mobile">
+                <span class="flow-step-icon">✅</span>
+                <div class="flow-step-title">Finish.cshtml</div>
+                <div class="flow-step-desc">완료 화면 - 서비스 종료</div>
+            </div>
         </div>
 
         <h3>📱 주요 화면 상세</h3>
@@ -564,6 +700,8 @@
         </div>
 
         <h3>🔧 화면별 기술 구현</h3>
+        
+        <!-- 데스크톱용 기술 구현 -->
         <div class="flow-step">
 StandByPage.cshtml:
 ├── 언어 선택 드롭다운
@@ -603,6 +741,73 @@ Finish.cshtml:
 ├── 추가 서비스 옵션
 ├── 시스템 초기화
 └── 자동 화면 전환
+        </div>
+
+        <!-- 모바일용 기술 구현 -->
+        <div class="feature-grid" style="display: none;" id="mobile-tech">
+            <div class="feature-card">
+                <span class="screen-icon">🌍</span>
+                <h4>StandByPage.cshtml</h4>
+                <ul>
+                    <li>언어 선택 드롭다운</li>
+                    <li>배경 비디오/이미지 재생</li>
+                    <li>자동 시작 타이머</li>
+                    <li>터치 이벤트 처리</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <span class="screen-icon">🏠</span>
+                <h4>MainMenu.cshtml</h4>
+                <ul>
+                    <li>카테고리별 그룹 표시</li>
+                    <li>동적 메뉴 생성</li>
+                    <li>언어 전환 기능</li>
+                    <li>네비게이션 처리</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <span class="screen-icon">🎨</span>
+                <h4>EditPage.cshtml</h4>
+                <ul>
+                    <li>QR코드 스캔 기능</li>
+                    <li>이미지 업로드 처리</li>
+                    <li>Canvas 기반 편집</li>
+                    <li>스티커 추가 기능</li>
+                    <li>미리보기 생성</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <span class="screen-icon">💳</span>
+                <h4>Payment.cshtml</h4>
+                <ul>
+                    <li>결제 수단 선택</li>
+                    <li>LinePay API 연동</li>
+                    <li>현금 결제 처리</li>
+                    <li>쿠폰 검증</li>
+                    <li>결제 상태 모니터링</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <span class="screen-icon">🖨️</span>
+                <h4>Print.cshtml</h4>
+                <ul>
+                    <li>프린터 상태 확인</li>
+                    <li>이미지 포맷 변환</li>
+                    <li>출력 작업 관리</li>
+                    <li>진행률 표시</li>
+                    <li>오류 처리</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <span class="screen-icon">✅</span>
+                <h4>Finish.cshtml</h4>
+                <ul>
+                    <li>완료 메시지 표시</li>
+                    <li>추가 서비스 옵션</li>
+                    <li>시스템 초기화</li>
+                    <li>자동 화면 전환</li>
+                </ul>
+            </div>
         </div>
 
         <h3>📱 반응형 디자인</h3>
@@ -727,6 +932,26 @@ Finish.cshtml:
                     this.style.transition = 'transform 0.3s ease';
                 });
             }
+
+            // 모바일 플로우 스텝 인터랙션
+            const flowSteps = document.querySelectorAll('.flow-step-mobile');
+            flowSteps.forEach((step, index) => {
+                step.addEventListener('click', function() {
+                    // 클릭 시 하이라이트 효과
+                    flowSteps.forEach(s => s.style.borderColor = '#00d4ff');
+                    this.style.borderColor = '#ffffff';
+                    this.style.background = 'linear-gradient(135deg, #2a2a2a 0%, #3a3a3a 100%)';
+                    
+                    // 3초 후 원래 상태로 복원
+                    setTimeout(() => {
+                        this.style.borderColor = '#00d4ff';
+                        this.style.background = 'linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%)';
+                    }, 3000);
+                });
+
+                // 애니메이션 지연 효과
+                step.style.animationDelay = `${index * 0.1}s`;
+            });
         });
 
         // PWA 지원
@@ -738,4 +963,4 @@ Finish.cshtml:
         }
     </script>
 </body>
-</html>
+</html> 

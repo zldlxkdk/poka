@@ -435,6 +435,106 @@
             color: #00d4ff;
         }
 
+        /* 모바일 최적화된 아키텍처 */
+        .mobile-architecture {
+            display: none;
+            flex-direction: column;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .arch-layer {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border: 2px solid #00d4ff;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .arch-layer:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+        }
+
+        .arch-layer::after {
+            content: '▼';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #00d4ff;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .arch-layer:last-child::after {
+            display: none;
+        }
+
+        .arch-title {
+            font-size: clamp(1.1rem, 3.5vw, 1.4rem);
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 15px;
+        }
+
+        .arch-desc {
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            color: #cccccc;
+            margin-bottom: 15px;
+        }
+
+        .arch-components {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .arch-component {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: clamp(0.8rem, 2.2vw, 0.9rem);
+            color: #00d4ff;
+            transition: all 0.3s ease;
+        }
+
+        .arch-component:hover {
+            background: rgba(0, 212, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .arch-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        /* 데스크톱에서 모바일 아키텍처 숨김 */
+        @media (min-width: 769px) {
+            .mobile-architecture {
+                display: none;
+            }
+            .architecture-diagram {
+                display: block;
+            }
+        }
+
+        /* 모바일에서 데스크톱 아키텍처 숨김 */
+        @media (max-width: 768px) {
+            .mobile-architecture {
+                display: flex;
+            }
+            .architecture-diagram {
+                display: none;
+            }
+        }
+
         /* 기술 스택 아이콘 */
         .tech-icon {
             font-size: 1.5rem;
@@ -509,6 +609,8 @@
         </div>
 
         <h3>🏗️ 시스템 아키텍처</h3>
+        
+        <!-- 데스크톱용 아키텍처 다이어그램 -->
         <div class="architecture-diagram">
     ┌─────────────────────────────────────────────────────────────┐
     │                    POKA KIOSK SYSTEM                       │
@@ -557,6 +659,63 @@
     │  │  (COM3)     │  │  (COM4)     │  │  (USB)      │        │
     │  └─────────────┘  └─────────────┘  └─────────────┘        │
     └─────────────────────────────────────────────────────────────┘
+        </div>
+
+        <!-- 모바일용 아키텍처 다이어그램 -->
+        <div class="mobile-architecture">
+            <div class="arch-layer">
+                <span class="arch-icon">🏗️</span>
+                <div class="arch-title">POKA KIOSK SYSTEM</div>
+                <div class="arch-desc">포토카드 제작 키오스크 시스템</div>
+            </div>
+            <div class="arch-layer">
+                <span class="arch-icon">⚡</span>
+                <div class="arch-title">ASP.NET Core 9.0</div>
+                <div class="arch-desc">Razor Pages + C#</div>
+            </div>
+            <div class="arch-layer">
+                <span class="arch-icon">🎨</span>
+                <div class="arch-title">Frontend Layer</div>
+                <div class="arch-desc">사용자 인터페이스</div>
+                <div class="arch-components">
+                    <span class="arch-component">HTML5</span>
+                    <span class="arch-component">CSS3</span>
+                    <span class="arch-component">JavaScript</span>
+                    <span class="arch-component">Razor</span>
+                    <span class="arch-component">Bootstrap</span>
+                    <span class="arch-component">jQuery</span>
+                </div>
+            </div>
+            <div class="arch-layer">
+                <span class="arch-icon">🔧</span>
+                <div class="arch-title">Business Layer</div>
+                <div class="arch-desc">비즈니스 로직</div>
+                <div class="arch-components">
+                    <span class="arch-component">Payment Service</span>
+                    <span class="arch-component">Upload Service</span>
+                    <span class="arch-component">Print Service</span>
+                </div>
+            </div>
+            <div class="arch-layer">
+                <span class="arch-icon">🌐</span>
+                <div class="arch-title">External Services</div>
+                <div class="arch-desc">외부 서비스 연동</div>
+                <div class="arch-components">
+                    <span class="arch-component">API Server</span>
+                    <span class="arch-component">File Server</span>
+                    <span class="arch-component">Payment Gateway</span>
+                </div>
+            </div>
+            <div class="arch-layer">
+                <span class="arch-icon">🔌</span>
+                <div class="arch-title">Hardware Layer</div>
+                <div class="arch-desc">하드웨어 연동</div>
+                <div class="arch-components">
+                    <span class="arch-component">Bill Reader (COM3)</span>
+                    <span class="arch-component">Hopper (COM4)</span>
+                    <span class="arch-component">Printer (USB)</span>
+                </div>
+            </div>
         </div>
 
         <h3>🔧 기술 스택</h3>
@@ -855,6 +1014,43 @@
                     closeModal();
                 }
             });
+
+            // 모바일 아키텍처 레이어 인터랙션
+            const archLayers = document.querySelectorAll('.arch-layer');
+            archLayers.forEach((layer, index) => {
+                layer.addEventListener('click', function() {
+                    // 클릭 시 하이라이트 효과
+                    archLayers.forEach(l => l.style.borderColor = '#00d4ff');
+                    this.style.borderColor = '#ffffff';
+                    this.style.background = 'linear-gradient(135deg, #2a2a2a 0%, #3a3a3a 100%)';
+                    
+                    // 3초 후 원래 상태로 복원
+                    setTimeout(() => {
+                        this.style.borderColor = '#00d4ff';
+                        this.style.background = 'linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%)';
+                    }, 3000);
+                });
+
+                // 애니메이션 지연 효과
+                layer.style.animationDelay = `${index * 0.15}s`;
+            });
+
+            // 아키텍처 컴포넌트 인터랙션
+            const archComponents = document.querySelectorAll('.arch-component');
+            archComponents.forEach(component => {
+                component.addEventListener('click', function(e) {
+                    e.stopPropagation(); // 부모 레이어 클릭 이벤트 방지
+                    
+                    // 클릭 시 확대 효과
+                    this.style.transform = 'scale(1.1)';
+                    this.style.background = 'rgba(0, 212, 255, 0.3)';
+                    
+                    setTimeout(() => {
+                        this.style.transform = '';
+                        this.style.background = '';
+                    }, 500);
+                });
+            });
         });
 
         // PWA 지원
@@ -866,4 +1062,4 @@
         }
     </script>
 </body>
-</html>
+</html> 
