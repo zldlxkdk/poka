@@ -337,6 +337,64 @@
             color: #ffffff;
             text-decoration: underline;
         }
+
+        /* 바로가기 버튼 스타일 */
+        .quick-link-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: #000000;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 212, 255, 0.4);
+            transition: all 0.3s ease;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quick-link-btn:hover {
+            background: linear-gradient(135deg, #0099cc, #006699);
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.6);
+        }
+
+        .quick-link-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* 카드 호버 시 버튼 강조 */
+        .feature-card:hover .quick-link-btn {
+            transform: scale(1.1);
+        }
+
+        /* 모바일에서 버튼 크기 조정 */
+        @media (max-width: 768px) {
+            .quick-link-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 0.9rem;
+                top: 10px;
+                right: 10px;
+            }
+        }
+
+        /* 작은 모바일 화면 */
+        @media (max-width: 480px) {
+            .quick-link-btn {
+                width: 30px;
+                height: 30px;
+                font-size: 0.8rem;
+                top: 8px;
+                right: 8px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -369,6 +427,7 @@
 
         <div class="feature-grid">
             <div class="feature-card">
+                <button class="quick-link-btn" onclick="window.location.href='01_시스템개요.html'" title="시스템 개요로 바로가기">🏗️</button>
                 <span class="category-icon">🏗️</span>
                 <h4>시스템 개요</h4>
                 <ul>
@@ -379,6 +438,7 @@
                 </ul>
             </div>
             <div class="feature-card">
+                <button class="quick-link-btn" onclick="window.location.href='02_주요기능화면.html'" title="주요 기능/화면으로 바로가기">📱</button>
                 <span class="category-icon">📱</span>
                 <h4>주요 기능/화면</h4>
                 <ul>
@@ -389,6 +449,7 @@
                 </ul>
             </div>
             <div class="feature-card">
+                <button class="quick-link-btn" onclick="window.location.href='03_URL_API목록.html'" title="URL/API 목록으로 바로가기">🌐</button>
                 <span class="category-icon">🌐</span>
                 <h4>URL/API 목록</h4>
                 <ul>
@@ -399,6 +460,7 @@
                 </ul>
             </div>
             <div class="feature-card">
+                <button class="quick-link-btn" onclick="window.location.href='04_데이터구조.html'" title="데이터 구조로 바로가기">🗄️</button>
                 <span class="category-icon">🗄️</span>
                 <h4>데이터 구조</h4>
                 <ul>
@@ -409,6 +471,7 @@
                 </ul>
             </div>
             <div class="feature-card">
+                <button class="quick-link-btn" onclick="window.location.href='05_로그인보안.html'" title="로그인/보안으로 바로가기">🔐</button>
                 <span class="category-icon">🔐</span>
                 <h4>로그인/보안</h4>
                 <ul>
@@ -419,6 +482,7 @@
                 </ul>
             </div>
             <div class="feature-card">
+                <button class="quick-link-btn" onclick="window.location.href='06_결제업로드.html'" title="결제/업로드로 바로가기">💳</button>
                 <span class="category-icon">💳</span>
                 <h4>결제/업로드</h4>
                 <ul>
@@ -429,6 +493,7 @@
                 </ul>
             </div>
             <div class="feature-card">
+                <button class="quick-link-btn" onclick="window.location.href='07_운영관리.html'" title="운영/관리로 바로가기">⚙️</button>
                 <span class="category-icon">⚙️</span>
                 <h4>운영/관리</h4>
                 <ul>
@@ -439,6 +504,7 @@
                 </ul>
             </div>
             <div class="feature-card">
+                <button class="quick-link-btn" onclick="window.location.href='08_참고부록.html'" title="참고/부록으로 바로가기">📚</button>
                 <span class="category-icon">📚</span>
                 <h4>참고/부록</h4>
                 <ul>
@@ -529,4 +595,4 @@
         }
     </script>
 </body>
-</html>
+</html> 
