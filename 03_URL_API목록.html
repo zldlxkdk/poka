@@ -3,173 +3,409 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>POKA URL/API 목록</title>
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body { 
-            font-family: 'Malgun Gothic', Arial, sans-serif; 
-            margin: 0; 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #222; 
+            font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', 'Noto Sans KR', Arial, sans-serif; 
+            background: #000000;
+            color: #ffffff; 
             min-height: 100vh;
+            line-height: 1.6;
         }
+
         .header {
-            background: rgba(255,255,255,0.95);
-            padding: 20px 0;
+            background: rgba(20, 20, 20, 0.95);
+            padding: clamp(15px, 3vw, 20px) clamp(10px, 2vw, 20px);
             text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            margin-bottom: 15px;
+            backdrop-filter: blur(10px);
+            border-bottom: 3px solid #00d4ff;
         }
+
         .header h1 {
             margin: 0;
-            color: #2c3e50;
-            font-size: 2.5em;
+            color: #ffffff;
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
             font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            line-height: 1.2;
         }
+
         .header p {
             margin: 10px 0 0 0;
-            color: #7f8c8d;
-            font-size: 1.1em;
+            color: #cccccc;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            font-weight: 500;
         }
+
         .nav {
-            background: rgba(255,255,255,0.95);
-            padding: 15px 0;
+            background: rgba(20, 20, 20, 0.95);
+            padding: 10px 5px;
             text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+            border-bottom: 2px solid #333333;
         }
+
+        .nav::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .nav::-webkit-scrollbar-track {
+            background: #333333;
+        }
+
+        .nav::-webkit-scrollbar-thumb {
+            background: #00d4ff;
+            border-radius: 2px;
+        }
+
         .nav a {
-            color: #3498db;
+            color: #ffffff;
             text-decoration: none;
-            margin: 0 15px;
-            padding: 8px 15px;
-            border-radius: 5px;
-            transition: background 0.3s;
+            margin: 0 8px;
+            padding: 10px 15px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            display: inline-block;
+            font-size: clamp(0.8rem, 2.2vw, 0.9rem);
+            white-space: nowrap;
+            font-weight: 500;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
         }
-        .nav a:hover {
-            background: #3498db;
-            color: white;
+
+        .nav a:hover, .nav a:active {
+            background: #00d4ff;
+            color: #000000;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
         }
+
         .container { 
             max-width: 1200px; 
-            margin: 0 auto 40px auto; 
-            background: #fff; 
-            border-radius: 15px; 
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1); 
-            padding: 40px;
+            margin: 0 auto 20px auto; 
+            background: rgba(20, 20, 20, 0.95); 
+            border-radius: 20px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5); 
+            padding: clamp(20px, 4vw, 40px);
             overflow: hidden;
+            border: 1px solid rgba(0, 212, 255, 0.2);
         }
+
         h2 { 
-            color: #3498db; 
-            border-bottom: 3px solid #e9ecef; 
-            padding-bottom: 10px; 
+            color: #ffffff; 
+            border-bottom: 3px solid #00d4ff; 
+            padding-bottom: 15px; 
             margin-top: 0; 
-            font-size: 1.8em;
+            font-size: clamp(1.3rem, 3.5vw, 1.8rem);
+            font-weight: bold;
         }
+
         h3 { 
-            color: #2c3e50; 
-            margin-top: 30px; 
-            font-size: 1.4em;
+            color: #cccccc; 
+            margin-top: 25px; 
+            font-size: clamp(1.1rem, 2.8vw, 1.4rem);
+            font-weight: 600;
         }
+
+        h4 {
+            color: #ffffff;
+            margin-top: 20px;
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            font-weight: 600;
+        }
+
         .api-table {
             width: 100%;
             border-collapse: collapse;
             margin: 20px 0;
-            background: #fff;
-            border-radius: 10px;
+            background: #1a1a1a;
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            font-size: clamp(0.8rem, 2.2vw, 0.9rem);
         }
+
         .api-table th {
-            background: #3498db;
-            color: white;
-            padding: 15px;
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: #000000;
+            padding: clamp(10px, 2.5vw, 15px);
             text-align: left;
             font-weight: bold;
+            font-size: clamp(0.85rem, 2.3vw, 0.95rem);
         }
+
         .api-table td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #e9ecef;
+            padding: clamp(8px, 2vw, 12px) clamp(10px, 2.5vw, 15px);
+            border-bottom: 1px solid #333333;
             vertical-align: top;
+            word-break: break-word;
+            color: #ffffff;
         }
+
         .api-table tr:hover {
-            background: #f8f9fa;
+            background: #2a2a2a;
         }
+
         .method {
             display: inline-block;
             padding: 4px 8px;
             border-radius: 4px;
-            font-size: 0.8em;
+            font-size: 0.75em;
             font-weight: bold;
-            text-transform: uppercase;
+            min-width: 60px;
+            text-align: center;
         }
-        .method.post { background: #28a745; color: white; }
-        .method.get { background: #007bff; color: white; }
-        .method.put { background: #ffc107; color: black; }
-        .method.delete { background: #dc3545; color: white; }
+
+        .method.get { background: #61dafb; color: #000000; }
+        .method.post { background: #51cf66; color: #000000; }
+        .method.put { background: #ffd43b; color: #000000; }
+        .method.delete { background: #ff6b6b; color: #ffffff; }
+
+        .status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75em;
+            font-weight: bold;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .status.success { background: #51cf66; color: #000000; }
+        .status.error { background: #ff6b6b; color: #ffffff; }
+        .status.info { background: #61dafb; color: #000000; }
+
         .code-block {
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 5px;
-            padding: 15px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border: 1px solid #00d4ff;
+            border-radius: 8px;
+            padding: clamp(12px, 2.5vw, 15px);
             margin: 15px 0;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9em;
+            font-family: 'Courier New', 'Consolas', monospace;
+            font-size: clamp(0.75rem, 2vw, 0.9rem);
             overflow-x: auto;
             white-space: pre-wrap;
+            -webkit-overflow-scrolling: touch;
+            color: #00d4ff;
         }
-        .url {
-            font-family: 'Courier New', monospace;
-            background: #e9ecef;
-            padding: 2px 6px;
-            border-radius: 3px;
-            color: #495057;
-        }
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin: 20px 0;
-        }
-        .feature-card {
-            background: #fff;
-            border: 1px solid #e9ecef;
-            border-radius: 10px;
+
+        .url-highlight {
+            background: linear-gradient(45deg, #00d4ff, #0099cc);
+            color: #000000;
             padding: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: center;
+            font-weight: bold;
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
         }
-        .feature-card h4 {
-            color: #3498db;
-            margin-top: 0;
-        }
+
         ul {
             margin: 0 0 20px 20px;
             line-height: 1.6;
+            font-size: clamp(0.85rem, 2.2vw, 0.95rem);
+            color: #cccccc;
         }
+
+        li {
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+
         .desc {
-            color: #555;
-            font-size: 1.1em;
+            color: #cccccc;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
             margin-bottom: 25px;
             line-height: 1.6;
+            font-weight: 500;
         }
+
+        .back-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: #000000;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .back-button:hover {
+            background: linear-gradient(135deg, #0099cc, #006699);
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
+        }
+
+        /* 모바일 테이블 최적화 */
+        .mobile-table {
+            display: none;
+        }
+
+        .mobile-api-item {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .mobile-api-item h4 {
+            color: #ffffff;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .mobile-api-item .method {
+            margin-bottom: 8px;
+        }
+
+        .mobile-api-item .description {
+            color: #cccccc;
+            font-size: 0.9rem;
+            margin-top: 8px;
+        }
+
+        /* 모바일 최적화 */
         @media (max-width: 768px) {
             .container {
-                padding: 20px;
+                margin: 0 10px 20px 10px;
+                border-radius: 15px;
             }
+
+            .nav {
+                padding: 8px 5px;
+            }
+
+            .nav a {
+                margin: 0 5px;
+                padding: 8px 12px;
+            }
+
+            /* 모바일에서 테이블을 카드 형태로 변경 */
             .api-table {
-                font-size: 0.9em;
+                display: none;
             }
-            .api-table th,
-            .api-table td {
-                padding: 8px;
+
+            .mobile-table {
+                display: block;
             }
+        }
+
+        /* 태블릿 최적화 */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .api-table {
+                font-size: 0.85rem;
+            }
+        }
+
+        /* 작은 모바일 화면 */
+        @media (max-width: 480px) {
+            .container {
+                margin: 0 5px 15px 5px;
+                padding: 15px;
+            }
+
+            .nav a {
+                margin: 0 3px;
+                padding: 6px 10px;
+                font-size: 0.75rem;
+            }
+
+            .back-button {
+                bottom: 15px;
+                right: 15px;
+                width: 45px;
+                height: 45px;
+                font-size: 1rem;
+            }
+
+            .mobile-api-item {
+                padding: 12px;
+            }
+        }
+
+        /* 터치 디바이스 최적화 */
+        @media (hover: none) and (pointer: coarse) {
+            .mobile-api-item:active {
+                transform: scale(0.98);
+            }
+        }
+
+        /* 접근성 개선 */
+        .mobile-api-item:focus {
+            outline: 2px solid #00d4ff;
+            outline-offset: 2px;
+        }
+
+        /* 로딩 애니메이션 */
+        .mobile-api-item {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 텍스트 강조 */
+        strong {
+            color: #00d4ff;
+            font-weight: bold;
+        }
+
+        /* 링크 스타일 */
+        a {
+            color: #00d4ff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        /* API 엔드포인트 강조 */
+        .endpoint {
+            font-family: 'Courier New', 'Consolas', monospace;
+            background: #2a2a2a;
+            padding: 4px 8px;
+            border-radius: 4px;
+            color: #00d4ff;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>POKA URL/API 목록</h1>
-        <p>포토카드 제작 키오스크 시스템 - API 엔드포인트 및 요청/응답 샘플</p>
+        <p>포토카드 제작 키오스크 시스템 - API 엔드포인트 및 서비스 URL</p>
     </div>
 
     <div class="nav">
@@ -186,312 +422,360 @@
     <div class="container">
         <h2>URL/API 목록</h2>
         <div class="desc">
-            POKA 시스템은 <b>RESTful API</b>를 기반으로 하며, <b>JSON</b> 형식으로 데이터를 주고받습니다.<br>
-            모든 API는 <b>HTTPS</b>를 통해 안전하게 통신하며, <b>JWT 토큰</b>을 통한 인증을 지원합니다.
+            POKA 시스템에서 사용되는 <strong>외부 서비스 URL</strong>과 <strong>API 엔드포인트</strong>를 상세히 설명합니다.<br>
+            각 서비스의 역할과 통신 방식을 중심으로 구성되어 있습니다.
         </div>
 
-        <h3>API 기본 정보</h3>
-        <div class="feature-grid">
-            <div class="feature-card">
-                <h4>🌐 기본 URL</h4>
-                <ul>
-                    <li><strong>API 서버:</strong> <span class="url">https://pkapi.ting.ovh</span></li>
-                    <li><strong>파일 서버:</strong> <span class="url">https://pkfile.ting.ovh</span></li>
-                    <li><strong>업로드 서버:</strong> <span class="url">https://upload.ting.ovh</span></li>
-                </ul>
-            </div>
-            <div class="feature-card">
-                <h4>🔐 인증 방식</h4>
-                <ul>
-                    <li><strong>JWT 토큰</strong> - Bearer 방식</li>
-                    <li><strong>토큰 만료:</strong> 20분</li>
-                    <li><strong>자동 갱신:</strong> 지원</li>
-                    <li><strong>헤더:</strong> Authorization: Bearer {token}</li>
-                </ul>
-            </div>
-            <div class="feature-card">
-                <h4>📊 응답 형식</h4>
-                <ul>
-                    <li><strong>성공:</strong> HTTP 200 + JSON</li>
-                    <li><strong>오류:</strong> HTTP 4xx/5xx + JSON</li>
-                    <li><strong>인코딩:</strong> UTF-8</li>
-                    <li><strong>Content-Type:</strong> application/json</li>
-                </ul>
-            </div>
+        <div class="url-highlight">
+            🌐 외부 서비스 연동 및 API 통신 인터페이스
         </div>
 
-        <h3>인증 API</h3>
+        <h3>🔗 외부 서비스 URL</h3>
+        
+        <!-- 데스크톱 테이블 -->
         <table class="api-table">
-            <tr>
-                <th>구분</th>
-                <th>URL</th>
-                <th>메서드</th>
-                <th>설명</th>
-            </tr>
-            <tr>
-                <td>키오스크 로그인</td>
-                <td><span class="url">https://pkapi.ting.ovh/user/Kiosk/login</span></td>
-                <td><span class="method post">POST</span></td>
-                <td>키오스크 로그인 인증 및 JWT 토큰 발급</td>
-            </tr>
+            <thead>
+                <tr>
+                    <th>서비스명</th>
+                    <th>URL</th>
+                    <th>프로토콜</th>
+                    <th>역할</th>
+                    <th>설명</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>API 서버</strong></td>
+                    <td><span class="endpoint">pkapi.ting.ovh</span></td>
+                    <td><span class="method get">HTTPS</span></td>
+                    <td><span class="status success">인증/결제</span></td>
+                    <td>메인 API 서버 - 인증, 결제, 데이터 처리</td>
+                </tr>
+                <tr>
+                    <td><strong>파일 서버</strong></td>
+                    <td><span class="endpoint">pkfile.ting.ovh</span></td>
+                    <td><span class="method get">HTTPS</span></td>
+                    <td><span class="status success">파일 저장</span></td>
+                    <td>이미지 파일 저장 및 CDN 서비스</td>
+                </tr>
+                <tr>
+                    <td><strong>업로드 서버</strong></td>
+                    <td><span class="endpoint">upload.ting.ovh</span></td>
+                    <td><span class="method post">HTTPS</span></td>
+                    <td><span class="status success">업로드</span></td>
+                    <td>모바일 이미지 업로드 전용 서버</td>
+                </tr>
+                <tr>
+                    <td><strong>LinePay API</strong></td>
+                    <td><span class="endpoint">api-pay.line.me</span></td>
+                    <td><span class="method post">HTTPS</span></td>
+                    <td><span class="status success">결제</span></td>
+                    <td>LinePay 결제 게이트웨이</td>
+                </tr>
+            </tbody>
         </table>
 
-        <h4>로그인 API 요청/응답 샘플</h4>
-        <div class="code-block">
-<b>요청 (Request):</b>
-POST https://pkapi.ting.ovh/user/Kiosk/login
-Content-Type: application/json
-
-{
-    "username": "kiosk_user",
-    "password": "kiosk_password"
-}
-
-<b>응답 (Response):</b>
-HTTP/1.1 200 OK
-Content-Type: application/json
-
-{
-    "success": true,
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-    "expiresIn": 1200,
-    "user": {
-        "id": 1,
-        "username": "kiosk_user",
-        "role": "kiosk"
-    }
-}
-        </div>
-
-        <h3>결제 API</h3>
-        <table class="api-table">
-            <tr>
-                <th>구분</th>
-                <th>URL</th>
-                <th>메서드</th>
-                <th>설명</th>
-            </tr>
-            <tr>
-                <td>현금 결제</td>
-                <td><span class="url">https://pkapi.ting.ovh/api/Cash/create</span></td>
-                <td><span class="method post">POST</span></td>
-                <td>현금 결제 주문 생성</td>
-            </tr>
-            <tr>
-                <td>LinePay 결제</td>
-                <td><span class="url">https://pkapi.ting.ovh/api/LinePay/create</span></td>
-                <td><span class="method post">POST</span></td>
-                <td>LinePay 결제 주문 생성</td>
-            </tr>
-            <tr>
-                <td>LinePay 상태</td>
-                <td><span class="url">https://pkapi.ting.ovh/api/LinePay/request?transactionId=...&orderId=...</span></td>
-                <td><span class="method get">GET</span></td>
-                <td>LinePay 결제 상태 조회</td>
-            </tr>
-            <tr>
-                <td>쿠폰 검증</td>
-                <td><span class="url">https://pkapi.ting.ovh/api/Kiosk/useCoupon?code=...</span></td>
-                <td><span class="method get">GET</span></td>
-                <td>쿠폰 코드 검증 및 할인 정보 반환</td>
-            </tr>
-        </table>
-
-        <h4>현금 결제 API 샘플</h4>
-        <div class="code-block">
-<b>요청 (Request):</b>
-POST https://pkapi.ting.ovh/api/Cash/create
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-Content-Type: application/json
-
-{
-    "amount": 5000,
-    "orderId": "ORDER_20241201_001",
-    "uploadId": "UPLOAD_12345"
-}
-
-<b>응답 (Response):</b>
-HTTP/1.1 200 OK
-Content-Type: application/json
-
-{
-    "success": true,
-    "orderId": "ORDER_20241201_001",
-    "amount": 5000,
-    "status": "completed",
-    "timestamp": "2024-12-01T10:30:00Z"
-}
-        </div>
-
-        <h4>LinePay 결제 API 샘플</h4>
-        <div class="code-block">
-<b>요청 (Request):</b>
-POST https://pkapi.ting.ovh/api/LinePay/create
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-Content-Type: application/json
-
-{
-    "amount": 5000,
-    "orderId": "ORDER_20241201_002",
-    "uploadId": "UPLOAD_12345",
-    "currency": "TWD"
-}
-
-<b>응답 (Response):</b>
-HTTP/1.1 200 OK
-Content-Type: application/json
-
-{
-    "success": true,
-    "orderId": "ORDER_20241201_002",
-    "transactionId": "202412010001",
-    "paymentUrl": "https://sandbox-api-pay.line.me/...",
-    "status": "pending"
-}
-        </div>
-
-        <h3>파일 업로드 API</h3>
-        <table class="api-table">
-            <tr>
-                <th>구분</th>
-                <th>URL</th>
-                <th>메서드</th>
-                <th>설명</th>
-            </tr>
-            <tr>
-                <td>업로드 URL 획득</td>
-                <td><span class="url">https://pkapi.ting.ovh/file/upload/</span></td>
-                <td><span class="method get">GET</span></td>
-                <td>이미지 업로드용 URL 및 업로드 페이지 URL 획득</td>
-            </tr>
-            <tr>
-                <td>프로필 이미지</td>
-                <td><span class="url">https://pkfile.ting.ovh/profiles/</span></td>
-                <td><span class="method get">GET</span></td>
-                <td>광고/프로필 이미지 제공</td>
-            </tr>
-            <tr>
-                <td>얼굴 이미지</td>
-                <td><span class="url">https://pkfile.ting.ovh/u/{ID}/face</span></td>
-                <td><span class="method get">GET</span></td>
-                <td>업로드된 얼굴 이미지 다운로드</td>
-            </tr>
-            <tr>
-                <td>배경 이미지</td>
-                <td><span class="url">https://pkfile.ting.ovh/u/{ID}/back</span></td>
-                <td><span class="method get">GET</span></td>
-                <td>업로드된 배경 이미지 다운로드</td>
-            </tr>
-            <tr>
-                <td>업로드 페이지</td>
-                <td><span class="url">https://upload.ting.ovh?id={ID}</span></td>
-                <td><span class="method get">GET</span></td>
-                <td>모바일 업로드 페이지 (QR코드로 접근)</td>
-            </tr>
-        </table>
-
-        <h4>업로드 URL API 샘플</h4>
-        <div class="code-block">
-<b>요청 (Request):</b>
-GET https://pkapi.ting.ovh/file/upload/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-
-<b>응답 (Response):</b>
-HTTP/1.1 200 OK
-Content-Type: application/json
-
-{
-    "success": true,
-    "uploadId": "UPLOAD_12345",
-    "uploadPageUrl": "https://upload.ting.ovh?id=UPLOAD_12345",
-    "expiresAt": "2024-12-01T11:30:00Z",
-    "qrCodeData": "https://upload.ting.ovh?id=UPLOAD_12345"
-}
-        </div>
-
-        <h3>외부 서비스 API</h3>
-        <table class="api-table">
-            <tr>
-                <th>구분</th>
-                <th>URL</th>
-                <th>메서드</th>
-                <th>설명</th>
-            </tr>
-            <tr>
-                <td>로고 서버</td>
-                <td><span class="url">https://file.frc8585.com/</span></td>
-                <td><span class="method get">GET</span></td>
-                <td>그룹별 로고 이미지 제공</td>
-            </tr>
-            <tr>
-                <td>LinePay API</td>
-                <td><span class="url">https://sandbox-api-pay.line.me/</span></td>
-                <td><span class="method post">POST</span></td>
-                <td>LinePay 결제 처리 (샌드박스)</td>
-            </tr>
-        </table>
-
-        <h3>오류 응답 형식</h3>
-        <div class="code-block">
-<b>일반 오류 응답:</b>
-HTTP/1.1 400 Bad Request
-Content-Type: application/json
-
-{
-    "success": false,
-    "error": {
-        "code": "INVALID_REQUEST",
-        "message": "잘못된 요청입니다.",
-        "details": "필수 파라미터가 누락되었습니다."
-    },
-    "timestamp": "2024-12-01T10:30:00Z"
-}
-
-<b>인증 오류 응답:</b>
-HTTP/1.1 401 Unauthorized
-Content-Type: application/json
-
-{
-    "success": false,
-    "error": {
-        "code": "UNAUTHORIZED",
-        "message": "인증이 필요합니다.",
-        "details": "유효하지 않은 토큰입니다."
-    },
-    "timestamp": "2024-12-01T10:30:00Z"
-}
-        </div>
-
-        <h3>API 사용 시 주의사항</h3>
-        <div class="feature-grid">
-            <div class="feature-card">
-                <h4>🔐 보안</h4>
-                <ul>
-                    <li>모든 API 호출 시 JWT 토큰 필수</li>
-                    <li>토큰 만료 시 자동 갱신 필요</li>
-                    <li>HTTPS 통신만 허용</li>
-                    <li>민감한 정보 로깅 금지</li>
-                </ul>
+        <!-- 모바일 카드 형태 -->
+        <div class="mobile-table">
+            <div class="mobile-api-item">
+                <h4>🔗 API 서버</h4>
+                <span class="method get">HTTPS</span>
+                <p><strong>URL:</strong> <span class="endpoint">pkapi.ting.ovh</span></p>
+                <p><strong>역할:</strong> <span class="status success">인증/결제</span></p>
+                <div class="description">메인 API 서버 - 인증, 결제, 데이터 처리</div>
             </div>
-            <div class="feature-card">
-                <h4>⚡ 성능</h4>
-                <ul>
-                    <li>API 응답 시간: 3초 이내</li>
-                    <li>이미지 업로드: 10MB 이하</li>
-                    <li>동시 요청 제한: 100개</li>
-                    <li>타임아웃: 30초</li>
-                </ul>
+            <div class="mobile-api-item">
+                <h4>📁 파일 서버</h4>
+                <span class="method get">HTTPS</span>
+                <p><strong>URL:</strong> <span class="endpoint">pkfile.ting.ovh</span></p>
+                <p><strong>역할:</strong> <span class="status success">파일 저장</span></p>
+                <div class="description">이미지 파일 저장 및 CDN 서비스</div>
             </div>
-            <div class="feature-card">
-                <h4>🔄 재시도</h4>
-                <ul>
-                    <li>네트워크 오류 시 3회 재시도</li>
-                    <li>재시도 간격: 1초, 3초, 5초</li>
-                    <li>결제 API는 재시도 금지</li>
-                    <li>로그인 실패 시 5분 대기</li>
-                </ul>
+            <div class="mobile-api-item">
+                <h4>📤 업로드 서버</h4>
+                <span class="method post">HTTPS</span>
+                <p><strong>URL:</strong> <span class="endpoint">upload.ting.ovh</span></p>
+                <p><strong>역할:</strong> <span class="status success">업로드</span></p>
+                <div class="description">모바일 이미지 업로드 전용 서버</div>
             </div>
+            <div class="mobile-api-item">
+                <h4>💳 LinePay API</h4>
+                <span class="method post">HTTPS</span>
+                <p><strong>URL:</strong> <span class="endpoint">api-pay.line.me</span></p>
+                <p><strong>역할:</strong> <span class="status success">결제</span></p>
+                <div class="description">LinePay 결제 게이트웨이</div>
+            </div>
+        </div>
+
+        <h3>🔐 인증 API</h3>
+        <div class="code-block">
+POST /api/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "password"
+}
+
+Response:
+{
+  "success": true,
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "expires": "2024-12-31T23:59:59Z"
+}
+        </div>
+
+        <h3>💳 결제 API</h3>
+        <div class="code-block">
+POST /api/payment/linepay
+Content-Type: application/json
+
+{
+  "amount": 1000,
+  "currency": "TWD",
+  "orderId": "ORDER_123456",
+  "productName": "Photo Card"
+}
+
+Response:
+{
+  "success": true,
+  "paymentUrl": "https://web-pay.line.me/...",
+  "transactionId": "TXN_123456"
+}
+        </div>
+
+        <h3>📤 파일 업로드 API</h3>
+        <div class="code-block">
+POST /api/upload/image
+Content-Type: multipart/form-data
+
+Form Data:
+- file: [image file]
+- sessionId: "SESSION_123456"
+
+Response:
+{
+  "success": true,
+  "fileUrl": "https://pkfile.ting.ovh/images/...",
+  "fileId": "FILE_123456"
+}
+        </div>
+
+        <h3>🖨️ 프린터 API</h3>
+        <div class="code-block">
+POST /api/printer/print
+Content-Type: application/json
+
+{
+  "imageUrl": "https://pkfile.ting.ovh/images/...",
+  "quantity": 1,
+  "quality": "high"
+}
+
+Response:
+{
+  "success": true,
+  "jobId": "PRINT_123456",
+  "status": "printing"
+}
+        </div>
+
+        <h3>📊 상태 확인 API</h3>
+        <div class="code-block">
+GET /api/status/printer
+Authorization: Bearer [token]
+
+Response:
+{
+  "success": true,
+  "status": "ready",
+  "paperLevel": 80,
+  "inkLevel": 90
+}
+        </div>
+
+        <h3>🌐 QR코드 생성 API</h3>
+        <div class="code-block">
+POST /api/qr/generate
+Content-Type: application/json
+
+{
+  "uploadUrl": "https://upload.ting.ovh/upload",
+  "sessionId": "SESSION_123456"
+}
+
+Response:
+{
+  "success": true,
+  "qrCodeUrl": "https://pkapi.ting.ovh/qr/...",
+  "qrCodeData": "https://upload.ting.ovh/upload?session=..."
+}
+        </div>
+
+        <h3>🔧 하드웨어 제어 API</h3>
+        <div class="code-block">
+POST /api/hardware/hopper/dispense
+Content-Type: application/json
+
+{
+  "amount": 100,
+  "currency": "TWD"
+}
+
+Response:
+{
+  "success": true,
+  "dispensed": 100,
+  "remaining": 900
+}
+        </div>
+
+        <h3>📱 모바일 업로드 플로우</h3>
+        <div class="code-block">
+1. 키오스크에서 QR코드 생성
+   POST /api/qr/generate
+
+2. 모바일에서 QR코드 스캔
+   GET https://upload.ting.ovh/upload?session=SESSION_ID
+
+3. 모바일에서 이미지 업로드
+   POST https://upload.ting.ovh/upload
+   Content-Type: multipart/form-data
+
+4. 키오스크에서 업로드 확인
+   GET /api/upload/status?sessionId=SESSION_ID
+
+5. 이미지 처리 및 편집
+   POST /api/image/process
+        </div>
+
+        <h3>🔒 보안 헤더</h3>
+        <div class="code-block">
+모든 API 요청에 포함되는 헤더:
+
+Authorization: Bearer [JWT_TOKEN]
+Content-Type: application/json
+User-Agent: POKA-KIOSK/1.0
+X-Request-ID: [UNIQUE_ID]
+X-Timestamp: [TIMESTAMP]
+        </div>
+
+        <h3>⚠️ 오류 응답 형식</h3>
+        <div class="code-block">
+{
+  "success": false,
+  "error": {
+    "code": "AUTH_FAILED",
+    "message": "인증에 실패했습니다",
+    "details": "토큰이 만료되었습니다"
+  },
+  "timestamp": "2024-01-01T12:00:00Z"
+}
         </div>
     </div>
+
+    <button class="back-button" onclick="window.location.href='index.html'" title="홈으로 돌아가기">🏠</button>
+
+    <script>
+        // 터치 이벤트 최적화
+        document.addEventListener('DOMContentLoaded', function() {
+            // 터치 디바이스 감지
+            if ('ontouchstart' in window) {
+                document.body.classList.add('touch-device');
+            }
+
+            // 스크롤 성능 최적화
+            let ticking = false;
+            function updateScroll() {
+                ticking = false;
+            }
+
+            function requestTick() {
+                if (!ticking) {
+                    requestAnimationFrame(updateScroll);
+                    ticking = true;
+                }
+            }
+
+            window.addEventListener('scroll', requestTick);
+
+            // 네비게이션 스크롤 최적화
+            const nav = document.querySelector('.nav');
+            let isScrolling = false;
+
+            nav.addEventListener('scroll', function() {
+                if (!isScrolling) {
+                    isScrolling = true;
+                    requestAnimationFrame(function() {
+                        isScrolling = false;
+                    });
+                }
+            });
+
+            // 뒤로가기 버튼 표시/숨김
+            const backButton = document.querySelector('.back-button');
+            let lastScrollTop = 0;
+
+            window.addEventListener('scroll', function() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                if (scrollTop > 100) {
+                    backButton.style.opacity = '1';
+                    backButton.style.visibility = 'visible';
+                } else {
+                    backButton.style.opacity = '0';
+                    backButton.style.visibility = 'hidden';
+                }
+                
+                lastScrollTop = scrollTop;
+            });
+
+            // 초기 상태 설정
+            backButton.style.opacity = '0';
+            backButton.style.visibility = 'hidden';
+            backButton.style.transition = 'opacity 0.3s ease, visibility 0.3s ease';
+
+            // 코드 블록 복사 기능
+            const codeBlocks = document.querySelectorAll('.code-block');
+            codeBlocks.forEach(block => {
+                block.addEventListener('click', function() {
+                    const text = this.textContent;
+                    navigator.clipboard.writeText(text).then(() => {
+                        // 복사 완료 표시
+                        const originalBackground = this.style.background;
+                        this.style.background = '#2ed573';
+                        this.style.color = '#000000';
+                        
+                        setTimeout(() => {
+                            this.style.background = originalBackground;
+                            this.style.color = '';
+                        }, 1000);
+                    });
+                });
+                
+                // 터치 디바이스에서 스타일 추가
+                if ('ontouchstart' in window) {
+                    block.style.cursor = 'pointer';
+                    block.title = '클릭하여 복사';
+                }
+            });
+
+            // 키보드 네비게이션
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeModal();
+                }
+            });
+        });
+
+        // PWA 지원
+        if ('serviceWorker' in navigator) {
+            const meta = document.createElement('meta');
+            meta.name = 'theme-color';
+            meta.content = '#000000';
+            document.head.appendChild(meta);
+        }
+    </script>
 </body>
-</html> 
+</html>

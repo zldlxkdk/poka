@@ -3,161 +3,391 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>POKA 주요 기능/화면</title>
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body { 
-            font-family: 'Malgun Gothic', Arial, sans-serif; 
-            margin: 0; 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #222; 
+            font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', 'Noto Sans KR', Arial, sans-serif; 
+            background: #000000;
+            color: #ffffff; 
             min-height: 100vh;
+            line-height: 1.6;
         }
+
         .header {
-            background: rgba(255,255,255,0.95);
-            padding: 20px 0;
+            background: rgba(20, 20, 20, 0.95);
+            padding: clamp(15px, 3vw, 20px) clamp(10px, 2vw, 20px);
             text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            margin-bottom: 15px;
+            backdrop-filter: blur(10px);
+            border-bottom: 3px solid #00d4ff;
         }
+
         .header h1 {
             margin: 0;
-            color: #2c3e50;
-            font-size: 2.5em;
+            color: #ffffff;
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
             font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            line-height: 1.2;
         }
+
         .header p {
             margin: 10px 0 0 0;
-            color: #7f8c8d;
-            font-size: 1.1em;
+            color: #cccccc;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            font-weight: 500;
         }
+
         .nav {
-            background: rgba(255,255,255,0.95);
-            padding: 15px 0;
+            background: rgba(20, 20, 20, 0.95);
+            padding: 10px 5px;
             text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+            border-bottom: 2px solid #333333;
         }
+
+        .nav::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .nav::-webkit-scrollbar-track {
+            background: #333333;
+        }
+
+        .nav::-webkit-scrollbar-thumb {
+            background: #00d4ff;
+            border-radius: 2px;
+        }
+
         .nav a {
-            color: #3498db;
+            color: #ffffff;
             text-decoration: none;
-            margin: 0 15px;
-            padding: 8px 15px;
-            border-radius: 5px;
-            transition: background 0.3s;
+            margin: 0 8px;
+            padding: 10px 15px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            display: inline-block;
+            font-size: clamp(0.8rem, 2.2vw, 0.9rem);
+            white-space: nowrap;
+            font-weight: 500;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
         }
-        .nav a:hover {
-            background: #3498db;
-            color: white;
+
+        .nav a:hover, .nav a:active {
+            background: #00d4ff;
+            color: #000000;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
         }
+
         .container { 
             max-width: 1200px; 
-            margin: 0 auto 40px auto; 
-            background: #fff; 
-            border-radius: 15px; 
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1); 
-            padding: 40px;
+            margin: 0 auto 20px auto; 
+            background: rgba(20, 20, 20, 0.95); 
+            border-radius: 20px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5); 
+            padding: clamp(20px, 4vw, 40px);
             overflow: hidden;
+            border: 1px solid rgba(0, 212, 255, 0.2);
         }
+
         h2 { 
-            color: #3498db; 
-            border-bottom: 3px solid #e9ecef; 
-            padding-bottom: 10px; 
+            color: #ffffff; 
+            border-bottom: 3px solid #00d4ff; 
+            padding-bottom: 15px; 
             margin-top: 0; 
-            font-size: 1.8em;
+            font-size: clamp(1.3rem, 3.5vw, 1.8rem);
+            font-weight: bold;
         }
+
         h3 { 
-            color: #2c3e50; 
-            margin-top: 30px; 
-            font-size: 1.4em;
+            color: #cccccc; 
+            margin-top: 25px; 
+            font-size: clamp(1.1rem, 2.8vw, 1.4rem);
+            font-weight: 600;
         }
+
+        h4 {
+            color: #ffffff;
+            margin-top: 20px;
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            font-weight: 600;
+        }
+
         .feature-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: clamp(15px, 3vw, 20px);
             margin: 20px 0;
         }
+
         .feature-card {
-            background: #fff;
-            border: 1px solid #e9ecef;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border: 2px solid #333333;
+            border-radius: 15px;
+            padding: clamp(20px, 3vw, 25px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #00d4ff, #0099cc);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+            border-color: #00d4ff;
+        }
+
         .feature-card h4 {
-            color: #3498db;
+            color: #ffffff;
             margin-top: 0;
-        }
-        .image-section {
-            margin: 30px 0;
-            text-align: center;
-        }
-        .image-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin: 20px 0;
-        }
-        .image-item {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        .image-item img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-            border: 1px solid #dee2e6;
-        }
-        .image-caption {
-            margin-top: 10px;
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
             font-weight: bold;
-            color: #495057;
+            margin-bottom: 15px;
         }
-        .flow-diagram {
-            background: #f8f9fa;
-            border-radius: 10px;
+
+        .screen-flow {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border: 2px solid #333333;
+            border-radius: 15px;
             padding: 20px;
             margin: 20px 0;
-            font-family: 'Courier New', monospace;
+            font-family: 'Courier New', 'Consolas', monospace;
             white-space: pre-wrap;
             text-align: center;
+            font-size: clamp(0.75rem, 2vw, 0.9rem);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            color: #00d4ff;
         }
+
+        .flow-step {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border: 1px solid #00d4ff;
+            border-radius: 8px;
+            padding: clamp(12px, 2.5vw, 15px);
+            margin: 15px 0;
+            font-family: 'Courier New', 'Consolas', monospace;
+            font-size: clamp(0.75rem, 2vw, 0.9rem);
+            overflow-x: auto;
+            white-space: pre-wrap;
+            -webkit-overflow-scrolling: touch;
+            color: #00d4ff;
+        }
+
         ul {
             margin: 0 0 20px 20px;
             line-height: 1.6;
+            font-size: clamp(0.85rem, 2.2vw, 0.95rem);
+            color: #cccccc;
         }
+
+        li {
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+
         .desc {
-            color: #555;
-            font-size: 1.1em;
+            color: #cccccc;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
             margin-bottom: 25px;
             line-height: 1.6;
+            font-weight: 500;
         }
-        .code-block {
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 5px;
-            padding: 15px;
-            margin: 15px 0;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9em;
-            overflow-x: auto;
+
+        .back-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: #000000;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
         }
+
+        .back-button:hover {
+            background: linear-gradient(135deg, #0099cc, #006699);
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
+        }
+
+        /* 모바일 최적화 */
         @media (max-width: 768px) {
             .container {
-                padding: 20px;
+                margin: 0 10px 20px 10px;
+                border-radius: 15px;
             }
-            .image-grid {
+
+            .feature-grid {
                 grid-template-columns: 1fr;
+                gap: 15px;
             }
+
+            .nav {
+                padding: 8px 5px;
+            }
+
+            .nav a {
+                margin: 0 5px;
+                padding: 8px 12px;
+            }
+        }
+
+        /* 태블릿 최적화 */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .feature-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* 작은 모바일 화면 */
+        @media (max-width: 480px) {
+            .container {
+                margin: 0 5px 15px 5px;
+                padding: 15px;
+            }
+
+            .nav a {
+                margin: 0 3px;
+                padding: 6px 10px;
+                font-size: 0.75rem;
+            }
+
+            .back-button {
+                bottom: 15px;
+                right: 15px;
+                width: 45px;
+                height: 45px;
+                font-size: 1rem;
+            }
+        }
+
+        /* 터치 디바이스 최적화 */
+        @media (hover: none) and (pointer: coarse) {
+            .feature-card:hover {
+                transform: none;
+            }
+
+            .feature-card:active {
+                transform: scale(0.98);
+            }
+        }
+
+        /* 접근성 개선 */
+        .feature-card:focus {
+            outline: 2px solid #00d4ff;
+            outline-offset: 2px;
+        }
+
+        /* 로딩 애니메이션 */
+        .feature-card {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 화면 플로우 강조 효과 */
+        .flow-highlight {
+            background: linear-gradient(45deg, #00d4ff, #0099cc);
+            color: #000000;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: center;
+            font-weight: bold;
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
+        }
+
+        /* 화면 아이콘 */
+        .screen-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        /* 호버 효과 개선 */
+        .feature-card:hover .screen-icon {
+            transform: scale(1.1);
+            transition: transform 0.3s ease;
+        }
+
+        /* 텍스트 강조 */
+        strong {
+            color: #00d4ff;
+            font-weight: bold;
+        }
+
+        /* 링크 스타일 */
+        a {
+            color: #00d4ff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        /* 화면 플로우 다이어그램 */
+        .flow-diagram {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border: 2px solid #333333;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Courier New', 'Consolas', monospace;
+            white-space: pre-wrap;
+            text-align: center;
+            font-size: clamp(0.75rem, 2vw, 0.9rem);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            color: #00d4ff;
         }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>POKA 주요 기능/화면</h1>
-        <p>포토카드 제작 키오스크 시스템 - 주요 기능 및 화면 구성</p>
+        <p>포토카드 제작 키오스크 시스템 - 사용자 인터페이스 및 기능</p>
     </div>
 
     <div class="nav">
@@ -172,203 +402,340 @@
     </div>
 
     <div class="container">
-        <h2>주요 기능/화면</h2>
+        <h2>주요 기능 및 화면</h2>
         <div class="desc">
-            POKA 시스템은 <b>사용자 친화적인 인터페이스</b>와 <b>직관적인 워크플로우</b>를 제공하여<br>
-            포토카드 제작 과정을 단순화하고 효율적으로 만들어줍니다.
-        </div>
-        
-        <div class="feature-grid">
-            <div class="feature-card">
-                <h4>🔐 로그인/설정</h4>
-                <ul>
-                    <li><strong>관리자/운영자 인증</strong> - JWT 토큰 기반 보안 인증</li>
-                    <li><strong>환경설정 관리</strong> - 시스템 설정 및 하드웨어 제어</li>
-                    <li><strong>시스템 상태 확인</strong> - 실시간 모니터링</li>
-                    <li><strong>언어 설정</strong> - 한국어/영어/중국어 지원</li>
-                </ul>
-            </div>
-            <div class="feature-card">
-                <h4>📱 메인 메뉴</h4>
-                <ul>
-                    <li><strong>서비스 모드 선택</strong> - ANIMAL/POP 모드 전환</li>
-                    <li><strong>언어 선택</strong> - 다국어 인터페이스</li>
-                    <li><strong>시스템 상태 표시</strong> - 프린터/호퍼 상태</li>
-                    <li><strong>관리자 모드</strong> - 설정 및 관리 기능</li>
-                </ul>
-            </div>
-            <div class="feature-card">
-                <h4>📸 사진 처리</h4>
-                <ul>
-                    <li><strong>이미지 업로드</strong> - QR코드 스캔 기반</li>
-                    <li><strong>편집/미리보기</strong> - 실시간 이미지 편집</li>
-                    <li><strong>스티커/로고 추가</strong> - 다양한 디자인 요소</li>
-                    <li><strong>이미지 최적화</strong> - 자동 리사이징</li>
-                </ul>
-            </div>
-            <div class="feature-card">
-                <h4>💳 결제 시스템</h4>
-                <ul>
-                    <li><strong>현금 결제</strong> - 호퍼 자동 제어</li>
-                    <li><strong>LinePay 결제</strong> - 모바일 결제 연동</li>
-                    <li><strong>쿠폰 사용</strong> - 할인 코드 적용</li>
-                    <li><strong>결제 상태 확인</strong> - 실시간 상태 모니터링</li>
-                </ul>
-            </div>
+            POKA 시스템의 <strong>사용자 인터페이스</strong>와 <strong>주요 기능</strong>을 상세히 설명합니다.<br>
+            각 화면의 역할과 사용자 경험을 중심으로 구성되어 있습니다.
         </div>
 
-        <h3>사용자 워크플로우</h3>
+        <div class="flow-highlight">
+            📱 직관적이고 사용하기 쉬운 터치 인터페이스
+        </div>
+
+        <h3>🖥️ 화면 플로우</h3>
         <div class="flow-diagram">
-1. 대기 화면 (StandByPage)
-   ↓
-2. 언어 선택
-   ↓
-3. 메인 메뉴 (MainMenu)
-   ↓
-4. 서비스 모드 선택 (ANIMAL/POP)
-   ↓
-5. QR코드 스캔 (QRCodePage)
-   ↓
-6. 이미지 업로드 대기
-   ↓
-7. 편집 화면 (EditPage)
-   ↓
-8. 결제 화면 (Payment)
-   ↓
-9. 프린트 화면 (Print)
-   ↓
-10. 완료 화면 (Finish)
+    ┌─────────────────────────────────────────────────────────────┐
+    │                    POKA KIOSK FLOW                         │
+    └─────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+    ┌─────────────────────────────────────────────────────────────┐
+    │                 StandByPage.cshtml                         │
+    │              (대기 화면 - 언어 선택)                        │
+    └─────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+    ┌─────────────────────────────────────────────────────────────┐
+    │                 MainMenu.cshtml                            │
+    │              (메인 메뉴 - 서비스 선택)                      │
+    └─────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+    ┌─────────────────────────────────────────────────────────────┐
+    │                 EditPage.cshtml                            │
+    │              (편집 화면 - 이미지 편집)                      │
+    └─────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+    ┌─────────────────────────────────────────────────────────────┐
+    │                 Payment.cshtml                             │
+    │              (결제 화면 - 결제 수단 선택)                   │
+    └─────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+    ┌─────────────────────────────────────────────────────────────┐
+    │                 Print.cshtml                               │
+    │              (프린트 화면 - 출력 진행)                      │
+    └─────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+    ┌─────────────────────────────────────────────────────────────┐
+    │                 Finish.cshtml                              │
+    │              (완료 화면 - 서비스 종료)                      │
+    └─────────────────────────────────────────────────────────────┘
         </div>
 
-        <div class="image-section">
-            <h3>주요 화면 구성</h3>
-            <div class="image-grid">
-                <div class="image-item">
-                    <img src="wwwroot/images/ANIMAL/EditPage/interface1.png" alt="편집 화면 1" onerror="this.style.display='none'">
-                    <div class="image-caption">편집 화면 1 - 기본 편집</div>
-                </div>
-                <div class="image-item">
-                    <img src="wwwroot/images/ANIMAL/EditPage/interface2.png" alt="편집 화면 2" onerror="this.style.display='none'">
-                    <div class="image-caption">편집 화면 2 - 스티커 추가</div>
-                </div>
-                <div class="image-item">
-                    <img src="wwwroot/images/ANIMAL/EditPage/interface3.png" alt="편집 화면 3" onerror="this.style.display='none'">
-                    <div class="image-caption">편집 화면 3 - 로고 선택</div>
-                </div>
-                <div class="image-item">
-                    <img src="wwwroot/images/ANIMAL/Print/interface.png" alt="프린트 화면" onerror="this.style.display='none'">
-                    <div class="image-caption">프린트 화면</div>
-                </div>
-                <div class="image-item">
-                    <img src="wwwroot/images/ANIMAL/Finish/interface.png" alt="완료 화면" onerror="this.style.display='none'">
-                    <div class="image-caption">완료 화면</div>
-                </div>
-                <div class="image-item">
-                    <img src="wwwroot/images/ANIMAL/AddPrint/interface.png" alt="추가 프린트" onerror="this.style.display='none'">
-                    <div class="image-caption">추가 프린트 화면</div>
-                </div>
-            </div>
-        </div>
-
-        <h3>화면별 상세 기능</h3>
+        <h3>📱 주요 화면 상세</h3>
         <div class="feature-grid">
             <div class="feature-card">
-                <h4>🔄 대기 화면 (StandByPage)</h4>
+                <span class="screen-icon">🌍</span>
+                <h4>StandByPage (대기 화면)</h4>
                 <ul>
-                    <li><strong>동영상 재생</strong> - 광고 및 안내 영상</li>
-                    <li><strong>언어 선택 버튼</strong> - 한국어/영어/중국어</li>
-                    <li><strong>시스템 상태 표시</strong> - 프린터/호퍼 상태</li>
-                    <li><strong>자동 화면 전환</strong> - 일정 시간 후 메인으로</li>
+                    <li><strong>언어 선택:</strong> 한국어, 영어, 중국어</li>
+                    <li><strong>광고 재생:</strong> 배경 비디오/이미지</li>
+                    <li><strong>시작 버튼:</strong> 터치하여 서비스 시작</li>
+                    <li><strong>자동 대기:</strong> 일정 시간 후 자동 시작</li>
                 </ul>
             </div>
             <div class="feature-card">
-                <h4>🎯 메인 메뉴 (MainMenu)</h4>
+                <span class="screen-icon">🏠</span>
+                <h4>MainMenu (메인 메뉴)</h4>
                 <ul>
-                    <li><strong>ANIMAL 모드</strong> - 동물 테마 포토카드</li>
-                    <li><strong>POP 모드</strong> - 팝아트 스타일 포토카드</li>
-                    <li><strong>관리자 모드</strong> - 시스템 설정 및 관리</li>
-                    <li><strong>언어 변경</strong> - 실시간 언어 전환</li>
+                    <li><strong>서비스 선택:</strong> ANIMAL, POP 카테고리</li>
+                    <li><strong>그룹 선택:</strong> 각 카테고리별 그룹</li>
+                    <li><strong>언어 전환:</strong> 실시간 언어 변경</li>
+                    <li><strong>뒤로가기:</strong> 이전 화면으로 이동</li>
                 </ul>
             </div>
             <div class="feature-card">
-                <h4>📱 QR코드 화면 (QRCodePage)</h4>
+                <span class="screen-icon">🎨</span>
+                <h4>EditPage (편집 화면)</h4>
                 <ul>
-                    <li><strong>QR코드 생성</strong> - 고유 업로드 URL</li>
-                    <li><strong>모바일 안내</strong> - 스마트폰 사용법</li>
-                    <li><strong>업로드 대기</strong> - 이미지 수신 대기</li>
-                    <li><strong>타임아웃 처리</strong> - 자동 화면 전환</li>
+                    <li><strong>이미지 업로드:</strong> QR코드 스캔</li>
+                    <li><strong>이미지 편집:</strong> 크기 조정, 회전</li>
+                    <li><strong>스티커 추가:</strong> 다양한 스티커</li>
+                    <li><strong>미리보기:</strong> 최종 결과 확인</li>
                 </ul>
             </div>
             <div class="feature-card">
-                <h4>✏️ 편집 화면 (EditPage)</h4>
+                <span class="screen-icon">💳</span>
+                <h4>Payment (결제 화면)</h4>
                 <ul>
-                    <li><strong>이미지 미리보기</strong> - 얼굴/배경 이미지</li>
-                    <li><strong>스티커 선택</strong> - 다양한 스티커 라이브러리</li>
-                    <li><strong>로고 선택</strong> - 그룹별 로고 선택</li>
-                    <li><strong>편집 도구</strong> - 크기 조정, 위치 변경</li>
+                    <li><strong>결제 수단:</strong> 현금, LinePay, 쿠폰</li>
+                    <li><strong>금액 표시:</strong> 선택된 서비스 가격</li>
+                    <li><strong>결제 진행:</strong> 실시간 결제 상태</li>
+                    <li><strong>오류 처리:</strong> 결제 실패 시 안내</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <span class="screen-icon">🖨️</span>
+                <h4>Print (프린트 화면)</h4>
+                <ul>
+                    <li><strong>프린터 상태:</strong> 연결 및 용지 확인</li>
+                    <li><strong>출력 진행:</strong> 실시간 진행률</li>
+                    <li><strong>대기 화면:</strong> 출력 중 사용자 안내</li>
+                    <li><strong>오류 처리:</strong> 프린터 오류 시 안내</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <span class="screen-icon">✅</span>
+                <h4>Finish (완료 화면)</h4>
+                <ul>
+                    <li><strong>완료 메시지:</strong> 서비스 완료 안내</li>
+                    <li><strong>추가 서비스:</strong> 추가 제작 옵션</li>
+                    <li><strong>초기화:</strong> 시스템 초기 상태로</li>
+                    <li><strong>자동 전환:</strong> 대기 화면으로 자동 이동</li>
                 </ul>
             </div>
         </div>
 
-        <h3>결제 화면 구성</h3>
-        <div class="image-grid">
-            <div class="image-item">
-                <img src="wwwroot/images/ANIMAL/Payment/Cash.png" alt="현금 결제" onerror="this.style.display='none'">
-                <div class="image-caption">현금 결제 화면</div>
-            </div>
-            <div class="image-item">
-                <img src="wwwroot/images/ANIMAL/Payment/Coupon.png" alt="쿠폰 결제" onerror="this.style.display='none'">
-                <div class="image-caption">쿠폰 결제 화면</div>
-            </div>
-            <div class="image-item">
-                <img src="wwwroot/images/ANIMAL/Payment/LinePay.png" alt="LinePay 결제" onerror="this.style.display='none'">
-                <div class="image-caption">LinePay 결제 화면</div>
-            </div>
-        </div>
-
-        <h3>팝업 및 알림</h3>
-        <div class="image-grid">
-            <div class="image-item">
-                <img src="wwwroot/images/ANIMAL/popup/couponSuccess.png" alt="쿠폰 성공" onerror="this.style.display='none'">
-                <div class="image-caption">쿠폰 적용 성공</div>
-            </div>
-            <div class="image-item">
-                <img src="wwwroot/images/ANIMAL/popup/couponError.png" alt="쿠폰 오류" onerror="this.style.display='none'">
-                <div class="image-caption">쿠폰 적용 오류</div>
-            </div>
-            <div class="image-item">
-                <img src="wwwroot/images/ANIMAL/popup/popupError.png" alt="일반 오류" onerror="this.style.display='none'">
-                <div class="image-caption">일반 오류 팝업</div>
-            </div>
-        </div>
-
-        <h3>다국어 지원</h3>
+        <h3>🎨 사용자 인터페이스 특징</h3>
         <div class="feature-grid">
             <div class="feature-card">
-                <h4>🇰🇷 한국어</h4>
+                <span class="screen-icon">👆</span>
+                <h4>터치 최적화</h4>
                 <ul>
-                    <li>기본 언어 설정</li>
-                    <li>한국 사용자 최적화</li>
-                    <li>현지화된 UI 텍스트</li>
+                    <li><strong>큰 버튼:</strong> 터치하기 쉬운 크기</li>
+                    <li><strong>명확한 피드백:</strong> 터치 시 시각적 반응</li>
+                    <li><strong>직관적 아이콘:</strong> 이해하기 쉬운 심볼</li>
+                    <li><strong>반응형 디자인:</strong> 다양한 화면 크기 대응</li>
                 </ul>
             </div>
             <div class="feature-card">
-                <h4>🇺🇸 영어</h4>
+                <span class="screen-icon">🌍</span>
+                <h4>다국어 지원</h4>
                 <ul>
-                    <li>국제 사용자 지원</li>
-                    <li>영어권 사용자 최적화</li>
-                    <li>표준 영어 인터페이스</li>
+                    <li><strong>3개 언어:</strong> 한국어, 영어, 중국어</li>
+                    <li><strong>실시간 전환:</strong> 즉시 언어 변경</li>
+                    <li><strong>로컬라이제이션:</strong> 문화적 특성 반영</li>
+                    <li><strong>일관된 UI:</strong> 언어별 동일한 경험</li>
                 </ul>
             </div>
             <div class="feature-card">
-                <h4>🇨🇳 중국어</h4>
+                <span class="screen-icon">⚡</span>
+                <h4>성능 최적화</h4>
                 <ul>
-                    <li>중국어권 사용자 지원</li>
-                    <li>번체자 지원</li>
-                    <li>중국어 UI/UX</li>
+                    <li><strong>빠른 로딩:</strong> 최적화된 이미지 및 리소스</li>
+                    <li><strong>부드러운 애니메이션:</strong> 60fps 애니메이션</li>
+                    <li><strong>메모리 효율:</strong> 효율적인 리소스 관리</li>
+                    <li><strong>오프라인 지원:</strong> 기본 기능 오프라인 동작</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <span class="screen-icon">♿</span>
+                <h4>접근성</h4>
+                <ul>
+                    <li><strong>높은 대비:</strong> 가독성 좋은 색상 조합</li>
+                    <li><strong>큰 폰트:</strong> 읽기 쉬운 글자 크기</li>
+                    <li><strong>명확한 네비게이션:</strong> 직관적인 화면 이동</li>
+                    <li><strong>오류 안내:</strong> 명확한 오류 메시지</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3>🔧 화면별 기술 구현</h3>
+        <div class="flow-step">
+StandByPage.cshtml:
+├── 언어 선택 드롭다운
+├── 배경 비디오/이미지 재생
+├── 자동 시작 타이머
+└── 터치 이벤트 처리
+
+MainMenu.cshtml:
+├── 카테고리별 그룹 표시
+├── 동적 메뉴 생성
+├── 언어 전환 기능
+└── 네비게이션 처리
+
+EditPage.cshtml:
+├── QR코드 스캔 기능
+├── 이미지 업로드 처리
+├── Canvas 기반 편집
+├── 스티커 추가 기능
+└── 미리보기 생성
+
+Payment.cshtml:
+├── 결제 수단 선택
+├── LinePay API 연동
+├── 현금 결제 처리
+├── 쿠폰 검증
+└── 결제 상태 모니터링
+
+Print.cshtml:
+├── 프린터 상태 확인
+├── 이미지 포맷 변환
+├── 출력 작업 관리
+├── 진행률 표시
+└── 오류 처리
+
+Finish.cshtml:
+├── 완료 메시지 표시
+├── 추가 서비스 옵션
+├── 시스템 초기화
+└── 자동 화면 전환
+        </div>
+
+        <h3>📱 반응형 디자인</h3>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <span class="screen-icon">📱</span>
+                <h4>모바일 최적화</h4>
+                <ul>
+                    <li><strong>터치 친화적:</strong> 터치 타겟 최적화</li>
+                    <li><strong>스와이프 제스처:</strong> 직관적인 네비게이션</li>
+                    <li><strong>가상 키보드:</strong> 입력 필드 최적화</li>
+                    <li><strong>방향 전환:</strong> 세로/가로 모드 지원</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <span class="screen-icon">💻</span>
+                <h4>데스크톱 지원</h4>
+                <ul>
+                    <li><strong>마우스 인터랙션:</strong> 호버 효과</li>
+                    <li><strong>키보드 네비게이션:</strong> Tab 키 지원</li>
+                    <li><strong>고해상도:</strong> Retina 디스플레이 지원</li>
+                    <li><strong>윈도우 크기:</strong> 반응형 레이아웃</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <span class="screen-icon">🖥️</span>
+                <h4>태블릿 최적화</h4>
+                <ul>
+                    <li><strong>중간 크기:</strong> 태블릿 전용 레이아웃</li>
+                    <li><strong>멀티터치:</strong> 제스처 지원</li>
+                    <li><strong>랜드스케이프:</strong> 가로 모드 최적화</li>
+                    <li><strong>스플릿 뷰:</strong> 멀티 태스킹 지원</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <span class="screen-icon">🎯</span>
+                <h4>키오스크 특화</h4>
+                <ul>
+                    <li><strong>전체 화면:</strong> 키오스크 모드</li>
+                    <li><strong>터치 최적화:</strong> 큰 버튼과 명확한 UI</li>
+                    <li><strong>자동 시작:</strong> 부팅 시 자동 실행</li>
+                    <li><strong>오류 복구:</strong> 자동 재시작 기능</li>
                 </ul>
             </div>
         </div>
     </div>
+
+    <button class="back-button" onclick="window.location.href='index.html'" title="홈으로 돌아가기">🏠</button>
+
+    <script>
+        // 터치 이벤트 최적화
+        document.addEventListener('DOMContentLoaded', function() {
+            // 터치 디바이스 감지
+            if ('ontouchstart' in window) {
+                document.body.classList.add('touch-device');
+            }
+
+            // 스크롤 성능 최적화
+            let ticking = false;
+            function updateScroll() {
+                ticking = false;
+            }
+
+            function requestTick() {
+                if (!ticking) {
+                    requestAnimationFrame(updateScroll);
+                    ticking = true;
+                }
+            }
+
+            window.addEventListener('scroll', requestTick);
+
+            // 네비게이션 스크롤 최적화
+            const nav = document.querySelector('.nav');
+            let isScrolling = false;
+
+            nav.addEventListener('scroll', function() {
+                if (!isScrolling) {
+                    isScrolling = true;
+                    requestAnimationFrame(function() {
+                        isScrolling = false;
+                    });
+                }
+            });
+
+            // 뒤로가기 버튼 표시/숨김
+            const backButton = document.querySelector('.back-button');
+            let lastScrollTop = 0;
+
+            window.addEventListener('scroll', function() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                if (scrollTop > 100) {
+                    backButton.style.opacity = '1';
+                    backButton.style.visibility = 'visible';
+                } else {
+                    backButton.style.opacity = '0';
+                    backButton.style.visibility = 'hidden';
+                }
+                
+                lastScrollTop = scrollTop;
+            });
+
+            // 초기 상태 설정
+            backButton.style.opacity = '0';
+            backButton.style.visibility = 'hidden';
+            backButton.style.transition = 'opacity 0.3s ease, visibility 0.3s ease';
+
+            // 키보드 네비게이션
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeModal();
+                }
+            });
+
+            // 화면 플로우 다이어그램 인터랙션
+            const flowDiagram = document.querySelector('.flow-diagram');
+            if (flowDiagram) {
+                flowDiagram.addEventListener('click', function() {
+                    // 클릭 시 확대/축소 효과
+                    this.style.transform = this.style.transform === 'scale(1.1)' ? 'scale(1)' : 'scale(1.1)';
+                    this.style.transition = 'transform 0.3s ease';
+                });
+            }
+        });
+
+        // PWA 지원
+        if ('serviceWorker' in navigator) {
+            const meta = document.createElement('meta');
+            meta.name = 'theme-color';
+            meta.content = '#000000';
+            document.head.appendChild(meta);
+        }
+    </script>
 </body>
-</html> 
+</html>

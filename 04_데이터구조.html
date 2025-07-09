@@ -3,175 +3,459 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>POKA 데이터 구조</title>
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body { 
-            font-family: 'Malgun Gothic', Arial, sans-serif; 
-            margin: 0; 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #222; 
+            font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', 'Noto Sans KR', Arial, sans-serif; 
+            background: #000000;
+            color: #ffffff; 
             min-height: 100vh;
+            line-height: 1.6;
         }
+
         .header {
-            background: rgba(255,255,255,0.95);
-            padding: 20px 0;
+            background: rgba(20, 20, 20, 0.95);
+            padding: clamp(15px, 3vw, 20px) clamp(10px, 2vw, 20px);
             text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            margin-bottom: 15px;
+            backdrop-filter: blur(10px);
+            border-bottom: 3px solid #00d4ff;
         }
+
         .header h1 {
             margin: 0;
-            color: #2c3e50;
-            font-size: 2.5em;
+            color: #ffffff;
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
             font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            line-height: 1.2;
         }
+
         .header p {
             margin: 10px 0 0 0;
-            color: #7f8c8d;
-            font-size: 1.1em;
+            color: #cccccc;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            font-weight: 500;
         }
+
         .nav {
-            background: rgba(255,255,255,0.95);
-            padding: 15px 0;
+            background: rgba(20, 20, 20, 0.95);
+            padding: 10px 5px;
             text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+            border-bottom: 2px solid #333333;
         }
+
+        .nav::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .nav::-webkit-scrollbar-track {
+            background: #333333;
+        }
+
+        .nav::-webkit-scrollbar-thumb {
+            background: #00d4ff;
+            border-radius: 2px;
+        }
+
         .nav a {
-            color: #3498db;
+            color: #ffffff;
             text-decoration: none;
-            margin: 0 15px;
-            padding: 8px 15px;
-            border-radius: 5px;
-            transition: background 0.3s;
+            margin: 0 8px;
+            padding: 10px 15px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            display: inline-block;
+            font-size: clamp(0.8rem, 2.2vw, 0.9rem);
+            white-space: nowrap;
+            font-weight: 500;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
         }
-        .nav a:hover {
-            background: #3498db;
-            color: white;
+
+        .nav a:hover, .nav a:active {
+            background: #00d4ff;
+            color: #000000;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
         }
+
         .container { 
             max-width: 1200px; 
-            margin: 0 auto 40px auto; 
-            background: #fff; 
-            border-radius: 15px; 
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1); 
-            padding: 40px;
+            margin: 0 auto 20px auto; 
+            background: rgba(20, 20, 20, 0.95); 
+            border-radius: 20px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5); 
+            padding: clamp(20px, 4vw, 40px);
             overflow: hidden;
+            border: 1px solid rgba(0, 212, 255, 0.2);
         }
+
         h2 { 
-            color: #3498db; 
-            border-bottom: 3px solid #e9ecef; 
-            padding-bottom: 10px; 
+            color: #ffffff; 
+            border-bottom: 3px solid #00d4ff; 
+            padding-bottom: 15px; 
             margin-top: 0; 
-            font-size: 1.8em;
+            font-size: clamp(1.3rem, 3.5vw, 1.8rem);
+            font-weight: bold;
         }
+
         h3 { 
-            color: #2c3e50; 
-            margin-top: 30px; 
-            font-size: 1.4em;
+            color: #cccccc; 
+            margin-top: 25px; 
+            font-size: clamp(1.1rem, 2.8vw, 1.4rem);
+            font-weight: 600;
         }
+
+        h4 {
+            color: #ffffff;
+            margin-top: 20px;
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            font-weight: 600;
+        }
+
         .feature-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: clamp(15px, 3vw, 20px);
             margin: 20px 0;
         }
+
         .feature-card {
-            background: #fff;
-            border: 1px solid #e9ecef;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border: 2px solid #333333;
+            border-radius: 15px;
+            padding: clamp(20px, 3vw, 25px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #00d4ff, #0099cc);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+            border-color: #00d4ff;
+        }
+
         .feature-card h4 {
-            color: #3498db;
+            color: #ffffff;
             margin-top: 0;
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            font-weight: bold;
+            margin-bottom: 15px;
         }
+
         .code-block {
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 5px;
-            padding: 15px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border: 1px solid #00d4ff;
+            border-radius: 8px;
+            padding: clamp(12px, 2.5vw, 15px);
             margin: 15px 0;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9em;
+            font-family: 'Courier New', 'Consolas', monospace;
+            font-size: clamp(0.75rem, 2vw, 0.9rem);
             overflow-x: auto;
             white-space: pre-wrap;
+            -webkit-overflow-scrolling: touch;
+            color: #00d4ff;
         }
-        .entity-table {
+
+        .data-table {
             width: 100%;
             border-collapse: collapse;
             margin: 20px 0;
-            background: #fff;
-            border-radius: 10px;
+            background: #1a1a1a;
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            font-size: clamp(0.8rem, 2.2vw, 0.9rem);
         }
-        .entity-table th {
-            background: #3498db;
-            color: white;
-            padding: 15px;
+
+        .data-table th {
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: #000000;
+            padding: clamp(10px, 2.5vw, 15px);
             text-align: left;
             font-weight: bold;
+            font-size: clamp(0.85rem, 2.3vw, 0.95rem);
         }
-        .entity-table td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #e9ecef;
+
+        .data-table td {
+            padding: clamp(8px, 2vw, 12px) clamp(10px, 2.5vw, 15px);
+            border-bottom: 1px solid #333333;
             vertical-align: top;
+            word-break: break-word;
+            color: #ffffff;
         }
-        .entity-table tr:hover {
-            background: #f8f9fa;
+
+        .data-table tr:hover {
+            background: #2a2a2a;
         }
+
         .data-type {
             display: inline-block;
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-size: 0.8em;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75em;
             font-weight: bold;
+            min-width: 60px;
+            text-align: center;
         }
-        .type.string { background: #28a745; color: white; }
-        .type.int { background: #007bff; color: white; }
-        .type.bool { background: #ffc107; color: black; }
-        .type.datetime { background: #6f42c1; color: white; }
-        .type.decimal { background: #fd7e14; color: white; }
+
+        .type.string { background: #61dafb; color: #000000; }
+        .type.number { background: #51cf66; color: #000000; }
+        .type.boolean { background: #ffd43b; color: #000000; }
+        .type.object { background: #a55eea; color: #ffffff; }
+        .type.array { background: #ff6b6b; color: #ffffff; }
+
+        .data-highlight {
+            background: linear-gradient(45deg, #00d4ff, #0099cc);
+            color: #000000;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: center;
+            font-weight: bold;
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
+        }
+
         ul {
             margin: 0 0 20px 20px;
             line-height: 1.6;
+            font-size: clamp(0.85rem, 2.2vw, 0.95rem);
+            color: #cccccc;
         }
+
+        li {
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+
         .desc {
-            color: #555;
-            font-size: 1.1em;
+            color: #cccccc;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
             margin-bottom: 25px;
             line-height: 1.6;
+            font-weight: 500;
         }
-        .er-diagram {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 20px 0;
-            font-family: 'Courier New', monospace;
-            white-space: pre-wrap;
-            text-align: center;
+
+        .back-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: #000000;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
         }
+
+        .back-button:hover {
+            background: linear-gradient(135deg, #0099cc, #006699);
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
+        }
+
+        /* 모바일 테이블 최적화 */
+        .mobile-table {
+            display: none;
+        }
+
+        .mobile-data-item {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .mobile-data-item h4 {
+            color: #ffffff;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .mobile-data-item .data-type {
+            margin-bottom: 8px;
+        }
+
+        .mobile-data-item .description {
+            color: #cccccc;
+            font-size: 0.9rem;
+            margin-top: 8px;
+        }
+
+        /* 모바일 최적화 */
         @media (max-width: 768px) {
             .container {
-                padding: 20px;
+                margin: 0 10px 20px 10px;
+                border-radius: 15px;
             }
-            .entity-table {
-                font-size: 0.9em;
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
             }
-            .entity-table th,
-            .entity-table td {
-                padding: 8px;
+
+            .nav {
+                padding: 8px 5px;
             }
+
+            .nav a {
+                margin: 0 5px;
+                padding: 8px 12px;
+            }
+
+            /* 모바일에서 테이블을 카드 형태로 변경 */
+            .data-table {
+                display: none;
+            }
+
+            .mobile-table {
+                display: block;
+            }
+        }
+
+        /* 태블릿 최적화 */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .feature-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .data-table {
+                font-size: 0.85rem;
+            }
+        }
+
+        /* 작은 모바일 화면 */
+        @media (max-width: 480px) {
+            .container {
+                margin: 0 5px 15px 5px;
+                padding: 15px;
+            }
+
+            .nav a {
+                margin: 0 3px;
+                padding: 6px 10px;
+                font-size: 0.75rem;
+            }
+
+            .back-button {
+                bottom: 15px;
+                right: 15px;
+                width: 45px;
+                height: 45px;
+                font-size: 1rem;
+            }
+
+            .mobile-data-item {
+                padding: 12px;
+            }
+        }
+
+        /* 터치 디바이스 최적화 */
+        @media (hover: none) and (pointer: coarse) {
+            .feature-card:hover {
+                transform: none;
+            }
+
+            .feature-card:active {
+                transform: scale(0.98);
+            }
+        }
+
+        /* 접근성 개선 */
+        .feature-card:focus,
+        .mobile-data-item:focus {
+            outline: 2px solid #00d4ff;
+            outline-offset: 2px;
+        }
+
+        /* 로딩 애니메이션 */
+        .feature-card,
+        .mobile-data-item {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 텍스트 강조 */
+        strong {
+            color: #00d4ff;
+            font-weight: bold;
+        }
+
+        /* 링크 스타일 */
+        a {
+            color: #00d4ff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        /* 데이터 구조 다이어그램 */
+        .structure-diagram {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border: 2px solid #333333;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Courier New', 'Consolas', monospace;
+            white-space: pre-wrap;
+            text-align: center;
+            font-size: clamp(0.75rem, 2vw, 0.9rem);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            color: #00d4ff;
         }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>POKA 데이터 구조</h1>
-        <p>포토카드 제작 키오스크 시스템 - 데이터 모델 및 스키마 분석</p>
+        <p>포토카드 제작 키오스크 시스템 - 데이터베이스 및 파일 구조</p>
     </div>
 
     <div class="nav">
@@ -188,485 +472,432 @@
     <div class="container">
         <h2>데이터 구조</h2>
         <div class="desc">
-            POKA 시스템은 <b>관계형 데이터베이스</b>와 <b>JSON 기반 API</b>를 사용하여<br>
-            포토카드 제작 과정의 모든 데이터를 효율적으로 관리합니다.
+            POKA 시스템의 <strong>데이터베이스 구조</strong>와 <strong>파일 시스템</strong>을 상세히 설명합니다.<br>
+            데이터 모델과 저장 방식을 중심으로 구성되어 있습니다.
         </div>
 
-        <h3>주요 엔티티</h3>
+        <div class="data-highlight">
+            🗄️ 효율적인 데이터 관리 및 파일 구조 시스템
+        </div>
+
+        <h3>📊 데이터베이스 구조</h3>
+        <div class="structure-diagram">
+    ┌─────────────────────────────────────────────────────────────┐
+    │                    POKA DATABASE                           │
+    └─────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+    ┌─────────────────────────────────────────────────────────────┐
+    │                   Users Table                              │
+    │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │
+    │  │     id      │  │  username   │  │   role      │        │
+    │  │   (PK)      │  │  (VARCHAR)  │  │  (VARCHAR)  │        │
+    │  └─────────────┘  └─────────────┘  └─────────────┘        │
+    └─────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+    ┌─────────────────────────────────────────────────────────────┐
+    │                  Orders Table                              │
+    │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │
+    │  │     id      │  │  orderId    │  │   amount    │        │
+    │  │   (PK)      │  │  (VARCHAR)  │  │   (INT)     │        │
+    │  └─────────────┘  └─────────────┘  └─────────────┘        │
+    │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │
+    │  │  paymentType │  │   status    │  │  createdAt  │        │
+    │  │  (VARCHAR)  │  │  (VARCHAR)  │  │  (DATETIME) │        │
+    │  └─────────────┘  └─────────────┘  └─────────────┘        │
+    └─────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+    ┌─────────────────────────────────────────────────────────────┐
+    │                 Uploads Table                              │
+    │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │
+    │  │     id      │  │  uploadId   │  │  sessionId  │        │
+    │  │   (PK)      │  │  (VARCHAR)  │  │  (VARCHAR)  │        │
+    │  └─────────────┘  └─────────────┘  └─────────────┘        │
+    │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │
+    │  │  faceImage  │  │  backImage  │  │  createdAt  │        │
+    │  │  (VARCHAR)  │  │  (VARCHAR)  │  │  (DATETIME) │        │
+    │  └─────────────┘  └─────────────┘  └─────────────┘        │
+    └─────────────────────────────────────────────────────────────┘
+        </div>
+
+        <h3>🗂️ 테이블 상세 구조</h3>
+        
+        <!-- 데스크톱 테이블 -->
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>테이블명</th>
+                    <th>컬럼명</th>
+                    <th>데이터 타입</th>
+                    <th>제약조건</th>
+                    <th>설명</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td rowspan="3"><strong>Users</strong></td>
+                    <td>id</td>
+                    <td><span class="data-type type.number">INT</span></td>
+                    <td>PRIMARY KEY, AUTO_INCREMENT</td>
+                    <td>사용자 고유 식별자</td>
+                </tr>
+                <tr>
+                    <td>username</td>
+                    <td><span class="data-type type.string">VARCHAR(50)</span></td>
+                    <td>NOT NULL, UNIQUE</td>
+                    <td>사용자명</td>
+                </tr>
+                <tr>
+                    <td>role</td>
+                    <td><span class="data-type type.string">VARCHAR(20)</span></td>
+                    <td>NOT NULL, DEFAULT 'user'</td>
+                    <td>사용자 역할 (admin, user)</td>
+                </tr>
+                <tr>
+                    <td rowspan="6"><strong>Orders</strong></td>
+                    <td>id</td>
+                    <td><span class="data-type type.number">INT</span></td>
+                    <td>PRIMARY KEY, AUTO_INCREMENT</td>
+                    <td>주문 고유 식별자</td>
+                </tr>
+                <tr>
+                    <td>orderId</td>
+                    <td><span class="data-type type.string">VARCHAR(100)</span></td>
+                    <td>NOT NULL, UNIQUE</td>
+                    <td>주문 번호 (ORDER_YYYYMMDD_XXX)</td>
+                </tr>
+                <tr>
+                    <td>amount</td>
+                    <td><span class="data-type type.number">INT</span></td>
+                    <td>NOT NULL</td>
+                    <td>결제 금액 (원)</td>
+                </tr>
+                <tr>
+                    <td>paymentType</td>
+                    <td><span class="data-type type.string">VARCHAR(20)</span></td>
+                    <td>NOT NULL</td>
+                    <td>결제 수단 (cash, linepay, coupon)</td>
+                </tr>
+                <tr>
+                    <td>status</td>
+                    <td><span class="data-type type.string">VARCHAR(20)</span></td>
+                    <td>NOT NULL, DEFAULT 'pending'</td>
+                    <td>주문 상태 (pending, completed, failed)</td>
+                </tr>
+                <tr>
+                    <td>createdAt</td>
+                    <td><span class="data-type type.string">DATETIME</span></td>
+                    <td>NOT NULL, DEFAULT CURRENT_TIMESTAMP</td>
+                    <td>주문 생성 시간</td>
+                </tr>
+                <tr>
+                    <td rowspan="6"><strong>Uploads</strong></td>
+                    <td>id</td>
+                    <td><span class="data-type type.number">INT</span></td>
+                    <td>PRIMARY KEY, AUTO_INCREMENT</td>
+                    <td>업로드 고유 식별자</td>
+                </tr>
+                <tr>
+                    <td>uploadId</td>
+                    <td><span class="data-type type.string">VARCHAR(100)</span></td>
+                    <td>NOT NULL, UNIQUE</td>
+                    <td>업로드 번호 (UPLOAD_XXXXX)</td>
+                </tr>
+                <tr>
+                    <td>sessionId</td>
+                    <td><span class="data-type type.string">VARCHAR(100)</span></td>
+                    <td>NOT NULL</td>
+                    <td>세션 식별자</td>
+                </tr>
+                <tr>
+                    <td>faceImage</td>
+                    <td><span class="data-type type.string">VARCHAR(255)</span></td>
+                    <td>NULL</td>
+                    <td>얼굴 이미지 URL</td>
+                </tr>
+                <tr>
+                    <td>backImage</td>
+                    <td><span class="data-type type.string">VARCHAR(255)</span></td>
+                    <td>NULL</td>
+                    <td>배경 이미지 URL</td>
+                </tr>
+                <tr>
+                    <td>createdAt</td>
+                    <td><span class="data-type type.string">DATETIME</span></td>
+                    <td>NOT NULL, DEFAULT CURRENT_TIMESTAMP</td>
+                    <td>업로드 생성 시간</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- 모바일 카드 형태 -->
+        <div class="mobile-table">
+            <div class="mobile-data-item">
+                <h4>👥 Users 테이블</h4>
+                <p><strong>id:</strong> <span class="data-type type.number">INT</span> (PRIMARY KEY)</p>
+                <p><strong>username:</strong> <span class="data-type type.string">VARCHAR(50)</span> (UNIQUE)</p>
+                <p><strong>role:</strong> <span class="data-type type.string">VARCHAR(20)</span> (DEFAULT 'user')</p>
+                <div class="description">사용자 정보 관리</div>
+            </div>
+            <div class="mobile-data-item">
+                <h4>📋 Orders 테이블</h4>
+                <p><strong>id:</strong> <span class="data-type type.number">INT</span> (PRIMARY KEY)</p>
+                <p><strong>orderId:</strong> <span class="data-type type.string">VARCHAR(100)</span> (UNIQUE)</p>
+                <p><strong>amount:</strong> <span class="data-type type.number">INT</span> (결제 금액)</p>
+                <p><strong>paymentType:</strong> <span class="data-type type.string">VARCHAR(20)</span></p>
+                <p><strong>status:</strong> <span class="data-type type.string">VARCHAR(20)</span></p>
+                <p><strong>createdAt:</strong> <span class="data-type type.string">DATETIME</span></p>
+                <div class="description">주문 및 결제 정보</div>
+            </div>
+            <div class="mobile-data-item">
+                <h4>📤 Uploads 테이블</h4>
+                <p><strong>id:</strong> <span class="data-type type.number">INT</span> (PRIMARY KEY)</p>
+                <p><strong>uploadId:</strong> <span class="data-type type.string">VARCHAR(100)</span> (UNIQUE)</p>
+                <p><strong>sessionId:</strong> <span class="data-type type.string">VARCHAR(100)</span></p>
+                <p><strong>faceImage:</strong> <span class="data-type type.string">VARCHAR(255)</span></p>
+                <p><strong>backImage:</strong> <span class="data-type type.string">VARCHAR(255)</span></p>
+                <p><strong>createdAt:</strong> <span class="data-type type.string">DATETIME</span></p>
+                <div class="description">이미지 업로드 정보</div>
+            </div>
+        </div>
+
+        <h3>📁 파일 구조</h3>
         <div class="feature-grid">
             <div class="feature-card">
-                <h4>👤 사용자 (User)</h4>
+                <h4>🖼️ 이미지 파일</h4>
                 <ul>
-                    <li><strong>사용자 인증</strong> - 로그인 정보 관리</li>
-                    <li><strong>권한 관리</strong> - 역할 기반 접근 제어</li>
-                    <li><strong>세션 관리</strong> - JWT 토큰 처리</li>
-                    <li><strong>활동 로그</strong> - 사용자 활동 추적</li>
+                    <li><strong>프로필 이미지:</strong> /profiles/ 디렉토리</li>
+                    <li><strong>업로드 이미지:</strong> /u/{ID}/face, /u/{ID}/back</li>
+                    <li><strong>광고 이미지:</strong> /ads/ 디렉토리</li>
+                    <li><strong>로고 이미지:</strong> /logos/ 디렉토리</li>
                 </ul>
             </div>
             <div class="feature-card">
-                <h4>📦 주문 (Order)</h4>
+                <h4>🎨 UI 리소스</h4>
                 <ul>
-                    <li><strong>주문 정보</strong> - 주문 번호, 금액, 상태</li>
-                    <li><strong>결제 정보</strong> - 결제 수단, 상태</li>
-                    <li><strong>업로드 연동</strong> - 이미지 업로드 ID</li>
-                    <li><strong>타임스탬프</strong> - 생성/수정 시간</li>
+                    <li><strong>스티커:</strong> /stickers/ 디렉토리</li>
+                    <li><strong>배경:</strong> /backgrounds/ 디렉토리</li>
+                    <li><strong>아이콘:</strong> /icons/ 디렉토리</li>
+                    <li><strong>폰트:</strong> /fonts/ 디렉토리</li>
                 </ul>
             </div>
             <div class="feature-card">
-                <h4>🖼️ 이미지 (Image)</h4>
+                <h4>⚙️ 설정 파일</h4>
                 <ul>
-                    <li><strong>업로드 관리</strong> - 고유 업로드 ID</li>
-                    <li><strong>파일 경로</strong> - 얼굴/배경 이미지 URL</li>
-                    <li><strong>메타데이터</strong> - 파일 크기, 형식</li>
-                    <li><strong>만료 관리</strong> - 자동 삭제 정책</li>
+                    <li><strong>appsettings.json:</strong> 애플리케이션 설정</li>
+                    <li><strong>data.json:</strong> 정적 데이터</li>
+                    <li><strong>ApiEndpoints.json:</strong> API 엔드포인트</li>
+                    <li><strong>launchSettings.json:</strong> 실행 설정</li>
                 </ul>
             </div>
             <div class="feature-card">
-                <h4>⚙️ 설정 (Settings)</h4>
+                <h4>📝 로그 파일</h4>
                 <ul>
-                    <li><strong>시스템 설정</strong> - 환경 설정 값</li>
-                    <li><strong>하드웨어 설정</strong> - 프린터/호퍼 설정</li>
-                    <li><strong>언어 설정</strong> - 다국어 지원</li>
-                    <li><strong>보안 설정</strong> - 인증 정책</li>
+                    <li><strong>시스템 로그:</strong> /logs/system/</li>
+                    <li><strong>오류 로그:</strong> /logs/error/</li>
+                    <li><strong>접근 로그:</strong> /logs/access/</li>
+                    <li><strong>결제 로그:</strong> /logs/payment/</li>
                 </ul>
             </div>
         </div>
 
-        <h3>엔티티 관계 다이어그램</h3>
-        <div class="er-diagram">
-┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│    User     │    │    Order    │    │    Image    │
-├─────────────┤    ├─────────────┤    ├─────────────┤
-│ id (PK)     │    │ id (PK)     │    │ id (PK)     │
-│ username    │    │ orderId     │    │ uploadId    │
-│ password    │    │ amount      │    │ faceUrl     │
-│ role        │    │ status      │    │ backUrl     │
-│ createdAt   │    │ paymentType │    │ createdAt   │
-│ updatedAt   │    │ uploadId    │    │ expiresAt   │
-└─────────────┘    │ createdAt   │    └─────────────┘
-                   │ updatedAt   │
-                   └─────────────┘
-                          │
-                          │ uploadId (FK)
-                          ▼
-                   ┌─────────────┐
-                   │   Settings  │
-                   ├─────────────┤
-                   │ id (PK)     │
-                   │ key         │
-                   │ value       │
-                   │ category    │
-                   │ updatedAt   │
-                   └─────────────┘
-        </div>
-
-        <h3>상세 데이터 스키마</h3>
-
-        <h4>사용자 테이블 (Users)</h4>
-        <table class="entity-table">
-            <tr>
-                <th>필드명</th>
-                <th>데이터 타입</th>
-                <th>제약조건</th>
-                <th>설명</th>
-            </tr>
-            <tr>
-                <td>id</td>
-                <td><span class="data-type type.int">INT</span></td>
-                <td>PRIMARY KEY, AUTO_INCREMENT</td>
-                <td>사용자 고유 식별자</td>
-            </tr>
-            <tr>
-                <td>username</td>
-                <td><span class="data-type type.string">VARCHAR(50)</span></td>
-                <td>UNIQUE, NOT NULL</td>
-                <td>사용자명 (로그인 ID)</td>
-            </tr>
-            <tr>
-                <td>password</td>
-                <td><span class="data-type type.string">VARCHAR(255)</span></td>
-                <td>NOT NULL</td>
-                <td>암호화된 비밀번호</td>
-            </tr>
-            <tr>
-                <td>role</td>
-                <td><span class="data-type type.string">VARCHAR(20)</span></td>
-                <td>NOT NULL, DEFAULT 'user'</td>
-                <td>사용자 역할 (admin, kiosk, user)</td>
-            </tr>
-            <tr>
-                <td>isActive</td>
-                <td><span class="data-type type.bool">BOOLEAN</span></td>
-                <td>NOT NULL, DEFAULT TRUE</td>
-                <td>계정 활성화 상태</td>
-            </tr>
-            <tr>
-                <td>lastLoginAt</td>
-                <td><span class="data-type type.datetime">DATETIME</span></td>
-                <td>NULL</td>
-                <td>마지막 로그인 시간</td>
-            </tr>
-            <tr>
-                <td>createdAt</td>
-                <td><span class="data-type type.datetime">DATETIME</span></td>
-                <td>NOT NULL, DEFAULT CURRENT_TIMESTAMP</td>
-                <td>계정 생성 시간</td>
-            </tr>
-            <tr>
-                <td>updatedAt</td>
-                <td><span class="data-type type.datetime">DATETIME</span></td>
-                <td>NOT NULL, DEFAULT CURRENT_TIMESTAMP ON UPDATE</td>
-                <td>계정 수정 시간</td>
-            </tr>
-        </table>
-
-        <h4>주문 테이블 (Orders)</h4>
-        <table class="entity-table">
-            <tr>
-                <th>필드명</th>
-                <th>데이터 타입</th>
-                <th>제약조건</th>
-                <th>설명</th>
-            </tr>
-            <tr>
-                <td>id</td>
-                <td><span class="data-type type.int">INT</span></td>
-                <td>PRIMARY KEY, AUTO_INCREMENT</td>
-                <td>주문 고유 식별자</td>
-            </tr>
-            <tr>
-                <td>orderId</td>
-                <td><span class="data-type type.string">VARCHAR(50)</span></td>
-                <td>UNIQUE, NOT NULL</td>
-                <td>주문 번호 (외부 식별자)</td>
-            </tr>
-            <tr>
-                <td>amount</td>
-                <td><span class="data-type type.decimal">DECIMAL(10,2)</span></td>
-                <td>NOT NULL</td>
-                <td>주문 금액</td>
-            </tr>
-            <tr>
-                <td>status</td>
-                <td><span class="data-type type.string">VARCHAR(20)</span></td>
-                <td>NOT NULL, DEFAULT 'pending'</td>
-                <td>주문 상태 (pending, completed, failed, cancelled)</td>
-            </tr>
-            <tr>
-                <td>paymentType</td>
-                <td><span class="data-type type.string">VARCHAR(20)</span></td>
-                <td>NOT NULL</td>
-                <td>결제 수단 (cash, linepay, coupon)</td>
-            </tr>
-            <tr>
-                <td>uploadId</td>
-                <td><span class="data-type type.string">VARCHAR(50)</span></td>
-                <td>NOT NULL</td>
-                <td>업로드 ID (이미지 연동)</td>
-            </tr>
-            <tr>
-                <td>transactionId</td>
-                <td><span class="data-type type.string">VARCHAR(100)</span></td>
-                <td>NULL</td>
-                <td>외부 결제 거래 ID</td>
-            </tr>
-            <tr>
-                <td>couponCode</td>
-                <td><span class="data-type type.string">VARCHAR(20)</span></td>
-                <td>NULL</td>
-                <td>사용된 쿠폰 코드</td>
-            </tr>
-            <tr>
-                <td>discountAmount</td>
-                <td><span class="data-type type.decimal">DECIMAL(10,2)</span></td>
-                <td>NULL, DEFAULT 0</td>
-                <td>할인 금액</td>
-            </tr>
-            <tr>
-                <td>createdAt</td>
-                <td><span class="data-type type.datetime">DATETIME</span></td>
-                <td>NOT NULL, DEFAULT CURRENT_TIMESTAMP</td>
-                <td>주문 생성 시간</td>
-            </tr>
-            <tr>
-                <td>updatedAt</td>
-                <td><span class="data-type type.datetime">DATETIME</span></td>
-                <td>NOT NULL, DEFAULT CURRENT_TIMESTAMP ON UPDATE</td>
-                <td>주문 수정 시간</td>
-            </tr>
-        </table>
-
-        <h4>이미지 테이블 (Images)</h4>
-        <table class="entity-table">
-            <tr>
-                <th>필드명</th>
-                <th>데이터 타입</th>
-                <th>제약조건</th>
-                <th>설명</th>
-            </tr>
-            <tr>
-                <td>id</td>
-                <td><span class="data-type type.int">INT</span></td>
-                <td>PRIMARY KEY, AUTO_INCREMENT</td>
-                <td>이미지 고유 식별자</td>
-            </tr>
-            <tr>
-                <td>uploadId</td>
-                <td><span class="data-type type.string">VARCHAR(50)</span></td>
-                <td>UNIQUE, NOT NULL</td>
-                <td>업로드 ID (외부 식별자)</td>
-            </tr>
-            <tr>
-                <td>faceUrl</td>
-                <td><span class="data-type type.string">VARCHAR(500)</span></td>
-                <td>NULL</td>
-                <td>얼굴 이미지 URL</td>
-            </tr>
-            <tr>
-                <td>backUrl</td>
-                <td><span class="data-type type.string">VARCHAR(500)</span></td>
-                <td>NULL</td>
-                <td>배경 이미지 URL</td>
-            </tr>
-            <tr>
-                <td>faceSize</td>
-                <td><span class="data-type type.int">INT</span></td>
-                <td>NULL</td>
-                <td>얼굴 이미지 파일 크기 (bytes)</td>
-            </tr>
-            <tr>
-                <td>backSize</td>
-                <td><span class="data-type type.int">INT</span></td>
-                <td>NULL</td>
-                <td>배경 이미지 파일 크기 (bytes)</td>
-            </tr>
-            <tr>
-                <td>status</td>
-                <td><span class="data-type type.string">VARCHAR(20)</span></td>
-                <td>NOT NULL, DEFAULT 'uploading'</td>
-                <td>업로드 상태 (uploading, completed, failed)</td>
-            </tr>
-            <tr>
-                <td>expiresAt</td>
-                <td><span class="data-type type.datetime">DATETIME</span></td>
-                <td>NOT NULL</td>
-                <td>파일 만료 시간</td>
-            </tr>
-            <tr>
-                <td>createdAt</td>
-                <td><span class="data-type type.datetime">DATETIME</span></td>
-                <td>NOT NULL, DEFAULT CURRENT_TIMESTAMP</td>
-                <td>업로드 생성 시간</td>
-            </tr>
-        </table>
-
-        <h4>설정 테이블 (Settings)</h4>
-        <table class="entity-table">
-            <tr>
-                <th>필드명</th>
-                <th>데이터 타입</th>
-                <th>제약조건</th>
-                <th>설명</th>
-            </tr>
-            <tr>
-                <td>id</td>
-                <td><span class="data-type type.int">INT</span></td>
-                <td>PRIMARY KEY, AUTO_INCREMENT</td>
-                <td>설정 고유 식별자</td>
-            </tr>
-            <tr>
-                <td>key</td>
-                <td><span class="data-type type.string">VARCHAR(100)</span></td>
-                <td>UNIQUE, NOT NULL</td>
-                <td>설정 키</td>
-            </tr>
-            <tr>
-                <td>value</td>
-                <td><span class="data-type type.string">TEXT</span></td>
-                <td>NOT NULL</td>
-                <td>설정 값</td>
-            </tr>
-            <tr>
-                <td>category</td>
-                <td><span class="data-type type.string">VARCHAR(50)</span></td>
-                <td>NOT NULL</td>
-                <td>설정 카테고리 (system, printer, hopper, language)</td>
-            </tr>
-            <tr>
-                <td>description</td>
-                <td><span class="data-type type.string">VARCHAR(255)</span></td>
-                <td>NULL</td>
-                <td>설정 설명</td>
-            </tr>
-            <tr>
-                <td>updatedAt</td>
-                <td><span class="data-type type.datetime">DATETIME</span></td>
-                <td>NOT NULL, DEFAULT CURRENT_TIMESTAMP ON UPDATE</td>
-                <td>설정 수정 시간</td>
-            </tr>
-        </table>
-
-        <h3>JSON 데이터 구조</h3>
-
-        <h4>로그인 요청/응답</h4>
-        <div class="code-block">
-<b>로그인 요청:</b>
-{
-    "username": "kiosk_user",
-    "password": "kiosk_password"
-}
-
-<b>로그인 응답:</b>
-{
-    "success": true,
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-    "expiresIn": 1200,
-    "user": {
-        "id": 1,
-        "username": "kiosk_user",
-        "role": "kiosk",
-        "isActive": true,
-        "lastLoginAt": "2024-12-01T10:30:00Z"
-    }
-}
-        </div>
-
-        <h4>업로드 URL 응답</h4>
+        <h3>📄 JSON 데이터 구조</h3>
         <div class="code-block">
 {
-    "success": true,
-    "uploadId": "UPLOAD_12345",
-    "uploadPageUrl": "https://upload.ting.ovh?id=UPLOAD_12345",
-    "expiresAt": "2024-12-01T11:30:00Z",
-    "qrCodeData": "https://upload.ting.ovh?id=UPLOAD_12345",
-    "image": {
-        "id": 1,
-        "uploadId": "UPLOAD_12345",
-        "faceUrl": null,
-        "backUrl": null,
-        "status": "uploading",
-        "expiresAt": "2024-12-01T11:30:00Z",
-        "createdAt": "2024-12-01T10:30:00Z"
+  "users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "role": "admin",
+      "createdAt": "2024-01-01T00:00:00Z"
     }
+  ],
+  "orders": [
+    {
+      "id": 1,
+      "orderId": "ORDER_20241201_001",
+      "amount": 5000,
+      "paymentType": "linepay",
+      "status": "completed",
+      "createdAt": "2024-12-01T10:30:00Z"
+    }
+  ],
+  "uploads": [
+    {
+      "id": 1,
+      "uploadId": "UPLOAD_12345",
+      "sessionId": "SESSION_67890",
+      "faceImage": "https://pkfile.ting.ovh/u/12345/face",
+      "backImage": "https://pkfile.ting.ovh/u/12345/back",
+      "createdAt": "2024-12-01T10:25:00Z"
+    }
+  ]
 }
         </div>
 
-        <h4>주문 생성 요청/응답</h4>
-        <div class="code-block">
-<b>주문 생성 요청:</b>
-{
-    "amount": 5000,
-    "orderId": "ORDER_20241201_001",
-    "uploadId": "UPLOAD_12345",
-    "paymentType": "cash"
-}
-
-<b>주문 생성 응답:</b>
-{
-    "success": true,
-    "order": {
-        "id": 1,
-        "orderId": "ORDER_20241201_001",
-        "amount": 5000,
-        "status": "completed",
-        "paymentType": "cash",
-        "uploadId": "UPLOAD_12345",
-        "transactionId": null,
-        "couponCode": null,
-        "discountAmount": 0,
-        "createdAt": "2024-12-01T10:30:00Z",
-        "updatedAt": "2024-12-01T10:30:00Z"
-    }
-}
-        </div>
-
-        <h3>데이터 정규화</h3>
+        <h3>🔗 데이터 관계</h3>
         <div class="feature-grid">
             <div class="feature-card">
-                <h4>1️⃣ 1차 정규화</h4>
+                <h4>📊 1:N 관계</h4>
                 <ul>
-                    <li>모든 필드는 원자적 값</li>
-                    <li>반복되는 그룹 제거</li>
-                    <li>기본 키 정의</li>
-                    <li>중복 데이터 제거</li>
+                    <li><strong>Users → Orders:</strong> 한 사용자가 여러 주문</li>
+                    <li><strong>Users → Uploads:</strong> 한 사용자가 여러 업로드</li>
+                    <li><strong>Orders → Uploads:</strong> 한 주문에 여러 업로드</li>
                 </ul>
             </div>
             <div class="feature-card">
-                <h4>2️⃣ 2차 정규화</h4>
+                <h4>🔍 인덱스 구조</h4>
                 <ul>
-                    <li>부분 함수 종속성 제거</li>
-                    <li>복합 키의 일부에만 종속되는 필드 분리</li>
-                    <li>주문-결제 정보 분리</li>
-                    <li>이미지-메타데이터 분리</li>
+                    <li><strong>Primary Key:</strong> id (모든 테이블)</li>
+                    <li><strong>Unique Index:</strong> orderId, uploadId</li>
+                    <li><strong>Foreign Key:</strong> userId (Orders, Uploads)</li>
+                    <li><strong>Composite Index:</strong> (userId, createdAt)</li>
                 </ul>
             </div>
             <div class="feature-card">
-                <h4>3️⃣ 3차 정규화</h4>
+                <h4>🗃️ 캐시 구조</h4>
                 <ul>
-                    <li>이행 함수 종속성 제거</li>
-                    <li>설정 테이블 분리</li>
-                    <li>사용자-권한 분리</li>
-                    <li>주문-상태 이력 분리</li>
+                    <li><strong>메모리 캐시:</strong> 자주 사용되는 데이터</li>
+                    <li><strong>파일 캐시:</strong> 이미지 및 리소스</li>
+                    <li><strong>세션 캐시:</strong> 사용자 세션 정보</li>
+                    <li><strong>API 캐시:</strong> 외부 API 응답</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h4>💾 백업 구조</h4>
+                <ul>
+                    <li><strong>데이터베이스:</strong> 일일 자동 백업</li>
+                    <li><strong>파일 시스템:</strong> 주간 증분 백업</li>
+                    <li><strong>설정 파일:</strong> 버전 관리</li>
+                    <li><strong>로그 파일:</strong> 월별 아카이브</li>
                 </ul>
             </div>
         </div>
 
-        <h3>인덱스 전략</h3>
+        <h3>📈 데이터 통계</h3>
         <div class="code-block">
-<b>주요 인덱스:</b>
+데이터베이스 통계 (예시):
 
--- 사용자 테이블
-CREATE INDEX idx_users_username ON Users(username);
-CREATE INDEX idx_users_role ON Users(role);
-CREATE INDEX idx_users_lastLoginAt ON Users(lastLoginAt);
+Users 테이블:
+- 총 레코드: 1,234개
+- 활성 사용자: 567개
+- 관리자: 5개
 
--- 주문 테이블
-CREATE INDEX idx_orders_orderId ON Orders(orderId);
-CREATE INDEX idx_orders_status ON Orders(status);
-CREATE INDEX idx_orders_paymentType ON Orders(paymentType);
-CREATE INDEX idx_orders_uploadId ON Orders(uploadId);
-CREATE INDEX idx_orders_createdAt ON Orders(createdAt);
+Orders 테이블:
+- 총 주문: 8,901개
+- 완료된 주문: 8,567개
+- 총 매출: ₩44,567,890
 
--- 이미지 테이블
-CREATE INDEX idx_images_uploadId ON Images(uploadId);
-CREATE INDEX idx_images_status ON Images(status);
-CREATE INDEX idx_images_expiresAt ON Images(expiresAt);
-
--- 설정 테이블
-CREATE INDEX idx_settings_category ON Settings(category);
-CREATE INDEX idx_settings_key ON Settings(key);
-        </div>
-
-        <h3>데이터 무결성</h3>
-        <div class="feature-grid">
-            <div class="feature-card">
-                <h4>🔒 제약조건</h4>
-                <ul>
-                    <li><strong>기본 키:</strong> 모든 테이블의 고유 식별자</li>
-                    <li><strong>외래 키:</strong> Orders.uploadId → Images.uploadId</li>
-                    <li><strong>NOT NULL:</strong> 필수 필드 보장</li>
-                    <li><strong>UNIQUE:</strong> 중복 방지</li>
-                </ul>
-            </div>
-            <div class="feature-card">
-                <h4>🔄 트리거</h4>
-                <ul>
-                    <li><strong>자동 타임스탬프:</strong> createdAt, updatedAt</li>
-                    <li><strong>상태 변경 로그:</strong> 주문 상태 변경 추적</li>
-                    <li><strong>파일 만료 처리:</strong> 자동 삭제</li>
-                    <li><strong>사용자 활동 로그:</strong> 로그인 기록</li>
-                </ul>
-            </div>
-            <div class="feature-card">
-                <h4>📊 데이터 검증</h4>
-                <ul>
-                    <li><strong>금액 검증:</strong> 양수 값만 허용</li>
-                    <li><strong>상태 검증:</strong> 유효한 상태값만 허용</li>
-                    <li><strong>URL 검증:</strong> 유효한 URL 형식</li>
-                    <li><strong>날짜 검증:</strong> 미래 날짜 제한</li>
-                </ul>
-            </div>
+Uploads 테이블:
+- 총 업로드: 12,345개
+- 성공한 업로드: 11,987개
+- 평균 파일 크기: 2.3MB
         </div>
     </div>
+
+    <button class="back-button" onclick="window.location.href='index.html'" title="홈으로 돌아가기">🏠</button>
+
+    <script>
+        // 터치 이벤트 최적화
+        document.addEventListener('DOMContentLoaded', function() {
+            // 터치 디바이스 감지
+            if ('ontouchstart' in window) {
+                document.body.classList.add('touch-device');
+            }
+
+            // 스크롤 성능 최적화
+            let ticking = false;
+            function updateScroll() {
+                ticking = false;
+            }
+
+            function requestTick() {
+                if (!ticking) {
+                    requestAnimationFrame(updateScroll);
+                    ticking = true;
+                }
+            }
+
+            window.addEventListener('scroll', requestTick);
+
+            // 네비게이션 스크롤 최적화
+            const nav = document.querySelector('.nav');
+            let isScrolling = false;
+
+            nav.addEventListener('scroll', function() {
+                if (!isScrolling) {
+                    isScrolling = true;
+                    requestAnimationFrame(function() {
+                        isScrolling = false;
+                    });
+                }
+            });
+
+            // 뒤로가기 버튼 표시/숨김
+            const backButton = document.querySelector('.back-button');
+            let lastScrollTop = 0;
+
+            window.addEventListener('scroll', function() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                if (scrollTop > 100) {
+                    backButton.style.opacity = '1';
+                    backButton.style.visibility = 'visible';
+                } else {
+                    backButton.style.opacity = '0';
+                    backButton.style.visibility = 'hidden';
+                }
+                
+                lastScrollTop = scrollTop;
+            });
+
+            // 초기 상태 설정
+            backButton.style.opacity = '0';
+            backButton.style.visibility = 'hidden';
+            backButton.style.transition = 'opacity 0.3s ease, visibility 0.3s ease';
+
+            // 코드 블록 복사 기능
+            const codeBlocks = document.querySelectorAll('.code-block');
+            codeBlocks.forEach(block => {
+                block.addEventListener('click', function() {
+                    const text = this.textContent;
+                    navigator.clipboard.writeText(text).then(() => {
+                        // 복사 완료 표시
+                        const originalBackground = this.style.background;
+                        this.style.background = '#2ed573';
+                        this.style.color = '#000000';
+                        
+                        setTimeout(() => {
+                            this.style.background = originalBackground;
+                            this.style.color = '';
+                        }, 1000);
+                    });
+                });
+                
+                // 터치 디바이스에서 스타일 추가
+                if ('ontouchstart' in window) {
+                    block.style.cursor = 'pointer';
+                    block.title = '클릭하여 복사';
+                }
+            });
+
+            // 키보드 네비게이션
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeModal();
+                }
+            });
+        });
+
+        // PWA 지원
+        if ('serviceWorker' in navigator) {
+            const meta = document.createElement('meta');
+            meta.name = 'theme-color';
+            meta.content = '#000000';
+            document.head.appendChild(meta);
+        }
+    </script>
 </body>
 </html>

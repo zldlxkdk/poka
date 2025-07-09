@@ -3,166 +3,450 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>POKA 로그인/보안</title>
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body { 
-            font-family: 'Malgun Gothic', Arial, sans-serif; 
-            margin: 0; 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #222; 
+            font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', 'Noto Sans KR', Arial, sans-serif; 
+            background: #000000;
+            color: #ffffff; 
             min-height: 100vh;
+            line-height: 1.6;
         }
+
         .header {
-            background: rgba(255,255,255,0.95);
-            padding: 20px 0;
+            background: rgba(20, 20, 20, 0.95);
+            padding: clamp(15px, 3vw, 20px) clamp(10px, 2vw, 20px);
             text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            margin-bottom: 15px;
+            backdrop-filter: blur(10px);
+            border-bottom: 3px solid #00d4ff;
         }
+
         .header h1 {
             margin: 0;
-            color: #2c3e50;
-            font-size: 2.5em;
+            color: #ffffff;
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
             font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            line-height: 1.2;
         }
+
         .header p {
             margin: 10px 0 0 0;
-            color: #7f8c8d;
-            font-size: 1.1em;
+            color: #cccccc;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            font-weight: 500;
         }
+
         .nav {
-            background: rgba(255,255,255,0.95);
-            padding: 15px 0;
+            background: rgba(20, 20, 20, 0.95);
+            padding: 10px 5px;
             text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+            border-bottom: 2px solid #333333;
         }
+
+        .nav::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .nav::-webkit-scrollbar-track {
+            background: #333333;
+        }
+
+        .nav::-webkit-scrollbar-thumb {
+            background: #00d4ff;
+            border-radius: 2px;
+        }
+
         .nav a {
-            color: #3498db;
+            color: #ffffff;
             text-decoration: none;
-            margin: 0 15px;
-            padding: 8px 15px;
-            border-radius: 5px;
-            transition: background 0.3s;
+            margin: 0 8px;
+            padding: 10px 15px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            display: inline-block;
+            font-size: clamp(0.8rem, 2.2vw, 0.9rem);
+            white-space: nowrap;
+            font-weight: 500;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
         }
-        .nav a:hover {
-            background: #3498db;
-            color: white;
+
+        .nav a:hover, .nav a:active {
+            background: #00d4ff;
+            color: #000000;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
         }
+
         .container { 
             max-width: 1200px; 
-            margin: 0 auto 40px auto; 
-            background: #fff; 
-            border-radius: 15px; 
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1); 
-            padding: 40px;
+            margin: 0 auto 20px auto; 
+            background: rgba(20, 20, 20, 0.95); 
+            border-radius: 20px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5); 
+            padding: clamp(20px, 4vw, 40px);
             overflow: hidden;
+            border: 1px solid rgba(0, 212, 255, 0.2);
         }
+
         h2 { 
-            color: #3498db; 
-            border-bottom: 3px solid #e9ecef; 
-            padding-bottom: 10px; 
+            color: #ffffff; 
+            border-bottom: 3px solid #00d4ff; 
+            padding-bottom: 15px; 
             margin-top: 0; 
-            font-size: 1.8em;
+            font-size: clamp(1.3rem, 3.5vw, 1.8rem);
+            font-weight: bold;
         }
+
         h3 { 
-            color: #2c3e50; 
-            margin-top: 30px; 
-            font-size: 1.4em;
+            color: #cccccc; 
+            margin-top: 25px; 
+            font-size: clamp(1.1rem, 2.8vw, 1.4rem);
+            font-weight: 600;
         }
+
+        h4 {
+            color: #ffffff;
+            margin-top: 20px;
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            font-weight: 600;
+        }
+
         .feature-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: clamp(15px, 3vw, 20px);
             margin: 20px 0;
         }
+
         .feature-card {
-            background: #fff;
-            border: 1px solid #e9ecef;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border: 2px solid #333333;
+            border-radius: 15px;
+            padding: clamp(20px, 3vw, 25px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #00d4ff, #0099cc);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+            border-color: #00d4ff;
+        }
+
         .feature-card h4 {
-            color: #3498db;
+            color: #ffffff;
             margin-top: 0;
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            font-weight: bold;
+            margin-bottom: 15px;
         }
+
         .code-block {
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 5px;
-            padding: 15px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border: 1px solid #00d4ff;
+            border-radius: 8px;
+            padding: clamp(12px, 2.5vw, 15px);
             margin: 15px 0;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9em;
+            font-family: 'Courier New', 'Consolas', monospace;
+            font-size: clamp(0.75rem, 2vw, 0.9rem);
             overflow-x: auto;
             white-space: pre-wrap;
+            -webkit-overflow-scrolling: touch;
+            color: #00d4ff;
         }
+
         .security-table {
             width: 100%;
             border-collapse: collapse;
             margin: 20px 0;
-            background: #fff;
-            border-radius: 10px;
+            background: #1a1a1a;
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            font-size: clamp(0.8rem, 2.2vw, 0.9rem);
         }
+
         .security-table th {
-            background: #3498db;
-            color: white;
-            padding: 15px;
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: #000000;
+            padding: clamp(10px, 2.5vw, 15px);
             text-align: left;
             font-weight: bold;
+            font-size: clamp(0.85rem, 2.3vw, 0.95rem);
         }
+
         .security-table td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #e9ecef;
+            padding: clamp(8px, 2vw, 12px) clamp(10px, 2.5vw, 15px);
+            border-bottom: 1px solid #333333;
             vertical-align: top;
+            word-break: break-word;
+            color: #ffffff;
         }
+
         .security-table tr:hover {
-            background: #f8f9fa;
+            background: #2a2a2a;
         }
+
         .security-level {
             display: inline-block;
             padding: 4px 8px;
             border-radius: 4px;
-            font-size: 0.8em;
+            font-size: 0.75em;
             font-weight: bold;
+            min-width: 60px;
+            text-align: center;
         }
-        .level.high { background: #dc3545; color: white; }
-        .level.medium { background: #ffc107; color: black; }
-        .level.low { background: #28a745; color: white; }
+
+        .level.high { background: #51cf66; color: #000000; }
+        .level.medium { background: #ffd43b; color: #000000; }
+        .level.low { background: #ff6b6b; color: #ffffff; }
+
+        .security-highlight {
+            background: linear-gradient(45deg, #00d4ff, #0099cc);
+            color: #000000;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: center;
+            font-weight: bold;
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
+        }
+
         ul {
             margin: 0 0 20px 20px;
             line-height: 1.6;
+            font-size: clamp(0.85rem, 2.2vw, 0.95rem);
+            color: #cccccc;
         }
+
+        li {
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+
         .desc {
-            color: #555;
-            font-size: 1.1em;
+            color: #cccccc;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
             margin-bottom: 25px;
             line-height: 1.6;
+            font-weight: 500;
         }
-        .flow-diagram {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 20px 0;
-            font-family: 'Courier New', monospace;
-            white-space: pre-wrap;
-            text-align: center;
+
+        .back-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: #000000;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
         }
+
+        .back-button:hover {
+            background: linear-gradient(135deg, #0099cc, #006699);
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
+        }
+
+        /* 모바일 테이블 최적화 */
+        .mobile-table {
+            display: none;
+        }
+
+        .mobile-security-item {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .mobile-security-item h4 {
+            color: #ffffff;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .mobile-security-item .security-level {
+            margin-bottom: 8px;
+        }
+
+        .mobile-security-item .description {
+            color: #cccccc;
+            font-size: 0.9rem;
+            margin-top: 8px;
+        }
+
+        /* 모바일 최적화 */
         @media (max-width: 768px) {
             .container {
-                padding: 20px;
+                margin: 0 10px 20px 10px;
+                border-radius: 15px;
             }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .nav {
+                padding: 8px 5px;
+            }
+
+            .nav a {
+                margin: 0 5px;
+                padding: 8px 12px;
+            }
+
+            /* 모바일에서 테이블을 카드 형태로 변경 */
             .security-table {
-                font-size: 0.9em;
+                display: none;
             }
-            .security-table th,
-            .security-table td {
-                padding: 8px;
+
+            .mobile-table {
+                display: block;
             }
+        }
+
+        /* 태블릿 최적화 */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .feature-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .security-table {
+                font-size: 0.85rem;
+            }
+        }
+
+        /* 작은 모바일 화면 */
+        @media (max-width: 480px) {
+            .container {
+                margin: 0 5px 15px 5px;
+                padding: 15px;
+            }
+
+            .nav a {
+                margin: 0 3px;
+                padding: 6px 10px;
+                font-size: 0.75rem;
+            }
+
+            .back-button {
+                bottom: 15px;
+                right: 15px;
+                width: 45px;
+                height: 45px;
+                font-size: 1rem;
+            }
+
+            .mobile-security-item {
+                padding: 12px;
+            }
+        }
+
+        /* 터치 디바이스 최적화 */
+        @media (hover: none) and (pointer: coarse) {
+            .feature-card:hover {
+                transform: none;
+            }
+
+            .feature-card:active {
+                transform: scale(0.98);
+            }
+        }
+
+        /* 접근성 개선 */
+        .feature-card:focus,
+        .mobile-security-item:focus {
+            outline: 2px solid #00d4ff;
+            outline-offset: 2px;
+        }
+
+        /* 로딩 애니메이션 */
+        .feature-card,
+        .mobile-security-item {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 텍스트 강조 */
+        strong {
+            color: #00d4ff;
+            font-weight: bold;
+        }
+
+        /* 링크 스타일 */
+        a {
+            color: #00d4ff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        /* 보안 다이어그램 */
+        .security-diagram {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border: 2px solid #333333;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Courier New', 'Consolas', monospace;
+            white-space: pre-wrap;
+            text-align: center;
+            font-size: clamp(0.75rem, 2vw, 0.9rem);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            color: #00d4ff;
         }
     </style>
 </head>
@@ -186,333 +470,456 @@
     <div class="container">
         <h2>로그인/보안</h2>
         <div class="desc">
-            POKA 시스템은 <b>JWT 토큰 기반 인증</b>과 <b>다층 보안 정책</b>을 통해<br>
-            시스템의 안전성과 사용자 데이터 보호를 보장합니다.
+            POKA 시스템의 <strong>인증 시스템</strong>과 <strong>보안 정책</strong>을 상세히 설명합니다.<br>
+            JWT 토큰 기반 인증과 다양한 보안 메커니즘을 중심으로 구성되어 있습니다.
         </div>
 
-        <h3>인증 시스템 개요</h3>
+        <div class="security-highlight">
+            🔐 JWT 토큰 기반의 안전한 인증 시스템
+        </div>
+
+        <h3>🔑 인증 시스템</h3>
+        <div class="security-diagram">
+    ┌─────────────────────────────────────────────────────────────┐
+    │                    AUTHENTICATION FLOW                     │
+    └─────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+    ┌─────────────────────────────────────────────────────────────┐
+    │                 Login Request                               │
+    │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │
+    │  │  Username   │  │  Password   │  │   Client    │        │
+    │  │  (String)   │  │  (String)   │  │   Info      │        │
+    │  └─────────────┘  └─────────────┘  └─────────────┘        │
+    └─────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+    ┌─────────────────────────────────────────────────────────────┐
+    │                Server Validation                            │
+    │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │
+    │  │   Database  │  │   Password  │  │   Role      │        │
+    │  │   Check     │  │   Verify    │  │   Check     │        │
+    │  └─────────────┘  └─────────────┘  └─────────────┘        │
+    └─────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+    ┌─────────────────────────────────────────────────────────────┐
+    │                 JWT Token Generation                        │
+    │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │
+    │  │   Header    │  │   Payload   │  │   Signature │        │
+    │  │  (Algorithm)│  │  (User Info)│  │  (Secret)   │        │
+    │  └─────────────┘  └─────────────┘  └─────────────┘        │
+    └─────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+    ┌─────────────────────────────────────────────────────────────┐
+    │                 Token Response                              │
+    │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │
+    │  │   Success   │  │    Token    │  │  Expires    │        │
+    │  │   (Boolean) │  │   (String)  │  │  (DateTime) │        │
+    │  └─────────────┘  └─────────────┘  └─────────────┘        │
+    └─────────────────────────────────────────────────────────────┘
+        </div>
+
+        <h3>🔐 JWT 토큰 구조</h3>
         <div class="feature-grid">
             <div class="feature-card">
-                <h4>🔐 JWT 토큰 인증</h4>
+                <h4>📋 Header (헤더)</h4>
                 <ul>
-                    <li><strong>토큰 기반:</strong> 서버리스 인증 방식</li>
-                    <li><strong>만료 시간:</strong> 20분 (1200초)</li>
-                    <li><strong>자동 갱신:</strong> 토큰 만료 5분 전 갱신</li>
-                    <li><strong>Bearer 방식:</strong> Authorization 헤더 사용</li>
+                    <li><strong>alg:</strong> HS256 (HMAC SHA256)</li>
+                    <li><strong>typ:</strong> JWT</li>
+                    <li><strong>kid:</strong> 키 식별자</li>
+                    <li><strong>ver:</strong> 토큰 버전</li>
                 </ul>
             </div>
             <div class="feature-card">
-                <h4>👥 사용자 역할</h4>
+                <h4>📄 Payload (페이로드)</h4>
                 <ul>
-                    <li><strong>admin:</strong> 시스템 관리자</li>
-                    <li><strong>kiosk:</strong> 키오스크 운영자</li>
-                    <li><strong>user:</strong> 일반 사용자</li>
-                    <li><strong>guest:</strong> 게스트 사용자</li>
+                    <li><strong>sub:</strong> 사용자 ID</li>
+                    <li><strong>username:</strong> 사용자명</li>
+                    <li><strong>role:</strong> 사용자 역할</li>
+                    <li><strong>iat:</strong> 발급 시간</li>
+                    <li><strong>exp:</strong> 만료 시간</li>
                 </ul>
             </div>
             <div class="feature-card">
-                <h4>🔒 보안 정책</h4>
+                <h4>🔏 Signature (서명)</h4>
                 <ul>
-                    <li><strong>HTTPS 강제:</strong> 모든 통신 암호화</li>
-                    <li><strong>비밀번호 정책:</strong> 복잡도 요구사항</li>
-                    <li><strong>세션 관리:</strong> 자동 로그아웃</li>
-                    <li><strong>접근 제어:</strong> 역할 기반 권한</li>
+                    <li><strong>알고리즘:</strong> HMAC SHA256</li>
+                    <li><strong>비밀키:</strong> 서버 전용 키</li>
+                    <li><strong>검증:</strong> 무결성 확인</li>
+                    <li><strong>위변조:</strong> 방지</li>
                 </ul>
             </div>
-        </div>
-
-        <h3>JWT 토큰 구조</h3>
-        <div class="code-block">
-<b>JWT 토큰 구성:</b>
-Header.Payload.Signature
-
-<b>Header (헤더):</b>
-{
-    "alg": "HS256",
-    "typ": "JWT"
-}
-
-<b>Payload (페이로드):</b>
-{
-    "sub": "kiosk_user",
-    "role": "kiosk",
-    "iat": 1701423000,
-    "exp": 1701424200,
-    "jti": "unique_token_id"
-}
-
-<b>Signature (서명):</b>
-HMACSHA256(
-    base64UrlEncode(header) + "." +
-    base64UrlEncode(payload),
-    secret_key
-)
-        </div>
-
-        <h3>인증 플로우</h3>
-        <div class="flow-diagram">
-1. 사용자 로그인 요청
-   ↓
-2. 사용자명/비밀번호 검증
-   ↓
-3. JWT 토큰 생성
-   ↓
-4. 토큰 응답 (20분 만료)
-   ↓
-5. API 요청 시 토큰 포함
-   ↓
-6. 토큰 검증 및 권한 확인
-   ↓
-7. API 응답
-   ↓
-8. 토큰 만료 5분 전 자동 갱신
-        </div>
-
-        <h3>보안 위험도 분석</h3>
-        <table class="security-table">
-            <tr>
-                <th>위험 요소</th>
-                <th>위험도</th>
-                <th>대응 방안</th>
-                <th>모니터링</th>
-            </tr>
-            <tr>
-                <td>무차별 대입 공격</td>
-                <td><span class="security-level level.high">HIGH</span></td>
-                <td>로그인 시도 제한 (5회/5분)</td>
-                <td>실시간 로그 모니터링</td>
-            </tr>
-            <tr>
-                <td>토큰 탈취</td>
-                <td><span class="security-level level.high">HIGH</span></td>
-                <td>HTTPS 강제, 토큰 만료 시간 단축</td>
-                <td>토큰 사용 패턴 분석</td>
-            </tr>
-            <tr>
-                <td>세션 하이재킹</td>
-                <td><span class="security-level level.medium">MEDIUM</span></td>
-                <td>토큰 기반 인증, 자동 갱신</td>
-                <td>비정상 접근 패턴 감지</td>
-            </tr>
-            <tr>
-                <td>CSRF 공격</td>
-                <td><span class="security-level level.medium">MEDIUM</span></td>
-                <td>SameSite 쿠키, CSRF 토큰</td>
-                <td>요청 출처 검증</td>
-            </tr>
-            <tr>
-                <td>XSS 공격</td>
-                <td><span class="security-level level.low">LOW</span></td>
-                <td>입력값 검증, 출력 인코딩</td>
-                <td>스크립트 태그 감지</td>
-            </tr>
-            <tr>
-                <td>SQL 인젝션</td>
-                <td><span class="security-level level.low">LOW</span></td>
-                <td>파라미터화된 쿼리 사용</td>
-                <td>SQL 패턴 감지</td>
-            </tr>
-        </table>
-
-        <h3>비밀번호 정책</h3>
-        <div class="feature-grid">
-            <div class="feature-card">
-                <h4>📏 복잡도 요구사항</h4>
-                <ul>
-                    <li><strong>최소 길이:</strong> 8자 이상</li>
-                    <li><strong>대문자:</strong> 1개 이상 포함</li>
-                    <li><strong>소문자:</strong> 1개 이상 포함</li>
-                    <li><strong>숫자:</strong> 1개 이상 포함</li>
-                    <li><strong>특수문자:</strong> 1개 이상 포함</li>
-                </ul>
-            </div>
-            <div class="feature-card">
-                <h4>🔄 비밀번호 관리</h4>
-                <ul>
-                    <li><strong>암호화:</strong> bcrypt 해시 (cost: 12)</li>
-                    <li><strong>솔트:</strong> 자동 생성</li>
-                    <li><strong>변경 주기:</strong> 90일 권장</li>
-                    <li><strong>이력 관리:</strong> 최근 3개 비밀번호 재사용 금지</li>
-                </ul>
-            </div>
-            <div class="feature-card">
-                <h4>🔒 보안 강화</h4>
-                <ul>
-                    <li><strong>계정 잠금:</strong> 5회 실패 시 30분 잠금</li>
-                    <li><strong>재시도 제한:</strong> 1분당 3회</li>
-                    <li><strong>IP 기반 제한:</strong> 의심스러운 IP 차단</li>
-                    <li><strong>2FA 지원:</strong> TOTP 기반 (선택사항)</li>
-                </ul>
-            </div>
-        </div>
-
-        <h3>권한 관리 시스템</h3>
-        <div class="code-block">
-<b>역할별 권한 매트릭스:</b>
-
-┌─────────────┬─────────┬─────────┬─────────┬─────────┐
-│   기능      │  admin  │  kiosk  │  user   │  guest  │
-├─────────────┼─────────┼─────────┼─────────┼─────────┤
-│ 로그인      │    ✓    │    ✓    │    ✓    │    ✓    │
-│ 주문 생성   │    ✓    │    ✓    │    ✓    │    ✗    │
-│ 결제 처리   │    ✓    │    ✓    │    ✗    │    ✗    │
-│ 이미지 업로드│    ✓    │    ✓    │    ✓    │    ✓    │
-│ 시스템 설정 │    ✓    │    ✗    │    ✗    │    ✗    │
-│ 사용자 관리 │    ✓    │    ✗    │    ✗    │    ✗    │
-│ 로그 조회   │    ✓    │    ✓    │    ✗    │    ✗    │
-│ 통계 조회   │    ✓    │    ✓    │    ✗    │    ✗    │
-└─────────────┴─────────┴─────────┴─────────┴─────────┘
-        </div>
-
-        <h3>세션 관리</h3>
-        <div class="feature-grid">
             <div class="feature-card">
                 <h4>⏰ 토큰 생명주기</h4>
                 <ul>
                     <li><strong>발급:</strong> 로그인 성공 시</li>
-                    <li><strong>유효기간:</strong> 20분 (1200초)</li>
-                    <li><strong>갱신:</strong> 만료 5분 전 자동</li>
-                    <li><strong>폐기:</strong> 로그아웃 시 즉시</li>
-                </ul>
-            </div>
-            <div class="feature-card">
-                <h4>🔄 자동 갱신 메커니즘</h4>
-                <ul>
-                    <li><strong>갱신 조건:</strong> 토큰 만료 5분 전</li>
-                    <li><strong>갱신 방식:</strong> 백그라운드 갱신</li>
-                    <li><strong>갱신 실패:</strong> 자동 로그아웃</li>
-                    <li><strong>사용자 알림:</strong> 갱신 상태 표시</li>
-                </ul>
-            </div>
-            <div class="feature-card">
-                <h4>🚪 로그아웃 처리</h4>
-                <ul>
-                    <li><strong>토큰 무효화:</strong> 블랙리스트 등록</li>
-                    <li><strong>세션 정리:</strong> 로컬 스토리지 삭제</li>
-                    <li><strong>리다이렉트:</strong> 로그인 페이지로</li>
-                    <li><strong>로그 기록:</strong> 로그아웃 이벤트</li>
+                    <li><strong>유효기간:</strong> 24시간</li>
+                    <li><strong>갱신:</strong> 자동 갱신</li>
+                    <li><strong>폐기:</strong> 로그아웃 시</li>
                 </ul>
             </div>
         </div>
 
-        <h3>보안 모니터링</h3>
+        <h3>🛡️ 보안 정책</h3>
+        
+        <!-- 데스크톱 테이블 -->
+        <table class="security-table">
+            <thead>
+                <tr>
+                    <th>보안 영역</th>
+                    <th>정책</th>
+                    <th>수준</th>
+                    <th>설명</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>인증</strong></td>
+                    <td>JWT 토큰 기반</td>
+                    <td><span class="security-level level high">HIGH</span></td>
+                    <td>서명된 토큰으로 사용자 인증</td>
+                </tr>
+                <tr>
+                    <td><strong>권한</strong></td>
+                    <td>역할 기반 접근 제어</td>
+                    <td><span class="security-level level high">HIGH</span></td>
+                    <td>사용자 역할에 따른 권한 제한</td>
+                </tr>
+                <tr>
+                    <td><strong>암호화</strong></td>
+                    <td>HTTPS/TLS 1.3</td>
+                    <td><span class="security-level level high">HIGH</span></td>
+                    <td>전송 중 데이터 암호화</td>
+                </tr>
+                <tr>
+                    <td><strong>세션</strong></td>
+                    <td>토큰 만료 관리</td>
+                    <td><span class="security-level level medium">MEDIUM</span></td>
+                    <td>24시간 자동 만료</td>
+                </tr>
+                <tr>
+                    <td><strong>입력 검증</strong></td>
+                    <td>서버 사이드 검증</td>
+                    <td><span class="security-level level high">HIGH</span></td>
+                    <td>모든 입력값 검증 및 필터링</td>
+                </tr>
+                <tr>
+                    <td><strong>로깅</strong></td>
+                    <td>보안 이벤트 로깅</td>
+                    <td><span class="security-level level medium">MEDIUM</span></td>
+                    <td>인증 실패 및 의심스러운 활동 기록</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- 모바일 카드 형태 -->
+        <div class="mobile-table">
+            <div class="mobile-security-item">
+                <h4>🔐 인증</h4>
+                <span class="security-level level high">HIGH</span>
+                <p><strong>정책:</strong> JWT 토큰 기반</p>
+                <div class="description">서명된 토큰으로 사용자 인증</div>
+            </div>
+            <div class="mobile-security-item">
+                <h4>👥 권한</h4>
+                <span class="security-level level high">HIGH</span>
+                <p><strong>정책:</strong> 역할 기반 접근 제어</p>
+                <div class="description">사용자 역할에 따른 권한 제한</div>
+            </div>
+            <div class="mobile-security-item">
+                <h4>🔒 암호화</h4>
+                <span class="security-level level high">HIGH</span>
+                <p><strong>정책:</strong> HTTPS/TLS 1.3</p>
+                <div class="description">전송 중 데이터 암호화</div>
+            </div>
+            <div class="mobile-security-item">
+                <h4>⏰ 세션</h4>
+                <span class="security-level level medium">MEDIUM</span>
+                <p><strong>정책:</strong> 토큰 만료 관리</p>
+                <div class="description">24시간 자동 만료</div>
+            </div>
+            <div class="mobile-security-item">
+                <h4>✅ 입력 검증</h4>
+                <span class="security-level level high">HIGH</span>
+                <p><strong>정책:</strong> 서버 사이드 검증</p>
+                <div class="description">모든 입력값 검증 및 필터링</div>
+            </div>
+            <div class="mobile-security-item">
+                <h4>📝 로깅</h4>
+                <span class="security-level level medium">MEDIUM</span>
+                <p><strong>정책:</strong> 보안 이벤트 로깅</p>
+                <div class="description">인증 실패 및 의심스러운 활동 기록</div>
+            </div>
+        </div>
+
+        <h3>🔑 로그인 API</h3>
         <div class="code-block">
-<b>보안 이벤트 로그:</b>
+POST /api/auth/login
+Content-Type: application/json
 
 {
-    "timestamp": "2024-12-01T10:30:00Z",
-    "event": "LOGIN_ATTEMPT",
-    "level": "INFO",
-    "userId": "kiosk_user",
-    "ipAddress": "192.168.1.100",
-    "userAgent": "Mozilla/5.0...",
-    "success": true,
-    "details": {
-        "loginMethod": "password",
-        "sessionId": "sess_12345"
-    }
+  "username": "admin",
+  "password": "secure_password"
 }
 
-<b>보안 경고 로그:</b>
+Response:
+{
+  "success": true,
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "expires": "2024-12-02T10:30:00Z",
+  "user": {
+    "id": 1,
+    "username": "admin",
+    "role": "admin"
+  }
+}
+        </div>
+
+        <h3>🔍 토큰 검증</h3>
+        <div class="code-block">
+GET /api/auth/verify
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+Response:
+{
+  "success": true,
+  "valid": true,
+  "user": {
+    "id": 1,
+    "username": "admin",
+    "role": "admin"
+  },
+  "expires": "2024-12-02T10:30:00Z"
+}
+        </div>
+
+        <h3>🔄 토큰 갱신</h3>
+        <div class="code-block">
+POST /api/auth/refresh
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+Response:
+{
+  "success": true,
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "expires": "2024-12-02T10:30:00Z"
+}
+        </div>
+
+        <h3>🚪 로그아웃</h3>
+        <div class="code-block">
+POST /api/auth/logout
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+Response:
+{
+  "success": true,
+  "message": "로그아웃되었습니다"
+}
+        </div>
+
+        <h3>🛡️ 보안 위협 대응</h3>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h4>🔓 무차별 대입 공격</h4>
+                <ul>
+                    <li><strong>계정 잠금:</strong> 5회 실패 시 30분 잠금</li>
+                    <li><strong>CAPTCHA:</strong> 의심스러운 활동 시</li>
+                    <li><strong>로그 기록:</strong> 모든 시도 기록</li>
+                    <li><strong>IP 차단:</strong> 반복 시도 IP 차단</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h4>🎭 세션 하이재킹</h4>
+                <ul>
+                    <li><strong>토큰 만료:</strong> 24시간 자동 만료</li>
+                    <li><strong>재발급:</strong> 의심스러운 활동 시</li>
+                    <li><strong>HTTPS:</strong> 모든 통신 암호화</li>
+                    <li><strong>세션 추적:</strong> 활성 세션 모니터링</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h4>💉 SQL 인젝션</h4>
+                <ul>
+                    <li><strong>파라미터화:</strong> Prepared Statements</li>
+                    <li><strong>입력 검증:</strong> 서버 사이드 검증</li>
+                    <li><strong>이스케이프:</strong> 특수문자 처리</li>
+                    <li><strong>ORM 사용:</strong> Entity Framework</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h4>🌐 XSS 공격</h4>
+                <ul>
+                    <li><strong>출력 인코딩:</strong> HTML 인코딩</li>
+                    <li><strong>CSP 헤더:</strong> Content Security Policy</li>
+                    <li><strong>입력 필터링:</strong> 스크립트 태그 제거</li>
+                    <li><strong>HttpOnly 쿠키:</strong> JavaScript 접근 차단</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3>📊 보안 모니터링</h3>
+        <div class="code-block">
+보안 이벤트 로그 예시:
 
 {
-    "timestamp": "2024-12-01T10:35:00Z",
-    "event": "BRUTE_FORCE_DETECTED",
-    "level": "WARNING",
-    "ipAddress": "192.168.1.101",
-    "attempts": 6,
-    "timeWindow": "5 minutes",
-    "action": "IP_BLOCKED",
-    "details": {
-        "blockDuration": "30 minutes",
-        "reason": "Multiple failed login attempts"
-    }
+  "timestamp": "2024-12-01T10:30:00Z",
+  "event": "LOGIN_ATTEMPT",
+  "username": "admin",
+  "ip": "192.168.1.100",
+  "userAgent": "Mozilla/5.0...",
+  "success": true,
+  "details": {
+    "method": "POST",
+    "endpoint": "/api/auth/login"
+  }
+}
+
+{
+  "timestamp": "2024-12-01T10:35:00Z",
+  "event": "LOGIN_FAILED",
+  "username": "unknown",
+  "ip": "192.168.1.101",
+  "userAgent": "Mozilla/5.0...",
+  "success": false,
+  "details": {
+    "reason": "INVALID_CREDENTIALS",
+    "attempts": 3
+  }
 }
         </div>
 
-        <h3>암호화 및 해시</h3>
-        <div class="feature-grid">
-            <div class="feature-card">
-                <h4>🔐 비밀번호 해시</h4>
-                <ul>
-                    <li><strong>알고리즘:</strong> bcrypt</li>
-                    <li><strong>비용 팩터:</strong> 12</li>
-                    <li><strong>솔트:</strong> 자동 생성 (22자)</li>
-                    <li><strong>해시 길이:</strong> 60자</li>
-                </ul>
-            </div>
-            <div class="feature-card">
-                <h4>🔑 JWT 서명</h4>
-                <ul>
-                    <li><strong>알고리즘:</strong> HMAC-SHA256</li>
-                    <li><strong>키 길이:</strong> 256비트</li>
-                    <li><strong>키 관리:</strong> 환경변수</li>
-                    <li><strong>키 순환:</strong> 90일마다</li>
-                </ul>
-            </div>
-            <div class="feature-card">
-                <h4>🌐 HTTPS 설정</h4>
-                <ul>
-                    <li><strong>프로토콜:</strong> TLS 1.3</li>
-                    <li><strong>인증서:</strong> Let's Encrypt</li>
-                    <li><strong>HSTS:</strong> 1년 (31536000초)</li>
-                    <li><strong>CSP:</strong> Content Security Policy</li>
-                </ul>
-            </div>
-        </div>
-
-        <h3>보안 헤더 설정</h3>
+        <h3>🔧 보안 설정</h3>
         <div class="code-block">
-<b>보안 헤더 구성:</b>
+appsettings.json 보안 설정:
 
-Strict-Transport-Security: max-age=31536000; includeSubDomains
-Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'
-X-Content-Type-Options: nosniff
-X-Frame-Options: DENY
-X-XSS-Protection: 1; mode=block
-Referrer-Policy: strict-origin-when-cross-origin
-Permissions-Policy: geolocation=(), microphone=(), camera=()
-
-<b>쿠키 보안 설정:</b>
-
-Set-Cookie: session=abc123; 
-    HttpOnly; 
-    Secure; 
-    SameSite=Strict; 
-    Max-Age=1200; 
-    Path=/
-        </div>
-
-        <h3>침입 탐지 및 대응</h3>
-        <div class="feature-grid">
-            <div class="feature-card">
-                <h4>🚨 침입 탐지</h4>
-                <ul>
-                    <li><strong>패턴 분석:</strong> 비정상 접근 패턴 감지</li>
-                    <li><strong>속도 제한:</strong> API 호출 빈도 제한</li>
-                    <li><strong>지리적 제한:</strong> 허용된 IP 대역만</li>
-                    <li><strong>행동 분석:</strong> 사용자 행동 패턴</li>
-                </ul>
-            </div>
-            <div class="feature-card">
-                <h4>🛡️ 자동 대응</h4>
-                <ul>
-                    <li><strong>IP 차단:</strong> 의심스러운 IP 자동 차단</li>
-                    <li><strong>계정 잠금:</strong> 다중 실패 시 자동 잠금</li>
-                    <li><strong>토큰 무효화:</strong> 보안 위반 시 토큰 폐기</li>
-                    <li><strong>알림 발송:</strong> 관리자에게 보안 경고</li>
-                </ul>
-            </div>
-            <div class="feature-card">
-                <h4>📊 모니터링 대시보드</h4>
-                <ul>
-                    <li><strong>실시간 모니터링:</strong> 보안 이벤트 실시간 추적</li>
-                    <li><strong>통계 분석:</strong> 보안 지표 대시보드</li>
-                    <li><strong>경고 시스템:</strong> 임계값 초과 시 알림</li>
-                    <li><strong>로그 분석:</strong> 보안 로그 분석 도구</li>
-                </ul>
-            </div>
+{
+  "JwtSettings": {
+    "SecretKey": "your-super-secret-key-here",
+    "Issuer": "POKA-KIOSK",
+    "Audience": "POKA-Users",
+    "ExpirationHours": 24,
+    "RefreshExpirationHours": 168
+  },
+  "Security": {
+    "MaxLoginAttempts": 5,
+    "LockoutDurationMinutes": 30,
+    "PasswordMinLength": 8,
+    "RequireSpecialChars": true,
+    "SessionTimeoutMinutes": 1440
+  },
+  "Cors": {
+    "AllowedOrigins": ["https://pkapi.ting.ovh"],
+    "AllowedMethods": ["GET", "POST"],
+    "AllowedHeaders": ["Authorization", "Content-Type"]
+  }
+}
         </div>
     </div>
+
+    <button class="back-button" onclick="window.location.href='index.html'" title="홈으로 돌아가기">🏠</button>
+
+    <script>
+        // 터치 이벤트 최적화
+        document.addEventListener('DOMContentLoaded', function() {
+            // 터치 디바이스 감지
+            if ('ontouchstart' in window) {
+                document.body.classList.add('touch-device');
+            }
+
+            // 스크롤 성능 최적화
+            let ticking = false;
+            function updateScroll() {
+                ticking = false;
+            }
+
+            function requestTick() {
+                if (!ticking) {
+                    requestAnimationFrame(updateScroll);
+                    ticking = true;
+                }
+            }
+
+            window.addEventListener('scroll', requestTick);
+
+            // 네비게이션 스크롤 최적화
+            const nav = document.querySelector('.nav');
+            let isScrolling = false;
+
+            nav.addEventListener('scroll', function() {
+                if (!isScrolling) {
+                    isScrolling = true;
+                    requestAnimationFrame(function() {
+                        isScrolling = false;
+                    });
+                }
+            });
+
+            // 뒤로가기 버튼 표시/숨김
+            const backButton = document.querySelector('.back-button');
+            let lastScrollTop = 0;
+
+            window.addEventListener('scroll', function() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                if (scrollTop > 100) {
+                    backButton.style.opacity = '1';
+                    backButton.style.visibility = 'visible';
+                } else {
+                    backButton.style.opacity = '0';
+                    backButton.style.visibility = 'hidden';
+                }
+                
+                lastScrollTop = scrollTop;
+            });
+
+            // 초기 상태 설정
+            backButton.style.opacity = '0';
+            backButton.style.visibility = 'hidden';
+            backButton.style.transition = 'opacity 0.3s ease, visibility 0.3s ease';
+
+            // 코드 블록 복사 기능
+            const codeBlocks = document.querySelectorAll('.code-block');
+            codeBlocks.forEach(block => {
+                block.addEventListener('click', function() {
+                    const text = this.textContent;
+                    navigator.clipboard.writeText(text).then(() => {
+                        // 복사 완료 표시
+                        const originalBackground = this.style.background;
+                        this.style.background = '#2ed573';
+                        this.style.color = '#000000';
+                        
+                        setTimeout(() => {
+                            this.style.background = originalBackground;
+                            this.style.color = '';
+                        }, 1000);
+                    });
+                });
+                
+                // 터치 디바이스에서 스타일 추가
+                if ('ontouchstart' in window) {
+                    block.style.cursor = 'pointer';
+                    block.title = '클릭하여 복사';
+                }
+            });
+
+            // 키보드 네비게이션
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeModal();
+                }
+            });
+        });
+
+        // PWA 지원
+        if ('serviceWorker' in navigator) {
+            const meta = document.createElement('meta');
+            meta.name = 'theme-color';
+            meta.content = '#000000';
+            document.head.appendChild(meta);
+        }
+    </script>
 </body>
 </html>
