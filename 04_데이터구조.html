@@ -291,18 +291,41 @@
         }
 
         .mobile-data-item {
-            background: #1a1a1a;
-            border: 1px solid #333333;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border: 2px solid #333333;
+            border-radius: 15px;
+            padding: clamp(20px, 3vw, 25px);
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mobile-data-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #00d4ff, #0099cc);
+        }
+
+        .mobile-data-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+            border-color: #00d4ff;
         }
 
         .mobile-data-item h4 {
             color: #ffffff;
-            margin-bottom: 10px;
-            font-size: 1rem;
+            margin-bottom: 15px;
+            font-size: clamp(1.1rem, 3vw, 1.3rem);
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .mobile-data-item .data-type {
@@ -311,8 +334,36 @@
 
         .mobile-data-item .description {
             color: #cccccc;
-            font-size: 0.9rem;
-            margin-top: 8px;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 8px;
+            border-left: 3px solid #00d4ff;
+        }
+
+        .mobile-data-item .column-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-data-item .column-row:last-child {
+            border-bottom: none;
+        }
+
+        .mobile-data-item .column-name {
+            font-weight: bold;
+            color: #00d4ff;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+        }
+
+        .mobile-data-item .column-info {
+            text-align: right;
+            font-size: clamp(0.8rem, 2.2vw, 0.9rem);
+            color: #cccccc;
         }
 
         /* 모바일 최적화 */
@@ -396,9 +447,58 @@
 
         /* 접근성 개선 */
         .feature-card:focus,
-        .mobile-data-item:focus {
+        .mobile-data-item:focus,
+        .db-table:focus {
             outline: 2px solid #00d4ff;
             outline-offset: 2px;
+        }
+
+        .db-column:focus {
+            outline: 2px solid #ffffff;
+            outline-offset: 1px;
+        }
+
+        /* 터치 타겟 크기 최적화 */
+        @media (max-width: 768px) {
+            .mobile-data-item {
+                min-height: 60px;
+                padding: 25px 20px;
+            }
+            
+            .db-column {
+                min-height: 44px;
+                padding: 12px 15px;
+            }
+
+            .column-row {
+                min-height: 44px;
+                padding: 12px 0;
+            }
+        }
+
+        /* 애니메이션 효과 */
+        .mobile-data-item {
+            animation: slideInUp 0.6s ease-out;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 호버 효과 개선 */
+        .mobile-data-item:hover .column-name {
+            color: #ffffff;
+        }
+
+        .mobile-data-item:hover .description {
+            background: rgba(0, 212, 255, 0.2);
         }
 
         /* 로딩 애니메이션 */
@@ -450,6 +550,121 @@
             -webkit-overflow-scrolling: touch;
             color: #00d4ff;
         }
+
+        /* 모바일 최적화된 데이터베이스 구조 */
+        .mobile-database {
+            display: none;
+            flex-direction: column;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .db-table {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border: 2px solid #00d4ff;
+            border-radius: 15px;
+            padding: clamp(20px, 3vw, 25px);
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+            margin-bottom: 25px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .db-table:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+        }
+
+        .db-table:active {
+            transform: scale(0.98);
+        }
+
+        .db-table::after {
+            content: '▼';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #00d4ff;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .db-table:last-child::after {
+            display: none;
+        }
+
+        .db-title {
+            font-size: clamp(1.1rem, 3.5vw, 1.4rem);
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 15px;
+        }
+
+        .db-desc {
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            color: #cccccc;
+            margin-bottom: 15px;
+        }
+
+        .db-columns {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .db-column {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: clamp(0.8rem, 2.2vw, 0.9rem);
+            color: #00d4ff;
+            transition: all 0.3s ease;
+            text-align: left;
+            min-width: 120px;
+        }
+
+        .db-column:hover {
+            background: rgba(0, 212, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .db-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .column-details {
+            font-size: clamp(0.7rem, 2vw, 0.8rem);
+            color: #cccccc;
+            margin-top: 5px;
+        }
+
+        /* 데스크톱에서 모바일 데이터베이스 숨김 */
+        @media (min-width: 769px) {
+            .mobile-database {
+                display: none;
+            }
+            .structure-diagram {
+                display: block;
+            }
+        }
+
+                /* 모바일에서 데스크톱 데이터베이스 숨김 */
+        @media (max-width: 768px) {
+            .mobile-database {
+                display: flex;
+            }
+            .structure-diagram {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -481,6 +696,8 @@
         </div>
 
         <h3>📊 데이터베이스 구조</h3>
+        
+        <!-- 데스크톱용 데이터베이스 구조 다이어그램 -->
         <div class="structure-diagram">
     ┌─────────────────────────────────────────────────────────────┐
     │                    POKA DATABASE                           │
@@ -520,6 +737,91 @@
     │  │  (VARCHAR)  │  │  (VARCHAR)  │  │  (DATETIME) │        │
     │  └─────────────┘  └─────────────┘  └─────────────┘        │
     └─────────────────────────────────────────────────────────────┘
+        </div>
+
+        <!-- 모바일용 데이터베이스 구조 다이어그램 -->
+        <div class="mobile-database" role="region" aria-label="데이터베이스 구조">
+            <div class="db-table" role="button" tabindex="0" aria-label="Users 테이블 구조">
+                <span class="db-icon" aria-hidden="true">👥</span>
+                <div class="db-title">Users Table</div>
+                <div class="db-desc">사용자 정보 관리</div>
+                <div class="db-columns">
+                    <div class="db-column">
+                        <strong>id</strong>
+                        <div class="column-details">INT (PK)</div>
+                    </div>
+                    <div class="db-column">
+                        <strong>username</strong>
+                        <div class="column-details">VARCHAR(50)</div>
+                    </div>
+                    <div class="db-column">
+                        <strong>role</strong>
+                        <div class="column-details">VARCHAR(20)</div>
+                    </div>
+                </div>
+            </div>
+            <div class="db-table" role="button" tabindex="0" aria-label="Orders 테이블 구조">
+                <span class="db-icon" aria-hidden="true">📋</span>
+                <div class="db-title">Orders Table</div>
+                <div class="db-desc">주문 및 결제 정보</div>
+                <div class="db-columns">
+                    <div class="db-column">
+                        <strong>id</strong>
+                        <div class="column-details">INT (PK)</div>
+                    </div>
+                    <div class="db-column">
+                        <strong>orderId</strong>
+                        <div class="column-details">VARCHAR(100)</div>
+                    </div>
+                    <div class="db-column">
+                        <strong>amount</strong>
+                        <div class="column-details">INT</div>
+                    </div>
+                    <div class="db-column">
+                        <strong>paymentType</strong>
+                        <div class="column-details">VARCHAR(20)</div>
+                    </div>
+                    <div class="db-column">
+                        <strong>status</strong>
+                        <div class="column-details">VARCHAR(20)</div>
+                    </div>
+                    <div class="db-column">
+                        <strong>createdAt</strong>
+                        <div class="column-details">DATETIME</div>
+                    </div>
+                </div>
+            </div>
+            <div class="db-table" role="button" tabindex="0" aria-label="Uploads 테이블 구조">
+                <span class="db-icon" aria-hidden="true">📤</span>
+                <div class="db-title">Uploads Table</div>
+                <div class="db-desc">이미지 업로드 정보</div>
+                <div class="db-columns">
+                    <div class="db-column">
+                        <strong>id</strong>
+                        <div class="column-details">INT (PK)</div>
+                    </div>
+                    <div class="db-column">
+                        <strong>uploadId</strong>
+                        <div class="column-details">VARCHAR(100)</div>
+                    </div>
+                    <div class="db-column">
+                        <strong>sessionId</strong>
+                        <div class="column-details">VARCHAR(100)</div>
+                    </div>
+                    <div class="db-column">
+                        <strong>faceImage</strong>
+                        <div class="column-details">VARCHAR(255)</div>
+                    </div>
+                    <div class="db-column">
+                        <strong>backImage</strong>
+                        <div class="column-details">VARCHAR(255)</div>
+                    </div>
+                    <div class="db-column">
+                        <strong>createdAt</strong>
+                        <div class="column-details">DATETIME</div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <h3>🗂️ 테이블 상세 구조</h3>
@@ -634,32 +936,77 @@
 
         <!-- 모바일 카드 형태 -->
         <div class="mobile-table">
-            <div class="mobile-data-item">
+            <div class="mobile-data-item" role="button" tabindex="0" aria-label="Users 테이블 상세 정보">
                 <h4>👥 Users 테이블</h4>
-                <p><strong>id:</strong> <span class="data-type type.number">INT</span> (PRIMARY KEY)</p>
-                <p><strong>username:</strong> <span class="data-type type.string">VARCHAR(50)</span> (UNIQUE)</p>
-                <p><strong>role:</strong> <span class="data-type type.string">VARCHAR(20)</span> (DEFAULT 'user')</p>
-                <div class="description">사용자 정보 관리</div>
+                <div class="column-row">
+                    <span class="column-name">id</span>
+                    <span class="column-info"><span class="data-type type.number">INT</span> (PRIMARY KEY)</span>
+                </div>
+                <div class="column-row">
+                    <span class="column-name">username</span>
+                    <span class="column-info"><span class="data-type type.string">VARCHAR(50)</span> (UNIQUE)</span>
+                </div>
+                <div class="column-row">
+                    <span class="column-name">role</span>
+                    <span class="column-info"><span class="data-type type.string">VARCHAR(20)</span> (DEFAULT 'user')</span>
+                </div>
+                <div class="description">사용자 정보 관리 - 시스템 사용자 계정 및 권한 정보를 저장합니다.</div>
             </div>
-            <div class="mobile-data-item">
+            <div class="mobile-data-item" role="button" tabindex="0" aria-label="Orders 테이블 상세 정보">
                 <h4>📋 Orders 테이블</h4>
-                <p><strong>id:</strong> <span class="data-type type.number">INT</span> (PRIMARY KEY)</p>
-                <p><strong>orderId:</strong> <span class="data-type type.string">VARCHAR(100)</span> (UNIQUE)</p>
-                <p><strong>amount:</strong> <span class="data-type type.number">INT</span> (결제 금액)</p>
-                <p><strong>paymentType:</strong> <span class="data-type type.string">VARCHAR(20)</span></p>
-                <p><strong>status:</strong> <span class="data-type type.string">VARCHAR(20)</span></p>
-                <p><strong>createdAt:</strong> <span class="data-type type.string">DATETIME</span></p>
-                <div class="description">주문 및 결제 정보</div>
+                <div class="column-row">
+                    <span class="column-name">id</span>
+                    <span class="column-info"><span class="data-type type.number">INT</span> (PRIMARY KEY)</span>
+                </div>
+                <div class="column-row">
+                    <span class="column-name">orderId</span>
+                    <span class="column-info"><span class="data-type type.string">VARCHAR(100)</span> (UNIQUE)</span>
+                </div>
+                <div class="column-row">
+                    <span class="column-name">amount</span>
+                    <span class="column-info"><span class="data-type type.number">INT</span> (결제 금액)</span>
+                </div>
+                <div class="column-row">
+                    <span class="column-name">paymentType</span>
+                    <span class="column-info"><span class="data-type type.string">VARCHAR(20)</span> (cash/linepay/coupon)</span>
+                </div>
+                <div class="column-row">
+                    <span class="column-name">status</span>
+                    <span class="column-info"><span class="data-type type.string">VARCHAR(20)</span> (pending/completed/failed)</span>
+                </div>
+                <div class="column-row">
+                    <span class="column-name">createdAt</span>
+                    <span class="column-info"><span class="data-type type.string">DATETIME</span> (생성 시간)</span>
+                </div>
+                <div class="description">주문 및 결제 정보 - 사용자의 포토카드 주문과 결제 내역을 관리합니다.</div>
             </div>
-            <div class="mobile-data-item">
+            <div class="mobile-data-item" role="button" tabindex="0" aria-label="Uploads 테이블 상세 정보">
                 <h4>📤 Uploads 테이블</h4>
-                <p><strong>id:</strong> <span class="data-type type.number">INT</span> (PRIMARY KEY)</p>
-                <p><strong>uploadId:</strong> <span class="data-type type.string">VARCHAR(100)</span> (UNIQUE)</p>
-                <p><strong>sessionId:</strong> <span class="data-type type.string">VARCHAR(100)</span></p>
-                <p><strong>faceImage:</strong> <span class="data-type type.string">VARCHAR(255)</span></p>
-                <p><strong>backImage:</strong> <span class="data-type type.string">VARCHAR(255)</span></p>
-                <p><strong>createdAt:</strong> <span class="data-type type.string">DATETIME</span></p>
-                <div class="description">이미지 업로드 정보</div>
+                <div class="column-row">
+                    <span class="column-name">id</span>
+                    <span class="column-info"><span class="data-type type.number">INT</span> (PRIMARY KEY)</span>
+                </div>
+                <div class="column-row">
+                    <span class="column-name">uploadId</span>
+                    <span class="column-info"><span class="data-type type.string">VARCHAR(100)</span> (UNIQUE)</span>
+                </div>
+                <div class="column-row">
+                    <span class="column-name">sessionId</span>
+                    <span class="column-info"><span class="data-type type.string">VARCHAR(100)</span> (세션 식별자)</span>
+                </div>
+                <div class="column-row">
+                    <span class="column-name">faceImage</span>
+                    <span class="column-info"><span class="data-type type.string">VARCHAR(255)</span> (얼굴 이미지 URL)</span>
+                </div>
+                <div class="column-row">
+                    <span class="column-name">backImage</span>
+                    <span class="column-info"><span class="data-type type.string">VARCHAR(255)</span> (배경 이미지 URL)</span>
+                </div>
+                <div class="column-row">
+                    <span class="column-name">createdAt</span>
+                    <span class="column-info"><span class="data-type type.string">DATETIME</span> (업로드 시간)</span>
+                </div>
+                <div class="description">이미지 업로드 정보 - 사용자가 업로드한 얼굴 및 배경 이미지 정보를 저장합니다.</div>
             </div>
         </div>
 
@@ -889,6 +1236,113 @@ Uploads 테이블:
                     closeModal();
                 }
             });
+
+            // 모바일 데이터베이스 테이블 인터랙션
+            const dbTables = document.querySelectorAll('.db-table');
+            dbTables.forEach((table, index) => {
+                const handleTableClick = function() {
+                    // 클릭 시 하이라이트 효과
+                    dbTables.forEach(t => t.style.borderColor = '#00d4ff');
+                    this.style.borderColor = '#ffffff';
+                    this.style.background = 'linear-gradient(135deg, #2a2a2a 0%, #3a3a3a 100%)';
+                    
+                    // 3초 후 원래 상태로 복원
+                    setTimeout(() => {
+                        this.style.borderColor = '#00d4ff';
+                        this.style.background = 'linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%)';
+                    }, 3000);
+                };
+
+                table.addEventListener('click', handleTableClick);
+                table.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        handleTableClick.call(this);
+                    }
+                });
+
+                // 애니메이션 지연 효과
+                table.style.animationDelay = `${index * 0.15}s`;
+            });
+
+            // 데이터베이스 컬럼 인터랙션
+            const dbColumns = document.querySelectorAll('.db-column');
+            dbColumns.forEach(column => {
+                const handleColumnClick = function(e) {
+                    e.stopPropagation(); // 부모 테이블 클릭 이벤트 방지
+                    
+                    // 클릭 시 확대 효과
+                    this.style.transform = 'scale(1.1)';
+                    this.style.background = 'rgba(0, 212, 255, 0.3)';
+                    
+                    setTimeout(() => {
+                        this.style.transform = '';
+                        this.style.background = '';
+                    }, 500);
+                };
+
+                column.addEventListener('click', handleColumnClick);
+                column.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        handleColumnClick.call(this, e);
+                    }
+                });
+            });
+
+            // 모바일 데이터 아이템 인터랙션
+            const mobileDataItems = document.querySelectorAll('.mobile-data-item');
+            mobileDataItems.forEach((item, index) => {
+                const handleItemClick = function() {
+                    // 모든 아이템에서 하이라이트 제거
+                    mobileDataItems.forEach(i => {
+                        i.style.borderColor = '#333333';
+                        i.style.transform = 'translateY(0)';
+                        i.style.boxShadow = '0 4px 15px rgba(0,0,0,0.3)';
+                    });
+                    
+                    // 클릭된 아이템 하이라이트
+                    this.style.borderColor = '#00d4ff';
+                    this.style.transform = 'translateY(-5px)';
+                    this.style.boxShadow = '0 8px 25px rgba(0, 212, 255, 0.4)';
+                    
+                    // 컬럼 로우들 애니메이션
+                    const columnRows = this.querySelectorAll('.column-row');
+                    columnRows.forEach((row, rowIndex) => {
+                        setTimeout(() => {
+                            row.style.background = 'rgba(0, 212, 255, 0.1)';
+                            row.style.transform = 'translateX(5px)';
+                            
+                            setTimeout(() => {
+                                row.style.background = '';
+                                row.style.transform = '';
+                            }, 300);
+                        }, rowIndex * 100);
+                    });
+                };
+
+                item.addEventListener('click', handleItemClick);
+                item.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        handleItemClick.call(this);
+                    }
+                });
+
+                // 터치 디바이스에서 탭 효과
+                if ('ontouchstart' in window) {
+                    item.addEventListener('touchstart', function() {
+                        this.style.transform = 'scale(0.98)';
+                    });
+                    
+                    item.addEventListener('touchend', function() {
+                        this.style.transform = 'scale(1)';
+                    });
+                }
+
+                // 애니메이션 지연 효과
+                item.style.animationDelay = `${index * 0.2}s`;
+            });
         });
 
         // PWA 지원
@@ -900,4 +1354,4 @@ Uploads 테이블:
         }
     </script>
 </body>
-</html>
+</html> 
