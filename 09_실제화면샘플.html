@@ -153,6 +153,16 @@
             max-height: 90vh;
             min-height: 600px;
         }
+        
+        /* 모바일에서 키오스크 화면 비율 조정 */
+        @media (max-width: 768px) {
+            .kiosk-screen {
+                /* 모바일에서는 더 짧은 비율로 조정 */
+                aspect-ratio: 1324/1600; /* 세로 길이를 줄임 */
+                max-height: 50vh; /* 모바일에서 높이 제한 */
+                min-height: 400px;
+            }
+        }
 
         .kiosk-screen img,
         .kiosk-screen video {
@@ -714,6 +724,8 @@
             display: none;
             backdrop-filter: blur(10px);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            max-height: 60vh; /* 최대 높이 제한 */
+            overflow-y: auto; /* 스크롤 가능 */
         }
 
         .mobile-control-header {
@@ -792,6 +804,30 @@
             z-index: 999;
             display: none;
         }
+        
+        /* 모바일에서 키오스크 컨테이너 조정 */
+        @media (max-width: 768px) {
+            .kiosk-container {
+                margin: 10px 5px;
+                padding: 10px;
+            }
+            
+            /* 모바일에서 컨테이너 간격 줄이기 */
+            .container > * {
+                margin-bottom: 15px;
+            }
+            
+            /* 모바일에서 헤더와 네비게이션 간격 줄이기 */
+            .header {
+                margin-bottom: 10px;
+                padding: 10px;
+            }
+            
+            .nav {
+                padding: 8px 5px;
+                margin-bottom: 10px;
+            }
+        }
 
         .mobile-toggle-btn:hover {
             transform: translateY(-2px);
@@ -801,14 +837,14 @@
         /* 모바일 최적화 */
         @media (max-width: 768px) {
             .container {
-                margin: 10px;
-                padding: 15px;
+                margin: 5px;
+                padding: 10px;
             }
             
             .kiosk-screen {
-                aspect-ratio: 1324/2112;
-                max-height: 70vh; /* 모바일에서도 더 큰 크기 */
-                min-height: 500px;
+                aspect-ratio: 1324/1600; /* 더 짧은 비율 */
+                max-height: 45vh; /* 높이 제한 */
+                min-height: 350px;
             }
             
             .screen-controls {
@@ -821,28 +857,46 @@
             
             .screen-grid {
                 grid-template-columns: 1fr;
+                gap: 15px;
             }
             
             /* 모바일에서 텍스트 크기 조정 */
             .standby-screen .language-button,
             .mainmenu-screen .language-button {
-                font-size: 2rem;
+                font-size: 1.8rem;
             }
             
             .payment-screen .price-input {
-                font-size: 2rem;
+                font-size: 1.8rem;
             }
             
             .finish-screen .finish-title {
-                font-size: 2.5rem;
+                font-size: 2rem;
             }
             
             .finish-screen .finish-message {
-                font-size: 1.2rem;
+                font-size: 1rem;
             }
             
             .lang-menu a {
-                font-size: 1.5rem;
+                font-size: 1.3rem;
+            }
+            
+            /* 모바일에서 화면 정보 간격 줄이기 */
+            .screen-info {
+                padding: 15px;
+                margin: 15px 0;
+            }
+            
+            /* 모바일에서 기능 설명 간격 줄이기 */
+            .kiosk-functionality {
+                padding: 15px;
+                margin: 15px 0;
+            }
+            
+            /* 모바일에서 갤러리 카드 간격 줄이기 */
+            .screen-card {
+                padding: 15px;
             }
         }
 
@@ -1521,9 +1575,13 @@
         function simulateKioskFunctionality(screenName) {
             console.log(`키오스크 화면 전환: ${screenName}`);
             
-            // 실제 키오스크 해상도 시뮬레이션
+            // 실제 키오스크 해상도 시뮬레이션 - 모바일/데스크톱 구분
             const kioskScreen = document.getElementById('mainScreen');
-            kioskScreen.style.aspectRatio = '1324/2112';
+            if (window.innerWidth <= 768) {
+                kioskScreen.style.aspectRatio = '1324/1600'; // 모바일에서는 더 짧은 비율
+            } else {
+                kioskScreen.style.aspectRatio = '1324/2112'; // 데스크톱에서는 원래 비율
+            }
             
             // 터치 이벤트 시뮬레이션
             if ('ontouchstart' in window) {
@@ -1946,11 +2004,17 @@
 
             // 실제 키오스크 해상도 설정
             const kioskScreen = document.getElementById('mainScreen');
-            kioskScreen.style.aspectRatio = '1324/2112';
             
-            // 실제 키오스크 크기 시뮬레이션 강화
-            kioskScreen.style.maxHeight = '90vh';
-            kioskScreen.style.minHeight = '600px';
+            // 모바일과 데스크톱에 따른 해상도 설정
+            if (window.innerWidth <= 768) {
+                kioskScreen.style.aspectRatio = '1324/1600'; // 모바일에서는 더 짧은 비율
+                kioskScreen.style.maxHeight = '45vh';
+                kioskScreen.style.minHeight = '350px';
+            } else {
+                kioskScreen.style.aspectRatio = '1324/2112'; // 데스크톱에서는 원래 비율
+                kioskScreen.style.maxHeight = '90vh';
+                kioskScreen.style.minHeight = '600px';
+            }
             
             // 모바일 컨트롤 초기화
             const mobileControls = document.getElementById('mobileControls');
@@ -2031,6 +2095,20 @@
             const videoViewer = document.querySelector('.video-viewer');
             const mobileToggleBtn = document.getElementById('mobileToggleBtn');
             const mobileControls = document.getElementById('mobileControls');
+            const kioskScreen = document.getElementById('mainScreen');
+            
+            // 키오스크 화면 크기 조정
+            if (kioskScreen) {
+                if (window.innerWidth <= 768) {
+                    kioskScreen.style.aspectRatio = '1324/1600'; // 모바일에서는 더 짧은 비율
+                    kioskScreen.style.maxHeight = '45vh';
+                    kioskScreen.style.minHeight = '350px';
+                } else {
+                    kioskScreen.style.aspectRatio = '1324/2112'; // 데스크톱에서는 원래 비율
+                    kioskScreen.style.maxHeight = '90vh';
+                    kioskScreen.style.minHeight = '600px';
+                }
+            }
             
             // 비디오 뷰어 크기 조정
             if (video && videoViewer && video.videoWidth > 0 && video.videoHeight > 0) {
