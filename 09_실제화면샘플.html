@@ -1,0 +1,1868 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>POKA 실제 화면 샘플</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body { 
+            font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', 'Noto Sans KR', Arial, sans-serif; 
+            background: #000000;
+            color: #ffffff; 
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: rgba(20, 20, 20, 0.95);
+            padding: clamp(15px, 3vw, 20px) clamp(10px, 2vw, 20px);
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            margin-bottom: 15px;
+            backdrop-filter: blur(10px);
+            border-bottom: 3px solid #00d4ff;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: #ffffff;
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            line-height: 1.2;
+        }
+
+        .header p {
+            margin: 10px 0 0 0;
+            color: #cccccc;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            font-weight: 500;
+        }
+
+        .nav {
+            background: rgba(20, 20, 20, 0.95);
+            padding: 10px 5px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+            border-bottom: 2px solid #333333;
+        }
+
+        .nav::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .nav::-webkit-scrollbar-track {
+            background: #333333;
+        }
+
+        .nav::-webkit-scrollbar-thumb {
+            background: #00d4ff;
+            border-radius: 2px;
+        }
+
+        .nav a {
+            color: #ffffff;
+            text-decoration: none;
+            margin: 0 8px;
+            padding: 10px 15px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            display: inline-block;
+            font-size: clamp(0.8rem, 2.2vw, 0.9rem);
+            white-space: nowrap;
+            font-weight: 500;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .nav a:hover, .nav a:active {
+            background: #00d4ff;
+            color: #000000;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
+        }
+
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto 20px auto; 
+            background: rgba(20, 20, 20, 0.95); 
+            border-radius: 20px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5); 
+            padding: clamp(20px, 4vw, 40px);
+            overflow: hidden;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        h2 { 
+            color: #ffffff; 
+            border-bottom: 3px solid #00d4ff; 
+            padding-bottom: 15px; 
+            margin-top: 0; 
+            font-size: clamp(1.3rem, 3.5vw, 1.8rem);
+            font-weight: bold;
+        }
+
+        h3 { 
+            color: #cccccc; 
+            margin-top: 25px; 
+            font-size: clamp(1.1rem, 2.8vw, 1.4rem);
+            font-weight: 600;
+        }
+
+        .desc {
+            color: #cccccc;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            margin-bottom: 25px;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        /* 키오스크 화면 컨테이너 - 실제 해상도 1324x2112 비율 적용 */
+        .kiosk-container {
+            background: #000000;
+            border: 3px solid #333333;
+            border-radius: 20px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kiosk-screen {
+            background: #000000;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            /* 실제 키오스크 해상도 비율: 1324:2112 ? 1:1.6 */
+            aspect-ratio: 1324/2112;
+            max-width: 100%;
+            margin: 0 auto;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.3);
+            /* 실제 키오스크 크기 시뮬레이션 - 더 큰 크기로 조정 */
+            max-height: 90vh;
+            min-height: 600px;
+        }
+
+        .kiosk-screen img,
+        .kiosk-screen video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        /* 실제 키오스크 화면 요소들 */
+        .kiosk-screen-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 15;
+        }
+
+        .kiosk-background-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+            transition: opacity 0.3s ease;
+            background: #000000;
+        }
+
+        .kiosk-background-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+            transition: opacity 0.3s ease;
+            background: #000000;
+        }
+
+        .kiosk-button {
+            position: absolute;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            pointer-events: auto;
+            transition: all 0.3s ease;
+            z-index: 20;
+        }
+
+        .kiosk-button:hover {
+            transform: scale(1.05);
+        }
+
+        .kiosk-button:active {
+            transform: scale(0.95);
+        }
+
+        .kiosk-text {
+            position: absolute;
+            color: #ffffff;
+            font-family: 'Inter', 'Jua', sans-serif;
+            font-weight: 600;
+            text-align: center;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .kiosk-image {
+            position: absolute;
+            object-fit: contain;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        /* 대기화면 특별 스타일 - 실제 키오스크 비율에 맞게 조정 */
+        .standby-screen .start-button {
+            position: absolute;
+            top: 72.7%; /* 1534px / 2112px */
+            left: 16.6%; /* 220px / 1324px */
+            width: 45.2%; /* 599px / 1324px */
+            height: 6.5%; /* 137px / 2112px */
+            background: transparent;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            z-index: 40;
+            pointer-events: auto;
+        }
+
+        .standby-screen .language-button {
+            position: absolute;
+            top: 4.2%; /* 89px / 2112px */
+            left: 6.2%; /* 82px / 1324px */
+            width: 22.7%; /* 300px / 1324px */
+            height: 3.9%; /* 82px / 2112px */
+            background: transparent;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            z-index: 41;
+            pointer-events: auto;
+            font-size: 2.5rem; /* 실제 키오스크에 맞게 조정 */
+            color: #613D25;
+            font-family: 'Jua', sans-serif;
+            text-align: center;
+            line-height: normal;
+        }
+
+        /* 메인메뉴 특별 스타일 - 실제 키오스크 비율에 맞게 조정 */
+        .mainmenu-screen .upload-qr {
+            position: absolute;
+            top: 22.2%; /* 468px / 2112px */
+            left: 15.5%; /* 205px / 1324px */
+            width: 30.2%; /* 400px / 1324px */
+            height: 32.2%; /* 680px / 2112px */
+            z-index: 11;
+            pointer-events: auto;
+            border-radius: 25px;
+        }
+
+        .mainmenu-screen .top-button {
+            position: absolute;
+            top: 18.9%; /* 400px / 2112px */
+            left: 9.1%; /* 120px / 1324px */
+            width: 63.4%; /* 840px / 1324px */
+            height: 54.5%; /* 1150px / 2112px */
+            background: transparent;
+            border: none;
+            border-radius: 70px;
+            cursor: pointer;
+            z-index: 12;
+            pointer-events: auto;
+        }
+
+        .mainmenu-screen .language-button {
+            position: absolute;
+            top: 4.2%; /* 89px / 2112px */
+            left: 5.6%; /* 74px / 1324px */
+            width: 21.9%; /* 290px / 1324px */
+            height: 3.7%; /* 78px / 2112px */
+            background: transparent;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            z-index: 50;
+            pointer-events: auto;
+            font-size: 2.5rem; /* 실제 키오스크에 맞게 조정 */
+            color: #613D25;
+            font-family: 'Jua', sans-serif;
+            text-align: center;
+            line-height: normal;
+        }
+
+        /* 편집화면 특별 스타일 - 실제 키오스크 비율에 맞게 조정 */
+        .edit-screen .image-container {
+            position: absolute;
+            top: 26.28%;
+            left: 27.15%;
+            width: 26.2%;
+            height: 38.45%;
+            border-radius: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            z-index: 10;
+            pointer-events: auto;
+            overflow: hidden;
+        }
+
+        .edit-screen .flip-h-button {
+            position: absolute;
+            top: 67%;
+            left: 22.9%;
+            width: 13.4%;
+            height: 7%;
+            background: transparent;
+            border: none;
+            border-radius: 75px;
+            cursor: pointer;
+            z-index: 20;
+            pointer-events: auto;
+        }
+
+        .edit-screen .flip-v-button {
+            position: absolute;
+            top: 67%;
+            right: 22.9%;
+            width: 13.4%;
+            height: 7%;
+            background: transparent;
+            border: none;
+            border-radius: 75px;
+            cursor: pointer;
+            z-index: 20;
+            pointer-events: auto;
+        }
+
+        .edit-screen .complete-button {
+            position: absolute;
+            top: 81.6%; /* ANIMAL 모드 기준 */
+            left: 73%; /* ANIMAL 모드 기준 */
+            width: 23%; /* ANIMAL 모드 기준 */
+            height: 6.63%; /* ANIMAL 모드 기준 */
+            background: transparent;
+            border: none;
+            border-radius: 39px; /* ANIMAL 모드 기준 */
+            cursor: pointer;
+            z-index: 20;
+            pointer-events: auto;
+        }
+
+        /* 결제화면 특별 스타일 - 실제 키오스크 비율에 맞게 조정 */
+        .payment-screen .result-face {
+            position: absolute;
+            top: 13.7%;
+            left: 7.6%;
+            width: 40.3%;
+            height: 30.1%;
+            border-radius: 20px;
+            object-fit: cover;
+            z-index: 1;
+        }
+
+        .payment-screen .result-back {
+            position: absolute;
+            top: 13.7%;
+            right: 7.6%;
+            width: 40.3%;
+            height: 30.1%;
+            border-radius: 20px;
+            object-fit: cover;
+            z-index: 1;
+        }
+
+        .payment-screen .price-input {
+            position: absolute;
+            top: 52.2%;
+            left: 10.5%;
+            width: 78.6%;
+            height: 5.6%;
+            background: transparent;
+            border: 5px dotted transparent;
+            border-radius: 20px;
+            font-size: 2.5rem; /* 실제 키오스크에 맞게 조정 */
+            color: #613D25;
+            text-align: center;
+            outline: none;
+            z-index: 5;
+            pointer-events: auto;
+        }
+
+        .payment-screen .cash-button {
+            position: absolute;
+            top: 65%;
+            left: 10%;
+            width: 35%;
+            height: 10%;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            z-index: 10;
+            pointer-events: auto;
+        }
+
+        .payment-screen .linepay-button {
+            position: absolute;
+            top: 65%;
+            left: 55%;
+            width: 35%;
+            height: 10%;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            z-index: 10;
+            pointer-events: auto;
+        }
+
+        /* 완료화면 특별 스타일 - 실제 키오스크 비율에 맞게 조정 */
+        .finish-screen .finish-title {
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 3rem; /* 실제 키오스크에 맞게 조정 */
+            color: #fee9c5;
+            font-family: 'Jua', sans-serif;
+            text-align: center;
+            z-index: 5;
+        }
+
+        .finish-screen .finish-message {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.5rem; /* 실제 키오스크에 맞게 조정 */
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            text-align: center;
+            z-index: 5;
+        }
+
+        /* 추가인쇄화면 특별 스타일 */
+        .addprint-screen .add-print-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40%;
+            height: 15%;
+            background: transparent;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            z-index: 10;
+            pointer-events: auto;
+        }
+
+        /* 언어 메뉴 - 실제 키오스크 비율에 맞게 조정 */
+        .lang-menu {
+            position: absolute;
+            top: 9%;
+            left: 5.9%;
+            background: white;
+            border: 7px solid #DFA442;
+            border-radius: 35px;
+            padding: 10px;
+            width: 19.8%;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.1s ease-in-out;
+            z-index: 50;
+            pointer-events: auto;
+        }
+
+        .lang-menu a {
+            display: block;
+            text-decoration: none;
+            color: #613D25;
+            font-size: 2rem; /* 실제 키오스크에 맞게 조정 */
+            font-family: 'Jua', sans-serif;
+            text-align: center;
+            padding: 5px 0;
+            transition: background-color 0.1s ease-in-out;
+        }
+
+        .lang-menu a:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* 화면 전환 버튼 */
+        .screen-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .screen-btn {
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: #000000;
+            border: none;
+            border-radius: 25px;
+            padding: 12px 20px;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+        }
+
+        .screen-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .screen-btn.active {
+            background: linear-gradient(135deg, #ffffff, #cccccc);
+            color: #000000;
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.4);
+        }
+
+        /* 화면 설명 */
+        .screen-info {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border: 2px solid #333333;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .screen-title {
+            color: #00d4ff;
+            font-size: clamp(1.1rem, 2.8vw, 1.3rem);
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .screen-desc {
+            color: #cccccc;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            line-height: 1.6;
+        }
+
+        /* 인터랙티브 요소 */
+        .interactive-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0,0,0,0.3);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .kiosk-screen:hover .interactive-overlay {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .overlay-btn {
+            background: rgba(0, 212, 255, 0.9);
+            color: #000000;
+            border: none;
+            border-radius: 25px;
+            padding: 15px 25px;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .overlay-btn:hover {
+            background: rgba(0, 212, 255, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        }
+
+        /* 화면 그리드 */
+        .screen-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .screen-card {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border: 2px solid #333333;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .screen-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+            border-color: #00d4ff;
+        }
+
+        .screen-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .screen-card h4 {
+            color: #00d4ff;
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .screen-card p {
+            color: #cccccc;
+            font-size: clamp(0.8rem, 2.2vw, 0.9rem);
+            line-height: 1.5;
+        }
+
+        /* 애니메이션 */
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 실제 키오스크 기능 시뮬레이션 */
+        .kiosk-functionality {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border: 2px solid #333333;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .functionality-title {
+            color: #00d4ff;
+            font-size: clamp(1.1rem, 2.8vw, 1.3rem);
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .functionality-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .function-item {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .function-item h5 {
+            color: #00d4ff;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            margin-bottom: 8px;
+        }
+
+        .function-item p {
+            color: #cccccc;
+            font-size: clamp(0.8rem, 2.2vw, 0.9rem);
+        }
+
+        /* 모바일 최적화 */
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 15px;
+            }
+            
+            .kiosk-screen {
+                aspect-ratio: 1324/2112;
+                max-height: 70vh; /* 모바일에서도 더 큰 크기 */
+                min-height: 500px;
+            }
+            
+            .screen-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .screen-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .screen-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            /* 모바일에서 텍스트 크기 조정 */
+            .standby-screen .language-button,
+            .mainmenu-screen .language-button {
+                font-size: 2rem;
+            }
+            
+            .payment-screen .price-input {
+                font-size: 2rem;
+            }
+            
+            .finish-screen .finish-title {
+                font-size: 2.5rem;
+            }
+            
+            .finish-screen .finish-message {
+                font-size: 1.2rem;
+            }
+            
+            .lang-menu a {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* 뒤로가기 버튼 */
+        .back-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: #000000;
+            border: none;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
+            z-index: 1000;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.6);
+        }
+
+        /* 로딩 인디케이터 */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+            color: #00d4ff;
+            font-size: 1.2rem;
+        }
+
+        /* 터치 효과 */
+        .touch-effect {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle, rgba(0, 212, 255, 0.6) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: touchRipple 0.6s ease-out;
+            z-index: 1000;
+        }
+
+        @keyframes touchRipple {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+
+        /* 파일 경로 표시 */
+        .file-path {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #333;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #00d4ff;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>POKA 실제 화면 샘플</h1>
+        <p>포토카드 제작 키오스크 시스템 - 실제 구동 화면 데모</p>
+    </div>
+
+    <div class="nav">
+        <a href="index.html">🏠 홈</a>
+        <a href="01_시스템개요.html">📋 시스템 개요</a>
+        <a href="02_주요기능화면.html">🖥️ 주요 기능/화면</a>
+        <a href="03_URL_API목록.html">🔗 URL/API 목록</a>
+        <a href="04_데이터구조.html">🗄️ 데이터 구조</a>
+        <a href="05_로그인보안.html">🔐 로그인/보안</a>
+        <a href="06_결제업로드.html">💳 결제/업로드</a>
+        <a href="07_운영관리.html">⚙️ 운영/관리</a>
+        <a href="08_참고부록.html">📚 참고/부록</a>
+        <a href="09_실제화면샘플.html">🎮 실제 화면 샘플</a>
+    </div>
+
+    <div class="container">
+        <h2>실제 구동 화면 데모</h2>
+        <div class="desc">
+            POKA 키오스크 시스템의 <strong>실제 구동 화면</strong>을 확인할 수 있습니다.<br>
+            각 화면을 클릭하여 인터랙티브한 데모를 경험해보세요.
+        </div>
+
+        <!-- 키오스크 해상도 정보 -->
+        <div class="kiosk-functionality">
+            <div class="functionality-title">📱 키오스크 해상도 정보</div>
+            <div class="functionality-grid">
+                <div class="function-item">
+                    <h5>실제 해상도</h5>
+                    <p>1324 x 2112 픽셀</p>
+                </div>
+                <div class="function-item">
+                    <h5>화면 비율</h5>
+                    <p>1:1.6 (세로형)</p>
+                </div>
+                <div class="function-item">
+                    <h5>캔버스 크기</h5>
+                    <p>1080 x 1400 픽셀</p>
+                </div>
+                <div class="function-item">
+                    <h5>설정 파일</h5>
+                    <p>appsettings.json</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 메인 키오스크 화면 -->
+        <div class="kiosk-container">
+            <div class="kiosk-screen" id="mainScreen">
+                <div class="kiosk-screen-content" id="screenContent">
+                    <!-- 배경 동영상 -->
+                    <video class="kiosk-background-video" id="backgroundVideo" autoplay muted loop preload="auto">
+                        <source src="./wwwroot/images/ANIMAL/korean/StandByPage/Start.mp4" type="video/mp4">
+                    </video>
+                    
+                    <!-- 배경 이미지 -->
+                    <img class="kiosk-background-img" id="backgroundImage" src="" style="display: none;">
+                    
+                    <!-- 대기화면 요소들 -->
+                    <div class="standby-screen" id="standbyElements" style="display: block;">
+                        <button class="start-button" onclick="simulateStartButton()"></button>
+                        <button class="language-button" onclick="toggleLangMenu()">한국어</button>
+                        <div class="lang-menu" id="langMenu">
+                            <a href="#" onclick="changeLanguage('korean')">한국어</a>
+                            <a href="#" onclick="changeLanguage('chinese')">中文</a>
+                            <a href="#" onclick="changeLanguage('english')">English</a>
+                        </div>
+                    </div>
+                    
+                    <!-- 메인메뉴 요소들 -->
+                    <div class="mainmenu-screen" id="mainmenuElements" style="display: none;">
+                        <img class="upload-qr" src="./wwwroot/images/ANIMAL/korean/MainMenu/controlbar.png" alt="QR Code">
+                        <button class="top-button" onclick="simulateUploadButton()"></button>
+                        <button class="language-button" onclick="toggleLangMenu()">한국어</button>
+                        <div class="lang-menu" id="langMenu2">
+                            <a href="#" onclick="changeLanguage('korean')">한국어</a>
+                            <a href="#" onclick="changeLanguage('chinese')">中文</a>
+                            <a href="#" onclick="changeLanguage('english')">English</a>
+                        </div>
+                    </div>
+                    
+                    <!-- 편집화면 요소들 -->
+                    <div class="edit-screen" id="editElements" style="display: none;">
+                        <div class="image-container" onclick="simulateImageEdit()">
+                            <img src="./wwwroot/images/uploadimg/face.png" alt="편집 이미지" style="width: 100%; height: 100%; object-fit: contain;">
+                        </div>
+                        <button class="flip-h-button" onclick="simulateFlipH()"></button>
+                        <button class="flip-v-button" onclick="simulateFlipV()"></button>
+                        <button class="complete-button" onclick="simulateComplete()"></button>
+                    </div>
+                    
+                    <!-- 결제화면 요소들 -->
+                    <div class="payment-screen" id="paymentElements" style="display: none;">
+                        <img class="result-face" src="./wwwroot/images/uploadimg/face.png" alt="앞면">
+                        <img class="result-back" src="./wwwroot/images/uploadimg/back.png" alt="뒷면">
+                        <input type="text" class="price-input" value="150" readonly>
+                        <button class="cash-button" onclick="simulateCashPayment()"></button>
+                        <button class="linepay-button" onclick="simulateLinePayPayment()"></button>
+                    </div>
+                    
+                    <!-- 완료화면 요소들 -->
+                    <div class="finish-screen" id="finishElements" style="display: none;">
+                        <div class="finish-title">주문 완료!</div>
+                        <div class="finish-message">포토카드가 성공적으로 제작되었습니다.<br>잠시 후 인쇄가 시작됩니다.</div>
+                    </div>
+                    
+                    <!-- 추가인쇄화면 요소들 -->
+                    <div class="addprint-screen" id="addprintElements" style="display: none;">
+                        <button class="add-print-button" onclick="simulateAddPrint()"></button>
+                    </div>
+                </div>
+                
+                <div class="interactive-overlay">
+                    <button class="overlay-btn" onclick="showScreenInfo()">화면 정보 보기</button>
+                </div>
+            </div>
+            
+            <div class="screen-controls">
+                <button class="screen-btn active" onclick="changeScreen('standby')">⏰ 대기 화면</button>
+                <button class="screen-btn" onclick="changeScreen('mainmenu')">🏠 메인 메뉴</button>
+                <button class="screen-btn" onclick="changeScreen('edit')">✏️ 편집 화면</button>
+                <button class="screen-btn" onclick="changeScreen('payment')">💳 결제 화면</button>
+                <button class="screen-btn" onclick="changeScreen('finish')">✅ 완료 화면</button>
+                <button class="screen-btn" onclick="changeScreen('addprint')">🖨️ 추가 인쇄</button>
+            </div>
+        </div>
+
+        <!-- 화면 정보 -->
+        <div class="screen-info" id="screenInfo">
+            <div class="screen-title">대기 화면 (Standby Page)</div>
+            <div class="screen-desc">
+                키오스크가 대기 상태일 때 표시되는 화면입니다. 언어 선택과 시작 안내를 제공합니다.
+                사용자가 화면을 터치하면 메인 메뉴로 이동합니다.
+            </div>
+            <div class="file-path">
+                📁 파일 경로: ./wwwroot/images/ANIMAL/korean/StandByPage/language.png
+            </div>
+        </div>
+
+        <!-- 실제 키오스크 기능 시뮬레이션 -->
+        <h3>🎮 실제 키오스크 기능 시뮬레이션</h3>
+        <div class="kiosk-functionality">
+            <div class="functionality-title">터치 인터페이스 시뮬레이션</div>
+            <div class="functionality-grid">
+                <div class="function-item">
+                    <h5>👆 터치 이벤트</h5>
+                    <p>실제 키오스크처럼 터치로 조작</p>
+                </div>
+                <div class="function-item">
+                    <h5>🎯 정확한 좌표</h5>
+                    <p>1324x2112 해상도에 맞는 터치 좌표</p>
+                </div>
+                <div class="function-item">
+                    <h5>⚡ 반응 속도</h5>
+                    <p>실제 키오스크와 동일한 반응 속도</p>
+                </div>
+                <div class="function-item">
+                    <h5>🔄 화면 전환</h5>
+                    <p>부드러운 화면 전환 애니메이션</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 화면 갤러리 -->
+        <h3>🖼️ 화면 갤러리</h3>
+        <div class="screen-grid">
+            <div class="screen-card" onclick="previewScreen('standby')">
+                <video autoplay muted loop style="width: 100%; height: 200px; object-fit: cover; border-radius: 10px; margin-bottom: 15px;">
+                    <source src="./wwwroot/images/ANIMAL/korean/StandByPage/Start.mp4" type="video/mp4">
+                </video>
+                <h4>⏰ 대기 화면</h4>
+                <p>시작 동영상 자동 재생</p>
+                <div class="file-path">StandByPage/Start.mp4</div>
+            </div>
+            <div class="screen-card" onclick="previewScreen('mainmenu')">
+                <img src="./wwwroot/images/ANIMAL/korean/MainMenu/interface.png" alt="메인 메뉴">
+                <h4>🏠 메인 메뉴</h4>
+                <p>포토카드 제작 옵션 선택</p>
+                <div class="file-path">MainMenu/interface.png</div>
+            </div>
+            <div class="screen-card" onclick="previewScreen('edit')">
+                <img src="./wwwroot/images/ANIMAL/korean/EditPage/interface1.png" alt="편집 화면">
+                <h4>✏️ 편집 화면</h4>
+                <p>이미지 편집 및 스티커 적용</p>
+                <div class="file-path">EditPage/interface1.png</div>
+            </div>
+            <div class="screen-card" onclick="previewScreen('payment')">
+                <img src="./wwwroot/images/ANIMAL/korean/Payment/selPayment.png" alt="결제 화면">
+                <h4>💳 결제 화면</h4>
+                <p>결제 수단 선택 및 결제 진행</p>
+                <div class="file-path">Payment/selPayment.png</div>
+            </div>
+            <div class="screen-card" onclick="previewScreen('finish')">
+                <img src="./wwwroot/images/ANIMAL/korean/Finish/interface.png" alt="완료 화면">
+                <h4>✅ 완료 화면</h4>
+                <p>주문 완료 및 인쇄 안내</p>
+                <div class="file-path">Finish/interface.png</div>
+            </div>
+            <div class="screen-card" onclick="previewScreen('addprint')">
+                <img src="./wwwroot/images/ANIMAL/korean/AddPrint/interface.png" alt="추가 인쇄">
+                <h4>🖨️ 추가 인쇄</h4>
+                <p>추가 인쇄 옵션 선택</p>
+                <div class="file-path">AddPrint/interface.png</div>
+            </div>
+        </div>
+
+        <!-- 동영상 데모 -->
+        <h3>🎬 동영상 데모</h3>
+        <div class="kiosk-container">
+            <div class="video-viewer" style="position: relative; background: #000000; border-radius: 15px; overflow: hidden; margin: 0 auto; max-width: 100%; box-shadow: inset 0 0 20px rgba(0,0,0,0.3);">
+                <video id="demoVideo" controls preload="auto" style="width: 100%; height: auto; display: block; border-radius: 15px;">
+                    <source src="./wwwroot/KakaoTalk_20250625_161447255.mp4" type="video/mp4">
+                    <source src="./wwwroot/images/KakaoTalk_20250625_161447255.mp4" type="video/mp4">
+                    <source src="./wwwroot/videos/KakaoTalk_20250625_161447255.mp4" type="video/mp4">
+                    <source src="KakaoTalk_20250625_161447255.mp4" type="video/mp4">
+                    브라우저가 비디오를 지원하지 않습니다.
+                </video>
+                <div id="videoLoading" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #00d4ff; font-size: 1.2rem; display: none;">
+                    🎬 동영상 로딩 중...
+                </div>
+                <div id="videoError" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #ffffff; font-size: 1.2rem; text-align: center; background: rgba(0,0,0,0.8); padding: 20px; border-radius: 10px; z-index: 10; display: none;">
+                    <div>🎬 시연 동영상</div>
+                    <div style="margin-top: 10px; font-size: 1rem; color: #cccccc;">
+                        동영상 파일을 찾을 수 없습니다.<br>
+                        파일명: KakaoTalk_20250625_161447255.mp4
+                    </div>
+                    <div style="margin-top: 15px; font-size: 0.9rem; color: #ff6b6b;">
+                        파일이 wwwroot 폴더에 있는지 확인해주세요.
+                    </div>
+                </div>
+            </div>
+            <div class="screen-info">
+                <div class="screen-title">시연 동영상</div>
+                <div class="screen-desc">
+                    POKA 키오스크 시스템의 실제 시연 동영상입니다. 키오스크의 전체적인 사용 과정을 확인할 수 있습니다.
+                </div>
+                <div class="file-path">
+                    📁 파일 경로: ./wwwroot/KakaoTalk_20250625_161447255.mp4
+                </div>
+                <div style="margin-top: 15px; padding: 10px; background: rgba(0, 212, 255, 0.1); border-radius: 10px; border: 1px solid rgba(0, 212, 255, 0.3);">
+                    <strong>💡 팁:</strong> 동영상이 재생되지 않는 경우, 파일이 wwwroot 폴더에 있는지 확인해주세요.
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: rgba(255, 107, 107, 0.1); border-radius: 10px; border: 1px solid rgba(255, 107, 107, 0.3);">
+                    <strong>🔧 문제 해결:</strong> 
+                    <button onclick="retryVideoLoad()" style="background: #00d4ff; color: #000; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; margin-left: 10px;">동영상 다시 로드</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 인터랙티브 기능 설명 -->
+        <h3>🎯 인터랙티브 기능</h3>
+        <div class="screen-grid">
+            <div class="screen-card">
+                <h4>🔄 화면 전환</h4>
+                <p>상단 버튼을 클릭하여 다양한 화면을 확인할 수 있습니다.</p>
+            </div>
+            <div class="screen-card">
+                <h4>👆 터치 인터페이스</h4>
+                <p>실제 키오스크처럼 터치로 조작하는 인터페이스를 제공합니다.</p>
+            </div>
+            <div class="screen-card">
+                <h4>🎬 동영상 재생</h4>
+                <p>시작 동영상을 통해 실제 사용 경험을 확인할 수 있습니다.</p>
+            </div>
+            <div class="screen-card">
+                <h4>ℹ️ 화면 정보</h4>
+                <p>각 화면에 대한 상세한 설명과 기능을 확인할 수 있습니다.</p>
+            </div>
+        </div>
+
+        <!-- 파일 경로 참조 -->
+        <h3>📁 파일 경로 참조</h3>
+        <div class="kiosk-functionality">
+            <div class="functionality-title">이미지 및 동영상 파일 경로</div>
+            <div class="functionality-grid">
+                <div class="function-item">
+                    <h5>대기 화면</h5>
+                    <div class="file-path">./wwwroot/images/ANIMAL/korean/StandByPage/Start.mp4</div>
+                </div>
+                <div class="function-item">
+                    <h5>메인 메뉴</h5>
+                    <div class="file-path">./wwwroot/images/ANIMAL/korean/MainMenu/interface.png</div>
+                </div>
+                <div class="function-item">
+                    <h5>편집 화면</h5>
+                    <div class="file-path">./wwwroot/images/ANIMAL/korean/EditPage/interface1.png</div>
+                </div>
+                <div class="function-item">
+                    <h5>결제 화면</h5>
+                    <div class="file-path">./wwwroot/images/ANIMAL/korean/Payment/selPayment.png</div>
+                </div>
+                <div class="function-item">
+                    <h5>완료 화면</h5>
+                    <div class="file-path">./wwwroot/images/ANIMAL/korean/Finish/interface.png</div>
+                </div>
+                <div class="function-item">
+                    <h5>추가 인쇄</h5>
+                    <div class="file-path">./wwwroot/images/ANIMAL/korean/AddPrint/interface.png</div>
+                </div>
+                <div class="function-item">
+                    <h5>시연 동영상</h5>
+                    <div class="file-path">./wwwroot/KakaoTalk_20250625_161447255.mp4</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="back-button" onclick="window.location.href='index.html'" title="홈으로 돌아가기">🏠</button>
+
+    <script>
+        // 화면 데이터 - 실제 파일 경로 포함
+        const screens = {
+            standby: {
+                type: 'video',
+                video: './wwwroot/images/ANIMAL/korean/StandByPage/Start.mp4',
+                title: '대기 화면 (Standby Page)',
+                desc: '키오스크가 대기 상태일 때 표시되는 화면입니다. 시작 동영상이 자동 재생되며, 사용자가 화면을 터치하면 메인 메뉴로 이동합니다.',
+                filePath: './wwwroot/images/ANIMAL/korean/StandByPage/Start.mp4'
+            },
+            mainmenu: {
+                image: './wwwroot/images/ANIMAL/korean/MainMenu/interface.png',
+                title: '메인 메뉴 (Main Menu)',
+                desc: '포토카드 제작을 위한 메인 메뉴 화면입니다. 다양한 옵션과 설정을 선택할 수 있습니다.',
+                filePath: './wwwroot/images/ANIMAL/korean/MainMenu/interface.png'
+            },
+            edit: {
+                image: './wwwroot/images/ANIMAL/korean/EditPage/interface1.png',
+                title: '편집 화면 (Edit Page)',
+                desc: '이미지 편집 및 스티커 적용 화면입니다. 사용자가 업로드한 이미지를 편집하고 다양한 효과를 적용할 수 있습니다.',
+                filePath: './wwwroot/images/ANIMAL/korean/EditPage/interface1.png'
+            },
+            payment: {
+                image: './wwwroot/images/ANIMAL/korean/Payment/selPayment.png',
+                title: '결제 화면 (Payment Page)',
+                desc: '결제 수단 선택 및 결제 진행 화면입니다. 현금, 라인페이, 쿠폰 등 다양한 결제 방법을 지원합니다.',
+                filePath: './wwwroot/images/ANIMAL/korean/Payment/selPayment.png'
+            },
+            finish: {
+                image: './wwwroot/images/ANIMAL/korean/Finish/interface.png',
+                title: '완료 화면 (Finish Page)',
+                desc: '주문 완료 및 인쇄 안내 화면입니다. 주문이 성공적으로 완료되었음을 알리고 인쇄 과정을 안내합니다.',
+                filePath: './wwwroot/images/ANIMAL/korean/Finish/interface.png'
+            },
+            addprint: {
+                image: './wwwroot/images/ANIMAL/korean/AddPrint/interface.png',
+                title: '추가 인쇄 (Add Print)',
+                desc: '추가 인쇄 옵션 선택 화면입니다. 사용자가 추가로 인쇄할 수 있는 옵션을 제공합니다.',
+                filePath: './wwwroot/images/ANIMAL/korean/AddPrint/interface.png'
+            }
+        };
+
+        let currentScreen = 'standby';
+
+        // 화면 변경 함수 - 실제 키오스크 기능 시뮬레이션
+        function changeScreen(screenName) {
+            if (screens[screenName]) {
+                currentScreen = screenName;
+                const screen = screens[screenName];
+                
+                // 모든 화면 요소 숨기기
+                hideAllScreenElements();
+                
+                // 배경 설정
+                const backgroundVideo = document.getElementById('backgroundVideo');
+                const backgroundImage = document.getElementById('backgroundImage');
+                
+                if (screen.type === 'video') {
+                    // 동영상 배경
+                    backgroundVideo.src = screen.video;
+                    backgroundVideo.style.display = 'block';
+                    backgroundVideo.style.opacity = '1';
+                    backgroundVideo.style.zIndex = '1';
+                    backgroundImage.style.display = 'none';
+                    backgroundImage.style.opacity = '0';
+                    backgroundImage.style.zIndex = '0';
+                    backgroundVideo.play().catch(e => console.log('동영상 재생 오류:', e));
+                } else {
+                    // 이미지 배경
+                    backgroundImage.src = screen.image;
+                    backgroundImage.style.display = 'block';
+                    backgroundImage.style.opacity = '1';
+                    backgroundImage.style.zIndex = '1';
+                    backgroundVideo.style.display = 'none';
+                    backgroundVideo.style.opacity = '0';
+                    backgroundVideo.style.zIndex = '0';
+                    backgroundVideo.pause();
+                }
+                
+                // 해당 화면 요소들 표시
+                showScreenElements(screenName);
+                
+                // 버튼 활성화 상태 변경
+                document.querySelectorAll('.screen-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                if (event && event.target) {
+                    event.target.classList.add('active');
+                }
+                
+                // 화면 정보 업데이트
+                updateScreenInfo(screen);
+                
+                // 애니메이션 효과
+                const mainScreen = document.getElementById('mainScreen');
+                mainScreen.classList.add('fade-in');
+                setTimeout(() => {
+                    mainScreen.classList.remove('fade-in');
+                }, 600);
+                
+                // 터치 효과 추가
+                if (event) {
+                    addTouchEffect(event);
+                }
+                
+                // 실제 키오스크 기능 시뮬레이션
+                simulateKioskFunctionality(screenName);
+            }
+        }
+
+        // 모든 화면 요소 숨기기
+        function hideAllScreenElements() {
+            const elements = [
+                'standbyElements', 'mainmenuElements', 'editElements', 
+                'paymentElements', 'finishElements', 'addprintElements'
+            ];
+            elements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.style.display = 'none';
+                    element.style.opacity = '0';
+                    element.style.zIndex = '0';
+                }
+            });
+        }
+
+        // 특정 화면 요소들 표시
+        function showScreenElements(screenName) {
+            const elementMap = {
+                'standby': 'standbyElements',
+                'mainmenu': 'mainmenuElements',
+                'edit': 'editElements',
+                'payment': 'paymentElements',
+                'finish': 'finishElements',
+                'addprint': 'addprintElements'
+            };
+            
+            const elementId = elementMap[screenName];
+            if (elementId) {
+                const element = document.getElementById(elementId);
+                if (element) {
+                    element.style.display = 'block';
+                    element.style.opacity = '1';
+                    element.style.zIndex = '15';
+                }
+            }
+        }
+
+        // 화면 정보 업데이트
+        function updateScreenInfo(screen) {
+            document.querySelector('.screen-title').textContent = screen.title;
+            document.querySelector('.screen-desc').textContent = screen.desc;
+            
+            // 파일 경로 업데이트
+            const filePathElement = document.querySelector('#screenInfo .file-path');
+            if (filePathElement) {
+                filePathElement.textContent = `📁 파일 경로: ${screen.filePath}`;
+            }
+        }
+
+        // 화면 미리보기
+        function previewScreen(screenName) {
+            // 해당 버튼 활성화
+            document.querySelectorAll('.screen-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // 버튼 찾기 및 활성화
+            const buttons = document.querySelectorAll('.screen-btn');
+            buttons.forEach(btn => {
+                if (btn.textContent.includes(getScreenDisplayName(screenName))) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // 화면 변경
+            changeScreen(screenName);
+            
+            // 화면 정보로 스크롤
+            document.getElementById('screenInfo').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+
+        // 화면 표시 이름 가져오기
+        function getScreenDisplayName(screenName) {
+            const displayNames = {
+                'standby': '대기 화면',
+                'mainmenu': '메인 메뉴',
+                'edit': '편집 화면',
+                'payment': '결제 화면',
+                'finish': '완료 화면',
+                'addprint': '추가 인쇄'
+            };
+            return displayNames[screenName] || screenName;
+        }
+
+        // 화면 정보 보기
+        function showScreenInfo() {
+            const screenInfo = document.getElementById('screenInfo');
+            screenInfo.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 터치 효과 추가
+        function addTouchEffect(event) {
+            const touchEffect = document.createElement('div');
+            touchEffect.className = 'touch-effect';
+            touchEffect.style.left = (event.clientX - 25) + 'px';
+            touchEffect.style.top = (event.clientY - 25) + 'px';
+            document.body.appendChild(touchEffect);
+            
+            setTimeout(() => {
+                touchEffect.remove();
+            }, 600);
+        }
+
+        // 실제 키오스크 기능 시뮬레이션
+        function simulateKioskFunctionality(screenName) {
+            console.log(`키오스크 화면 전환: ${screenName}`);
+            
+            // 실제 키오스크 해상도 시뮬레이션
+            const kioskScreen = document.getElementById('mainScreen');
+            kioskScreen.style.aspectRatio = '1324/2112';
+            
+            // 터치 이벤트 시뮬레이션
+            if ('ontouchstart' in window) {
+                console.log('터치 디바이스 감지됨 - 실제 키오스크 모드');
+            }
+            
+            // 화면 전환 로그
+            const timestamp = new Date().toLocaleTimeString();
+            console.log(`[${timestamp}] 화면 전환: ${screens[screenName].title}`);
+            
+            // 배경 요소 상태 확인 및 복구
+            setTimeout(() => {
+                const backgroundVideo = document.getElementById('backgroundVideo');
+                const backgroundImage = document.getElementById('backgroundImage');
+                const screen = screens[screenName];
+                
+                if (screen.type === 'video') {
+                    if (backgroundVideo.style.display !== 'block' || backgroundVideo.style.opacity !== '1') {
+                        console.log('동영상 배경 복구 중...');
+                        backgroundVideo.style.display = 'block';
+                        backgroundVideo.style.opacity = '1';
+                        backgroundVideo.style.zIndex = '1';
+                        backgroundImage.style.display = 'none';
+                        backgroundImage.style.opacity = '0';
+                        backgroundImage.style.zIndex = '0';
+                        backgroundVideo.play().catch(e => console.log('동영상 재생 오류:', e));
+                    }
+                } else {
+                    if (backgroundImage.style.display !== 'block' || backgroundImage.style.opacity !== '1') {
+                        console.log('이미지 배경 복구 중...');
+                        backgroundImage.style.display = 'block';
+                        backgroundImage.style.opacity = '1';
+                        backgroundImage.style.zIndex = '1';
+                        backgroundVideo.style.display = 'none';
+                        backgroundVideo.style.opacity = '0';
+                        backgroundVideo.style.zIndex = '0';
+                        backgroundVideo.pause();
+                    }
+                }
+            }, 100);
+        }
+
+        // 언어 메뉴 토글
+        function toggleLangMenu() {
+            const langMenus = document.querySelectorAll('.lang-menu');
+            langMenus.forEach(menu => {
+                if (menu.style.display === 'block') {
+                    menu.style.opacity = '0';
+                    setTimeout(() => { menu.style.display = 'none'; }, 500);
+                } else {
+                    menu.style.display = 'block';
+                    setTimeout(() => { menu.style.opacity = '1'; }, 10);
+                }
+            });
+        }
+
+        // 언어 변경
+        function changeLanguage(lang) {
+            const langButtons = document.querySelectorAll('.language-button');
+            langButtons.forEach(btn => {
+                switch(lang) {
+                    case 'korean':
+                        btn.textContent = '한국어';
+                        break;
+                    case 'chinese':
+                        btn.textContent = '中文';
+                        break;
+                    case 'english':
+                        btn.textContent = 'English';
+                        break;
+                }
+            });
+            
+            // 언어 메뉴 닫기
+            toggleLangMenu();
+            
+            console.log(`언어 변경: ${lang}`);
+        }
+
+        // 대기화면 시작 버튼
+        function simulateStartButton() {
+            console.log('시작 버튼 클릭 - 메인메뉴로 이동');
+            
+            // 버튼 활성화 상태 변경
+            document.querySelectorAll('.screen-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector('[onclick="changeScreen(\'mainmenu\')"]').classList.add('active');
+            
+            // 화면 변경
+            changeScreen('mainmenu');
+        }
+
+        // 메인메뉴 업로드 버튼
+        function simulateUploadButton() {
+            console.log('업로드 버튼 클릭 - 편집화면으로 이동');
+            
+            // 버튼 활성화 상태 변경
+            document.querySelectorAll('.screen-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector('[onclick="changeScreen(\'edit\')"]').classList.add('active');
+            
+            // 화면 변경
+            changeScreen('edit');
+        }
+
+        // 편집화면 기능들
+        function simulateImageEdit() {
+            console.log('이미지 편집 영역 클릭');
+            showNotification('이미지 편집 모드 활성화');
+        }
+
+        function simulateFlipH() {
+            console.log('수평 뒤집기');
+            showNotification('이미지가 수평으로 뒤집혔습니다');
+        }
+
+        function simulateFlipV() {
+            console.log('수직 뒤집기');
+            showNotification('이미지가 수직으로 뒤집혔습니다');
+        }
+
+        function simulateComplete() {
+            console.log('편집 완료 - 결제화면으로 이동');
+            
+            // 버튼 활성화 상태 변경
+            document.querySelectorAll('.screen-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector('[onclick="changeScreen(\'payment\')"]').classList.add('active');
+            
+            // 화면 변경
+            changeScreen('payment');
+        }
+
+        // 결제화면 기능들
+        function simulateCashPayment() {
+            console.log('현금 결제 선택');
+            showNotification('현금 결제가 선택되었습니다');
+            setTimeout(() => {
+                // 버튼 활성화 상태 변경
+                document.querySelectorAll('.screen-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelector('[onclick="changeScreen(\'finish\')"]').classList.add('active');
+                
+                // 화면 변경
+                changeScreen('finish');
+            }, 2000);
+        }
+
+        function simulateLinePayPayment() {
+            console.log('라인페이 결제 선택');
+            showNotification('라인페이 결제가 선택되었습니다');
+            setTimeout(() => {
+                // 버튼 활성화 상태 변경
+                document.querySelectorAll('.screen-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelector('[onclick="changeScreen(\'finish\')"]').classList.add('active');
+                
+                // 화면 변경
+                changeScreen('finish');
+            }, 2000);
+        }
+
+        // 추가인쇄 기능
+        function simulateAddPrint() {
+            console.log('추가 인쇄 버튼 클릭');
+            showNotification('추가 인쇄가 요청되었습니다');
+        }
+
+        // 알림 표시
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(0, 212, 255, 0.9);
+                color: #000;
+                padding: 15px 25px;
+                border-radius: 25px;
+                font-size: 1.2rem;
+                font-weight: bold;
+                z-index: 10000;
+                animation: slideDown 0.3s ease-out;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideUp 0.3s ease-out';
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 2000);
+        }
+
+        // 동영상 다시 로드 함수
+        function retryVideoLoad() {
+            const video = document.getElementById('demoVideo');
+            const videoLoading = document.getElementById('videoLoading');
+            const videoError = document.getElementById('videoError');
+            const videoViewer = document.querySelector('.video-viewer');
+            
+            if (video) {
+                console.log('동영상 다시 로드 시도...');
+                
+                // 로딩 상태 표시
+                if (videoLoading) {
+                    videoLoading.style.display = 'block';
+                }
+                if (videoError) {
+                    videoError.style.display = 'none';
+                }
+                
+                // 비디오 소스 재설정
+                video.innerHTML = `
+                    <source src="./wwwroot/KakaoTalk_20250625_161447255.mp4" type="video/mp4">
+                    <source src="./wwwroot/images/KakaoTalk_20250625_161447255.mp4" type="video/mp4">
+                    <source src="./wwwroot/videos/KakaoTalk_20250625_161447255.mp4" type="video/mp4">
+                    <source src="KakaoTalk_20250625_161447255.mp4" type="video/mp4">
+                    브라우저가 비디오를 지원하지 않습니다.
+                `;
+                
+                // 비디오 다시 로드
+                video.load();
+                
+                // 메타데이터 로드 후 크기 조정
+                video.addEventListener('loadedmetadata', function() {
+                    if (videoViewer) {
+                        const aspectRatio = video.videoWidth / video.videoHeight;
+                        const maxWidth = Math.min(window.innerWidth * 0.9, 1200);
+                        const maxHeight = window.innerHeight * 0.7;
+                        
+                        let viewerWidth = maxWidth;
+                        let viewerHeight = maxWidth / aspectRatio;
+                        
+                        if (viewerHeight > maxHeight) {
+                            viewerHeight = maxHeight;
+                            viewerWidth = maxHeight * aspectRatio;
+                        }
+                        
+                        videoViewer.style.width = viewerWidth + 'px';
+                        videoViewer.style.height = viewerHeight + 'px';
+                    }
+                }, { once: true });
+                
+                // 재생 시도
+                setTimeout(() => {
+                    if (video.readyState > 0) {
+                        video.play().catch(e => {
+                            console.log('자동 재생 실패:', e);
+                        });
+                    }
+                }, 1000);
+            }
+        }
+
+        // 알림 애니메이션
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideDown {
+                from { transform: translateX(-50%) translateY(-100%); opacity: 0; }
+                to { transform: translateX(-50%) translateY(0); opacity: 1; }
+            }
+            @keyframes slideUp {
+                from { transform: translateX(-50%) translateY(0); opacity: 1; }
+                to { transform: translateX(-50%) translateY(-100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            // 터치 디바이스 감지
+            if ('ontouchstart' in window) {
+                document.body.classList.add('touch-device');
+            }
+
+            // 뒤로가기 버튼 표시/숨김
+            const backButton = document.querySelector('.back-button');
+            let lastScrollTop = 0;
+            
+            window.addEventListener('scroll', function() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                if (scrollTop > lastScrollTop && scrollTop > 100) {
+                    // 아래로 스크롤
+                    backButton.style.opacity = '0';
+                    backButton.style.visibility = 'hidden';
+                } else {
+                    // 위로 스크롤
+                    backButton.style.opacity = '1';
+                    backButton.style.visibility = 'visible';
+                }
+                
+                lastScrollTop = scrollTop;
+            });
+
+            // 초기 상태 설정
+            backButton.style.opacity = '0';
+            backButton.style.visibility = 'hidden';
+            backButton.style.transition = 'opacity 0.3s ease, visibility 0.3s ease';
+
+            // 키보드 네비게이션
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    window.location.href = 'index.html';
+                }
+            });
+
+            // 화면 카드 호버 효과
+            const screenCards = document.querySelectorAll('.screen-card');
+            screenCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+
+            // 비디오 로딩 최적화
+            const video = document.getElementById('demoVideo');
+            const bgVideo = document.getElementById('backgroundVideo');
+            
+            if (video) {
+                const videoLoading = document.getElementById('videoLoading');
+                const videoError = document.getElementById('videoError');
+                const videoViewer = document.querySelector('.video-viewer');
+                
+                video.addEventListener('loadstart', function() {
+                    console.log('데모 비디오 로딩 시작');
+                    if (videoLoading) {
+                        videoLoading.style.display = 'block';
+                    }
+                    if (videoError) {
+                        videoError.style.display = 'none';
+                    }
+                });
+                
+                video.addEventListener('loadedmetadata', function() {
+                    console.log('비디오 메타데이터 로드 완료');
+                    console.log('비디오 해상도:', video.videoWidth + 'x' + video.videoHeight);
+                    
+                    // 비디오 해상도에 맞춰 뷰어 크기 조정
+                    if (videoViewer) {
+                        const aspectRatio = video.videoWidth / video.videoHeight;
+                        const maxWidth = Math.min(window.innerWidth * 0.9, 1200); // 최대 너비 제한
+                        const maxHeight = window.innerHeight * 0.7; // 최대 높이 제한
+                        
+                        let viewerWidth = maxWidth;
+                        let viewerHeight = maxWidth / aspectRatio;
+                        
+                        // 높이가 최대 높이를 초과하면 높이 기준으로 조정
+                        if (viewerHeight > maxHeight) {
+                            viewerHeight = maxHeight;
+                            viewerWidth = maxHeight * aspectRatio;
+                        }
+                        
+                        videoViewer.style.width = viewerWidth + 'px';
+                        videoViewer.style.height = viewerHeight + 'px';
+                        
+                        console.log('뷰어 크기 조정:', viewerWidth + 'x' + viewerHeight);
+                    }
+                });
+                
+                video.addEventListener('canplay', function() {
+                    console.log('데모 비디오 재생 준비 완료');
+                    if (videoLoading) {
+                        videoLoading.style.display = 'none';
+                    }
+                    if (videoError) {
+                        videoError.style.display = 'none';
+                    }
+                });
+                
+                video.addEventListener('error', function(e) {
+                    console.log('데모 비디오 로딩 오류:', e);
+                    if (videoLoading) {
+                        videoLoading.style.display = 'none';
+                    }
+                    if (videoError) {
+                        videoError.style.display = 'block';
+                    }
+                });
+                
+                // 비디오 로딩 완료 확인
+                setTimeout(() => {
+                    if (video.readyState === 0) {
+                        console.log('비디오 로딩 상태 확인 - 재시도');
+                        video.load();
+                    }
+                }, 2000);
+            }
+            
+            if (bgVideo) {
+                bgVideo.addEventListener('loadstart', function() {
+                    console.log('배경 비디오 로딩 시작');
+                });
+                
+                bgVideo.addEventListener('canplay', function() {
+                    console.log('배경 비디오 재생 준비 완료');
+                });
+                
+                bgVideo.addEventListener('error', function(e) {
+                    console.log('배경 비디오 로딩 오류:', e);
+                });
+                
+                bgVideo.addEventListener('ended', function() {
+                    console.log('배경 비디오 재생 완료 - 루프 재시작');
+                });
+            }
+
+            // 실제 키오스크 해상도 설정
+            const kioskScreen = document.getElementById('mainScreen');
+            kioskScreen.style.aspectRatio = '1324/2112';
+            
+            // 실제 키오스크 크기 시뮬레이션 강화
+            kioskScreen.style.maxHeight = '90vh';
+            kioskScreen.style.minHeight = '600px';
+            
+            // 초기 화면 설정 - 대기화면으로 시작
+            hideAllScreenElements();
+            showScreenElements('standby');
+            
+            // 초기 배경 설정 - 대기화면 동영상
+            const backgroundVideo = document.getElementById('backgroundVideo');
+            const backgroundImage = document.getElementById('backgroundImage');
+            backgroundVideo.style.display = 'block';
+            backgroundVideo.style.opacity = '1';
+            backgroundVideo.style.zIndex = '1';
+            backgroundImage.style.display = 'none';
+            backgroundImage.style.opacity = '0';
+            backgroundImage.style.zIndex = '0';
+            backgroundVideo.play().catch(e => console.log('초기 동영상 재생 오류:', e));
+            
+            // 언어 메뉴 초기화
+            const langMenus = document.querySelectorAll('.lang-menu');
+            langMenus.forEach(menu => {
+                menu.style.display = 'none';
+                menu.style.opacity = '0';
+            });
+            
+            // 화면 정보 초기화
+            updateScreenInfo(screens.standby);
+            
+            console.log('POKA 키오스크 시뮬레이터 초기화 완료');
+            console.log('실제 해상도: 1324 x 2112 픽셀');
+            console.log('화면 비율: 1:1.6 (세로형)');
+            console.log('인터랙티브 기능 활성화됨');
+        });
+
+        // PWA 지원
+        if ('serviceWorker' in navigator) {
+            const meta = document.createElement('meta');
+            meta.name = 'theme-color';
+            meta.content = '#000000';
+            document.head.appendChild(meta);
+        }
+
+        // 터치 이벤트 최적화
+        document.addEventListener('touchstart', function(e) {
+            // 터치 효과 추가
+            addTouchEffect(e);
+        }, { passive: true });
+
+        // 성능 최적화
+        let ticking = false;
+        function updatePerformance() {
+            ticking = false;
+        }
+
+        function requestTick() {
+            if (!ticking) {
+                requestAnimationFrame(updatePerformance);
+                ticking = true;
+            }
+        }
+
+        window.addEventListener('scroll', requestTick);
+        window.addEventListener('resize', requestTick);
+        
+        // 화면 크기 변경 시 비디오 뷰어 크기 조정
+        window.addEventListener('resize', function() {
+            const video = document.getElementById('demoVideo');
+            const videoViewer = document.querySelector('.video-viewer');
+            
+            if (video && videoViewer && video.videoWidth > 0 && video.videoHeight > 0) {
+                const aspectRatio = video.videoWidth / video.videoHeight;
+                const maxWidth = Math.min(window.innerWidth * 0.9, 1200);
+                const maxHeight = window.innerHeight * 0.7;
+                
+                let viewerWidth = maxWidth;
+                let viewerHeight = maxWidth / aspectRatio;
+                
+                if (viewerHeight > maxHeight) {
+                    viewerHeight = maxHeight;
+                    viewerWidth = maxHeight * aspectRatio;
+                }
+                
+                videoViewer.style.width = viewerWidth + 'px';
+                videoViewer.style.height = viewerHeight + 'px';
+                
+                console.log('화면 크기 변경 - 뷰어 크기 조정:', viewerWidth + 'x' + viewerHeight);
+            }
+        });
+    </script>
+</body>
+</html> 
