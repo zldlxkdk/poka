@@ -510,7 +510,7 @@
 
 .modal-actions {
     display: flex;
-    gap: 8px;
+    gap: 12px;
     padding: 16px;
     border-top: 1px solid var(--border-color);
     flex-wrap: wrap;
@@ -525,6 +525,26 @@
     flex: 1;
     min-width: 120px;
     max-width: 200px;
+    padding: 12px 8px;
+}
+
+.modal-actions .btn-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.modal-actions .btn-icon {
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+.modal-actions .btn-text {
+    font-size: 0.8rem;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
 }
 
 .modal-actions .btn-close {
@@ -577,14 +597,25 @@
     .modal-actions {
         flex-direction: row;
         flex-wrap: wrap;
-        gap: 6px;
+        gap: 8px;
     }
     
     .modal-actions .btn {
         flex: 1;
         min-width: 60px;
         max-width: none;
-        padding: 6px 4px;
+        padding: 8px 4px;
+    }
+    
+    .modal-actions .btn-content {
+        gap: 2px;
+    }
+    
+    .modal-actions .btn-icon {
+        font-size: 1rem;
+    }
+    
+    .modal-actions .btn-text {
         font-size: 0.7rem;
     }
     
@@ -625,10 +656,7 @@
         z-index: 10;
     }
     
-    .modal-actions .btn {
-        padding: 8px 12px;
-        font-size: 0.9rem;
-    }
+
     
     .modal-actions .btn-close {
         background: var(--primary-color);
