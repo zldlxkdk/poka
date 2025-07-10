@@ -859,3 +859,80 @@
         transform: translateX(100%) translateY(100%);
     }
 }
+
+/* 모바일 디바이스 최적화 */
+@media (max-width: 768px) {
+    .card-3d-container {
+        /* 모바일에서 GPU 가속 강화 */
+        transform: translate3d(0, 0, 0);
+        -webkit-transform: translate3d(0, 0, 0);
+        will-change: transform;
+        /* 모바일에서 애니메이션 부드러움 개선 */
+        animation: cardRotate 15s linear infinite;
+        -webkit-animation: cardRotate 15s linear infinite;
+    }
+    
+    .card-front,
+    .card-back {
+        /* 모바일에서 렌더링 최적화 */
+        backface-visibility: visible;
+        -webkit-backface-visibility: visible;
+        transform-style: preserve-3d;
+        -webkit-transform-style: preserve-3d;
+        will-change: transform, opacity, z-index;
+    }
+    
+    .card-front img,
+    .card-back img {
+        /* 모바일에서 이미지 렌더링 최적화 */
+        image-rendering: optimizeSpeed;
+        -webkit-image-rendering: optimizeSpeed;
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+        /* 모바일에서 부드러운 전환 */
+        transition: opacity 0.1s ease, transform 0.1s ease;
+        -webkit-transition: opacity 0.1s ease, transform 0.1s ease;
+    }
+    
+    /* 모바일에서 카드 회전 애니메이션 최적화 */
+    @keyframes cardRotate {
+        0% { 
+            transform: rotateY(0deg) rotateX(2deg) rotateZ(0deg) translateZ(0);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+        25% { 
+            transform: rotateY(90deg) rotateX(1deg) rotateZ(-1deg) translateZ(0);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        50% { 
+            transform: rotateY(180deg) rotateX(0deg) rotateZ(0deg) translateZ(0);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
+        }
+        75% { 
+            transform: rotateY(270deg) rotateX(-1deg) rotateZ(1deg) translateZ(0);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        100% { 
+            transform: rotateY(360deg) rotateX(2deg) rotateZ(0deg) translateZ(0);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+    }
+}
+
+/* 터치 디바이스 최적화 */
+@media (hover: none) and (pointer: coarse) {
+    .card-3d-container {
+        /* 터치 디바이스에서 터치 이벤트 최적화 */
+        touch-action: manipulation;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
+    }
+    
+    .card-front,
+    .card-back {
+        /* 터치 디바이스에서 렌더링 최적화 */
+        pointer-events: none;
+        -webkit-pointer-events: none;
+    }
+}
