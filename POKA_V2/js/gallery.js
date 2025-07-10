@@ -59,15 +59,27 @@ function loadImages() {
     galleryContainer.style.display = 'none';
     emptyState.style.display = 'none';
     
+    console.log('갤러리 이미지 로드 시작');
+    
     // 로컬 스토리지에서 이미지 로드
     const savedImages = POKA.AppState.getFromStorage('editedImages') || [];
     const uploadedImages = POKA.AppState.getFromStorage('uploadedImages') || [];
+    
+    console.log('로드된 이미지:', {
+        editedImages: savedImages.length,
+        uploadedImages: uploadedImages.length,
+        editedImagesData: savedImages,
+        uploadedImagesData: uploadedImages
+    });
     
     // 모든 이미지 합치기
     allImages = [
         ...savedImages.map(img => ({ ...img, type: 'edited' })),
         ...uploadedImages.map(img => ({ ...img, type: 'uploaded' }))
     ];
+    
+    console.log('전체 이미지 개수:', allImages.length);
+    console.log('전체 이미지 데이터:', allImages);
     
     // 날짜순으로 정렬 (최신순)
     allImages.sort((a, b) => {
@@ -309,9 +321,15 @@ function toggleImageFavorite(index) {
 
 // 이미지 편집
 function editImage(index) {
+    console.log('editImage 호출됨, 인덱스:', index);
+    console.log('filteredImages 길이:', filteredImages.length);
+    console.log('filteredImages:', filteredImages);
+    
     if (index >= 0 && index < filteredImages.length) {
         const image = filteredImages[index];
         console.log('편집할 이미지 설정:', image);
+        console.log('이미지 데이터 URL 존재:', !!image.dataUrl);
+        console.log('이미지 데이터 URL 길이:', image.dataUrl ? image.dataUrl.length : '없음');
         
         // AppState에 저장 (더 안전한 방법)
         try {
@@ -329,6 +347,9 @@ function editImage(index) {
         const editUrl = 'edit.html';
         console.log('편집 페이지로 이동:', editUrl);
         POKA.Navigation.navigateTo(editUrl);
+    } else {
+        console.error('유효하지 않은 이미지 인덱스:', index);
+        POKA.Toast.error('이미지를 찾을 수 없습니다');
     }
 }
 
@@ -464,9 +485,24 @@ function editCurrentImage() {
         const { image, index } = currentModalImage;
         closeImageModal();
         
-        // 편집 페이지로 이동하면서 이미지 데이터 전달
-        POKA.AppState.saveToStorage('currentEditImage', image);
-        window.location.href = 'edit.html';
+        console.log('모달에서 편집할 이미지 설정:', image);
+        
+        // AppState에 저장 (올바른 키 사용)
+        try {
+            POKA.AppState.currentImage = image;
+            POKA.AppState.saveToStorage('currentImage', image);
+            console.log('AppState.currentImage 설정 후:', POKA.AppState.currentImage);
+            console.log('저장된 이미지 데이터 길이:', image.dataUrl ? image.dataUrl.length : '없음');
+        } catch (error) {
+            console.error('AppState 저장 오류:', error);
+            POKA.Toast.error('이미지 데이터 저장 중 오류가 발생했습니다');
+            return;
+        }
+        
+        // 편집 페이지로 이동 (POKA.Navigation 사용)
+        const editUrl = 'edit.html';
+        console.log('편집 페이지로 이동:', editUrl);
+        POKA.Navigation.navigateTo(editUrl);
     }
 }
 
