@@ -491,7 +491,7 @@
 
     .modal-body img {
         max-width: 100%;
-        max-height: 95%;
+        max-height: 70%;
         width: auto;
         height: auto;
         border-radius: var(--border-radius);
@@ -580,26 +580,26 @@
     
     .modal-actions .btn {
         flex: 1;
-        min-width: 70px;
+        min-width: 60px;
         max-width: none;
-        padding: 6px 6px;
-        font-size: 0.75rem;
+        padding: 6px 4px;
+        font-size: 0.7rem;
     }
     
     .modal-content {
         max-width: 95vw;
-        max-height: 75vh;
+        max-height: 80vh;
         width: 95vw;
-        height: 75vh;
+        height: 80vh;
     }
     
     .modal-body {
-        padding: 4px 12px;
+        padding: 8px 12px;
     }
     
     .image-info {
-        margin-top: 4px;
-        margin-bottom: 8px;
+        margin-top: 8px;
+        margin-bottom: 12px;
         padding: 0 4px;
     }
     
