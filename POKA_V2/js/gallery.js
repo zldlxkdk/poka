@@ -33,6 +33,20 @@ document.addEventListener('DOMContentLoaded', () => {
             performSearch();
         }
     });
+    
+    // 페이지 포커스 시 포토카드 다시 로드 (편집 후 갤러리로 돌아왔을 때)
+    window.addEventListener('focus', () => {
+        console.log('갤러리 페이지 포커스 - 포토카드 다시 로드');
+        loadPhotoCards();
+    });
+    
+    // 페이지 가시성 변경 시에도 로드
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+            console.log('갤러리 페이지 가시성 변경 - 포토카드 다시 로드');
+            loadPhotoCards();
+        }
+    });
 });
 
 // 이벤트 리스너 설정
@@ -61,16 +75,47 @@ function loadPhotoCards() {
     
     console.log('포토카드 로드 시작');
     
-    // 로컬 스토리지에서 포토카드 로드
-    const savedPhotoCards = POKA.AppState.getFromStorage('photoCards') || [];
+    // localStorage에서 직접 포토카드 로드 (POKA.AppState 대신 직접 접근)
+    const savedPhotoCards = JSON.parse(localStorage.getItem('photoCards') || '[]');
+    const savedGallery = JSON.parse(localStorage.getItem('gallery') || '[]');
     
-    console.log('로드된 포토카드:', {
+    console.log('localStorage에서 읽은 데이터:', {
         photoCards: savedPhotoCards.length,
-        photoCardsData: savedPhotoCards
+        gallery: savedGallery.length,
+        photoCardsData: savedPhotoCards,
+        galleryData: savedGallery
+    });
+    
+    // 포토카드 타입인 것들만 필터링
+    const photoCardItems = savedGallery.filter(item => item.type === 'photoCard');
+    
+    // 두 배열을 합치고 중복 제거
+    const allPhotoCards = [...savedPhotoCards, ...photoCardItems];
+    const uniquePhotoCards = allPhotoCards.filter((card, index, self) => 
+        index === self.findIndex(c => c.id === card.id)
+    );
+    
+    console.log('최종 로드된 포토카드:', {
+        photoCards: uniquePhotoCards.length,
+        photoCardsData: uniquePhotoCards
+    });
+    
+    // 각 포토카드의 이미지 데이터 확인
+    uniquePhotoCards.forEach((card, index) => {
+        console.log(`포토카드 ${index + 1}:`, {
+            id: card.id,
+            name: card.name,
+            frontImageLength: card.frontImage ? card.frontImage.length : 0,
+            backImageLength: card.backImage ? card.backImage.length : 0,
+            frontImageStart: card.frontImage ? card.frontImage.substring(0, 50) : '없음',
+            backImageStart: card.backImage ? card.backImage.substring(0, 50) : '없음',
+            frontImageEnd: card.frontImage ? card.frontImage.substring(card.frontImage.length - 20) : '없음',
+            backImageEnd: card.backImage ? card.backImage.substring(card.backImage.length - 20) : '없음'
+        });
     });
     
     // 포토카드 배열 설정
-    photoCards = savedPhotoCards;
+    photoCards = uniquePhotoCards;
     
     console.log('전체 포토카드 개수:', photoCards.length);
     console.log('전체 포토카드 데이터:', photoCards);
@@ -158,6 +203,15 @@ function renderGallery() {
 
 // 포토카드 아이템 생성
 function createPhotoCardItem(photoCard, index) {
+    console.log('포토카드 생성:', {
+        id: photoCard.id,
+        name: photoCard.name,
+        frontImage: photoCard.frontImage,
+        backImage: photoCard.backImage,
+        frontImageName: photoCard.frontImageName,
+        backImageName: photoCard.backImageName
+    });
+    
     const item = document.createElement('div');
     item.className = 'gallery-item photo-card-item';
     item.dataset.cardId = photoCard.id;
@@ -172,14 +226,21 @@ function createPhotoCardItem(photoCard, index) {
         <div class="photo-card-container">
             <div class="photo-card">
                 <div class="photo-card-front">
-                    <img src="${photoCard.frontImage}" alt="${photoCard.name || '앞면'}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <img src="${photoCard.frontImage}" alt="${photoCard.name || '앞면'}" loading="eager" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" onload="this.style.opacity='1';">
                     <div class="image-fallback">🖼️</div>
                 </div>
                 <div class="photo-card-back">
-                    <img src="${photoCard.backImage}" alt="${photoCard.name || '뒷면'}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <img src="${photoCard.backImage}" alt="${photoCard.name || '뒷면'}" loading="eager" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" onload="this.style.opacity='1';">
                     <div class="image-fallback">🖼️</div>
                 </div>
+                <!-- 카드 측면들 (두께감 표현) -->
+                <div class="photo-card-side photo-card-side-top"></div>
+                <div class="photo-card-side photo-card-side-bottom"></div>
+                <div class="photo-card-side photo-card-side-left"></div>
+                <div class="photo-card-side photo-card-side-right"></div>
             </div>
+            <!-- 카드 이름 표시 -->
+            <div class="photo-card-name">${photoCard.name || '제목 없음'}</div>
         </div>
         <div class="gallery-item-overlay">
             <div class="gallery-item-info">
@@ -187,13 +248,15 @@ function createPhotoCardItem(photoCard, index) {
                 <div class="gallery-item-date">${formattedDate}</div>
             </div>
         </div>
-        <div class="gallery-item-badge">포토카드</div>
     `;
     
     // 클릭 이벤트
     item.addEventListener('click', (e) => {
         openPhotoCardModal(photoCard, index);
     });
+    
+    // 애니메이션 지연 설정
+    item.style.animationDelay = `${index * 0.1}s`;
     
     return item;
 }
@@ -382,15 +445,24 @@ function editCurrentPhotoCard() {
         
         console.log('모달에서 편집할 포토카드 설정:', photoCard);
         
-        // AppState에 저장
+        // localStorage에 직접 저장 (더 안정적)
+        try {
+            localStorage.setItem('currentPhotoCard', JSON.stringify(photoCard));
+            console.log('localStorage에 포토카드 데이터 저장됨');
+        } catch (error) {
+            console.error('localStorage 저장 오류:', error);
+            POKA.Toast.error('포토카드 데이터 저장 중 오류가 발생했습니다');
+            return;
+        }
+        
+        // AppState에도 저장 (호환성)
         try {
             POKA.AppState.currentPhotoCard = photoCard;
             POKA.AppState.saveToStorage('currentPhotoCard', photoCard);
             console.log('AppState.currentPhotoCard 설정 후:', POKA.AppState.currentPhotoCard);
         } catch (error) {
             console.error('AppState 저장 오류:', error);
-            POKA.Toast.error('포토카드 데이터 저장 중 오류가 발생했습니다');
-            return;
+            // localStorage에 저장되었으므로 계속 진행
         }
         
         // 편집 페이지로 이동
