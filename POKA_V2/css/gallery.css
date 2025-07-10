@@ -392,9 +392,9 @@
     background: var(--surface-color);
     border-radius: var(--border-radius-large);
     max-width: 90vw;
-    max-height: 80vh;
+    max-height: 85vh;
     width: 90vw;
-    height: 80vh;
+    height: 85vh;
     overflow: hidden;
     box-shadow: var(--shadow-heavy);
     animation: modalSlideIn 0.3s ease-out;
@@ -473,11 +473,12 @@
     align-items: center;
     justify-content: flex-start;
     min-height: 0;
+    padding-bottom: 0;
 }
 
     .modal-body img {
         max-width: 100%;
-        max-height: 70%;
+        max-height: 60%;
         width: auto;
         height: auto;
         border-radius: var(--border-radius);
@@ -487,10 +488,11 @@
 
 .image-info {
     margin-top: 12px;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
     text-align: left;
     width: 100%;
     padding: 0 8px;
+    padding-bottom: 16px;
 }
 
 .image-info h3 {
@@ -514,6 +516,9 @@
     flex-wrap: wrap;
     justify-content: center;
     flex-shrink: 0;
+    background: var(--surface-color);
+    position: relative;
+    z-index: 10;
 }
 
 .modal-actions .btn {
@@ -522,13 +527,13 @@
     max-width: 200px;
 }
 
-.modal-actions .btn:last-child {
+.modal-actions .btn-close {
     background: var(--primary-color);
     color: white;
     border-color: var(--primary-color);
 }
 
-.modal-actions .btn:last-child:hover {
+.modal-actions .btn-close:hover {
     background: var(--primary-dark);
     border-color: var(--primary-dark);
 }
@@ -585,19 +590,21 @@
     
     .modal-content {
         max-width: 95vw;
-        max-height: 85vh;
+        max-height: 90vh;
         width: 95vw;
-        height: 85vh;
+        height: 90vh;
     }
     
     .modal-body {
         padding: 8px 12px;
+        padding-bottom: 0;
     }
     
     .image-info {
         margin-top: 8px;
-        margin-bottom: 16px;
+        margin-bottom: 20px;
         padding: 0 4px;
+        padding-bottom: 16px;
     }
     
     .image-info h3 {
@@ -613,6 +620,9 @@
     .modal-actions {
         padding: 8px 12px;
         flex-shrink: 0;
+        background: var(--surface-color);
+        position: relative;
+        z-index: 10;
     }
     
     .modal-actions .btn {
@@ -620,7 +630,7 @@
         font-size: 0.9rem;
     }
     
-    .modal-actions .btn:last-child {
+    .modal-actions .btn-close {
         background: var(--primary-color);
         color: white;
         border-color: var(--primary-color);
