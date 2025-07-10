@@ -1438,6 +1438,8 @@ function selectImageForPhotoCard(image, type) {
 
 // 이미지 편집 상태 로드
 function loadImageEditState(side) {
+    console.log('이미지 편집 상태 로드:', side);
+    
     let editState;
     
     if (side === 'front') {
@@ -1458,6 +1460,8 @@ function loadImageEditState(side) {
         };
     }
     
+    console.log('로드할 이미지:', currentImage);
+    
     // 편집 상태 적용
     if (editState) {
         currentRotation = editState.rotation;
@@ -1465,6 +1469,7 @@ function loadImageEditState(side) {
         currentFlipVertical = editState.flipVertical;
         currentFilter = editState.filter;
         emojis = [...editState.emojis];
+        console.log('기존 편집 상태 적용:', editState);
     } else {
         // 새로운 편집 상태 생성
         currentRotation = 0;
@@ -1472,31 +1477,62 @@ function loadImageEditState(side) {
         currentFlipVertical = false;
         currentFilter = 'none';
         emojis = [];
+        console.log('새로운 편집 상태 생성');
     }
     
     // 이미지 표시
+    console.log('이미지 src 설정:', currentImage.dataUrl);
     editImage.src = currentImage.dataUrl;
     editImage.style.display = 'block';
     imageFallback.style.display = 'none';
     
-    // 편집 상태 초기화
-    renderEmojis();
-    
-    // 필터 버튼 초기화
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    
-    // 현재 필터 버튼 활성화
-    if (currentFilter !== 'none') {
-        const activeBtn = document.querySelector(`[onclick="applyFilter('${currentFilter}')"]`);
-        if (activeBtn) {
-            activeBtn.classList.add('active');
+    // 이미지 로드 완료 대기
+    editImage.onload = function() {
+        console.log('포토카드 이미지 로드 완료:', side);
+        console.log('이미지 크기:', editImage.naturalWidth, 'x', editImage.naturalHeight);
+        editImage.style.display = 'block';
+        imageFallback.style.display = 'none';
+        
+        // 편집 상태 초기화
+        renderEmojis();
+        
+        // 필터 버튼 초기화
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        // 현재 필터 버튼 활성화
+        if (currentFilter !== 'none') {
+            const activeBtn = document.querySelector(`[onclick="applyFilter('${currentFilter}')"]`);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+            }
         }
-    }
+        
+        // 회전 슬라이더 초기화
+        initRotationSlider();
+        
+        // 편집 상태 적용 (회전, 반전 등)
+        if (currentRotation !== 0 || currentFlipHorizontal || currentFlipVertical) {
+            applyImageTransform();
+        }
+        
+        POKA.Toast.success(`${side === 'front' ? '앞면' : '뒷면'} 이미지가 로드되었습니다`);
+    };
     
-    // 회전 슬라이더 초기화
-    initRotationSlider();
+    editImage.onerror = function() {
+        console.error('포토카드 이미지 로드 실패:', side);
+        console.error('실패한 이미지 src:', currentImage.dataUrl);
+        editImage.style.display = 'none';
+        imageFallback.style.display = 'flex';
+        POKA.Toast.error('이미지 로드에 실패했습니다');
+    };
+    
+    // 이미지가 이미 로드되어 있는 경우 (캐시된 경우)
+    if (editImage.complete && editImage.naturalWidth > 0) {
+        console.log('이미지가 이미 로드되어 있음:', side);
+        editImage.onload();
+    }
 }
 
 // 포토카드 선택 화면으로 돌아가기
