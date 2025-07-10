@@ -19,10 +19,10 @@
                 <h1 class="page-title">갤러리</h1>
                 <div class="header-actions">
                     <button class="header-btn" onclick="toggleViewMode()" title="보기 모드 변경">
-                        <span class="btn-icon">??</span>
+                        <span class="btn-icon">🔄</span>
                     </button>
                     <button class="header-btn" onclick="showSortOptions()" title="정렬 옵션">
-                        <span class="btn-icon">?</span>
+                        <span class="btn-icon">⚙️</span>
                     </button>
                 </div>
             </div>
@@ -35,7 +35,7 @@
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="이미지 검색...">
                     <button class="search-btn" onclick="performSearch()">
-                        <span class="btn-icon">?</span>
+                        <span class="btn-icon">🔍</span>
                     </button>
                 </div>
                 
@@ -62,11 +62,11 @@
                 
                 <!-- 빈 상태 -->
                 <div class="empty-state" id="emptyState" style="display: none;">
-                    <div class="empty-icon">?</div>
+                    <div class="empty-icon">📷</div>
                     <h3>아직 포토카드가 없습니다</h3>
                     <p>첫 번째 포토카드를 만들어보세요!</p>
                     <button class="btn btn-primary" onclick="POKA.Navigation.navigateTo('upload.html')">
-                        <span class="btn-icon">?</span>
+                        <span class="btn-icon">📤</span>
                         사진 업로드하기
                     </button>
                 </div>
@@ -82,19 +82,19 @@
         <!-- 네비게이션 바 -->
         <nav class="bottom-nav">
             <a href="index.html" class="nav-item">
-                <span class="nav-icon">?</span>
+                <span class="nav-icon">🏠</span>
                 <span class="nav-text">홈</span>
             </a>
             <a href="upload.html" class="nav-item">
-                <span class="nav-icon">?</span>
+                <span class="nav-icon">📷</span>
                 <span class="nav-text">업로드</span>
             </a>
             <a href="gallery.html" class="nav-item active">
-                <span class="nav-icon">??</span>
+                <span class="nav-icon">🖼️</span>
                 <span class="nav-text">갤러리</span>
             </a>
             <a href="profile.html" class="nav-item">
-                <span class="nav-icon">?</span>
+                <span class="nav-icon">👤</span>
                 <span class="nav-text">프로필</span>
             </a>
         </nav>
@@ -110,7 +110,7 @@
             <div class="modal-body">
                 <img id="modalImage" src="" alt="">
                 <div class="image-fallback modal-fallback" id="modalImageFallback">
-                    ??
+                    📷
                 </div>
                 <div class="image-info">
                     <h3 id="modalTitle"></h3>
@@ -120,23 +120,23 @@
             </div>
             <div class="modal-actions">
                 <button class="btn btn-secondary" onclick="editCurrentImage()">
-                    <span class="btn-icon">??</span>
+                    <span class="btn-icon">✏️</span>
                     편집
                 </button>
                 <button class="btn btn-primary" onclick="downloadImage()">
-                    <span class="btn-icon">??</span>
+                    <span class="btn-icon">⬇️</span>
                     다운로드
                 </button>
                 <button class="btn btn-secondary" onclick="shareImage()">
-                    <span class="btn-icon">?</span>
+                    <span class="btn-icon">📤</span>
                     공유
                 </button>
                 <button class="btn btn-secondary" onclick="toggleFavorite()">
-                    <span class="btn-icon" id="favoriteIcon">?</span>
+                    <span class="btn-icon" id="favoriteIcon">⭐</span>
                     <span id="favoriteText">즐겨찾기</span>
                 </button>
                 <button class="btn btn-secondary" onclick="deleteCurrentImage()">
-                    <span class="btn-icon">??</span>
+                    <span class="btn-icon">🗑️</span>
                     삭제
                 </button>
             </div>
