@@ -185,12 +185,19 @@ async function handleFiles(files) {
         
         // 이미지 처리 및 압축
         const processedImages = [];
-        for (const file of validFiles) {
+        for (let i = 0; i < validFiles.length; i++) {
+            const file = validFiles[i];
             try {
-                console.log('이미지 처리 중:', file.name);
+                console.log(`이미지 처리 중 (${i + 1}/${validFiles.length}):`, file.name);
+                
+                // 각 이미지 처리 사이에 약간의 지연 추가 (첫 번째 이미지 안정화)
+                if (i === 0) {
+                    await new Promise(resolve => setTimeout(resolve, 50));
+                }
+                
                 const processedImage = await processImage(file);
                 processedImages.push({
-                    id: Date.now() + Math.random(),
+                    id: Date.now() + Math.random() + i, // 고유 ID 보장
                     file: file,
                     dataUrl: processedImage,
                     name: file.name,
@@ -198,24 +205,28 @@ async function handleFiles(files) {
                     type: file.type,
                     uploadedAt: new Date().toISOString()
                 });
-                console.log('이미지 처리 완료:', file.name);
+                console.log(`이미지 처리 완료 (${i + 1}/${validFiles.length}):`, file.name);
+                
             } catch (error) {
-                console.error('Image processing error:', error);
-                POKA.Toast.error(`${file.name} 처리 중 오류가 발생했습니다`);
+                console.error(`이미지 처리 오류 (${i + 1}/${validFiles.length}):`, file.name, error);
+                POKA.Toast.error(`${file.name} 처리 중 오류가 발생했습니다: ${error.message}`);
             }
         }
         
         // 업로드된 이미지 배열에 추가
-        uploadedImages.push(...processedImages);
-        
-        // 미리보기 업데이트
-        updateImagePreview();
-        
-        // 성공 메시지
         if (processedImages.length > 0) {
+            uploadedImages.push(...processedImages);
+            
+            // 미리보기 업데이트
+            updateImagePreview();
+            
+            // 성공 메시지
             POKA.Toast.success(`${processedImages.length}개의 이미지가 업로드되었습니다`);
+            
             // 업로드된 이미지 저장
             saveUploadedImages();
+        } else {
+            POKA.Toast.warning('처리할 수 있는 이미지가 없습니다');
         }
         
     } catch (error) {
@@ -230,59 +241,104 @@ async function handleFiles(files) {
 // 이미지 처리
 async function processImage(file) {
     return new Promise((resolve, reject) => {
+        // 브라우저 호환성 검사
+        if (!window.FileReader) {
+            reject(new Error('이 브라우저는 파일 읽기를 지원하지 않습니다'));
+            return;
+        }
+        
+        if (!window.HTMLCanvasElement) {
+            reject(new Error('이 브라우저는 Canvas를 지원하지 않습니다'));
+            return;
+        }
+        
         const reader = new FileReader();
         
         reader.onload = async (e) => {
             try {
                 const img = new Image();
+                
+                // 이미지 로드 완료 대기
                 img.onload = () => {
-                    // 최소 크기 검증 (300x300)
-                    if (img.width < 300 || img.height < 300) {
-                        reject(new Error('이미지 크기가 너무 작습니다 (최소 300x300px)'));
-                        return;
+                    try {
+                        // 최소 크기 검증 (300x300)
+                        if (img.width < 300 || img.height < 300) {
+                            reject(new Error('이미지 크기가 너무 작습니다 (최소 300x300px)'));
+                            return;
+                        }
+                        
+                        // Canvas 생성 및 컨텍스트 가져오기
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        
+                        if (!ctx) {
+                            reject(new Error('Canvas 컨텍스트를 가져올 수 없습니다'));
+                            return;
+                        }
+                        
+                        // 비율 유지하면서 크기 조정 (최대 1024px)
+                        const maxSize = 1024;
+                        let { width, height } = img;
+                        
+                        if (width > maxSize || height > maxSize) {
+                            const ratio = Math.min(maxSize / width, maxSize / height);
+                            width = Math.round(width * ratio);
+                            height = Math.round(height * ratio);
+                        }
+                        
+                        // Canvas 크기 설정
+                        canvas.width = width;
+                        canvas.height = height;
+                        
+                        // 이미지 그리기
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // 압축된 이미지 반환 (품질 조정)
+                        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                        
+                        // 메모리 정리
+                        canvas.width = 0;
+                        canvas.height = 0;
+                        
+                        resolve(compressedDataUrl);
+                        
+                    } catch (canvasError) {
+                        console.error('Canvas 처리 오류:', canvasError);
+                        reject(new Error('이미지 압축 처리 중 오류가 발생했습니다'));
                     }
-                    
-                    // 이미지 압축
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    
-                    // 비율 유지하면서 크기 조정 (최대 1024px)
-                    const maxSize = 1024;
-                    let { width, height } = img;
-                    
-                    if (width > maxSize || height > maxSize) {
-                        const ratio = Math.min(maxSize / width, maxSize / height);
-                        width *= ratio;
-                        height *= ratio;
-                    }
-                    
-                    canvas.width = width;
-                    canvas.height = height;
-                    
-                    // 이미지 그리기
-                    ctx.drawImage(img, 0, 0, width, height);
-                    
-                    // 압축된 이미지 반환
-                    const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
-                    resolve(compressedDataUrl);
                 };
                 
+                // 이미지 로드 오류 처리
                 img.onerror = () => {
                     reject(new Error('이미지 로드에 실패했습니다'));
                 };
                 
-                img.src = e.target.result;
+                // 이미지 크로스 오리진 설정
+                img.crossOrigin = 'anonymous';
+                
+                // 이미지 소스 설정 (약간의 지연 후)
+                setTimeout(() => {
+                    img.src = e.target.result;
+                }, 10);
                 
             } catch (error) {
-                reject(error);
+                console.error('이미지 처리 초기화 오류:', error);
+                reject(new Error('이미지 처리 초기화 중 오류가 발생했습니다'));
             }
         };
         
+        // 파일 읽기 오류 처리
         reader.onerror = () => {
             reject(new Error('파일 읽기에 실패했습니다'));
         };
         
-        reader.readAsDataURL(file);
+        // 파일 읽기 시작
+        try {
+            reader.readAsDataURL(file);
+        } catch (readError) {
+            console.error('파일 읽기 시작 오류:', readError);
+            reject(new Error('파일 읽기를 시작할 수 없습니다'));
+        }
     });
 }
 
