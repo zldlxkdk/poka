@@ -390,11 +390,15 @@ function openImageModal(image, index) {
     const favoriteIcon = document.getElementById('favoriteIcon');
     const favoriteText = document.getElementById('favoriteText');
     
-    // 초기 상태 설정
+    // 모달 표시
+    imageModal.style.display = 'flex';
+    
+    // 초기 상태 설정 - 이미지 소스 초기화
+    modalImage.src = '';
     modalImage.style.display = 'none';
     modalImageFallback.style.display = 'flex';
     
-    // 이미지 로드 완료 후 표시
+    // 이벤트 리스너 설정
     modalImage.onload = function() {
         modalImage.style.display = 'block';
         modalImageFallback.style.display = 'none';
@@ -405,7 +409,7 @@ function openImageModal(image, index) {
         modalImageFallback.style.display = 'flex';
     };
     
-    modalImage.src = image.dataUrl;
+    // 정보 업데이트
     modalTitle.textContent = image.name || '제목 없음';
     modalDate.textContent = `생성일: ${new Date(image.createdAt || image.uploadedAt).toLocaleString('ko-KR')}`;
     modalSize.textContent = `크기: ${formatFileSize(image.size || 0)}`;
@@ -418,7 +422,10 @@ function openImageModal(image, index) {
         favoriteText.textContent = '즐겨찾기';
     }
     
-    imageModal.style.display = 'flex';
+    // 이미지 소스 설정 (이벤트 리스너 설정 후)
+    setTimeout(() => {
+        modalImage.src = image.dataUrl;
+    }, 100);
 }
 
 // 이미지 모달 닫기
@@ -429,9 +436,13 @@ function closeImageModal() {
     // 모달 이미지와 폴백 초기화
     const modalImage = document.getElementById('modalImage');
     const modalImageFallback = document.getElementById('modalImageFallback');
+    
+    // 이미지 소스와 이벤트 리스너 제거
+    modalImage.onload = null;
+    modalImage.onerror = null;
+    modalImage.src = '';
     modalImage.style.display = 'none';
     modalImageFallback.style.display = 'none';
-    modalImage.src = '';
 }
 
 // 현재 이미지 편집
