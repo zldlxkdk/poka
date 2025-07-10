@@ -476,6 +476,7 @@
     border-top: 1px solid var(--border-color);
     flex-wrap: wrap;
     justify-content: center;
+    flex-shrink: 0;
 }
 
 .modal-actions .btn {
@@ -530,13 +531,41 @@
     
     .modal-content {
         max-width: 95vw;
-        max-height: 85vh;
+        max-height: 70vh;
         width: 95vw;
-        height: 85vh;
+        height: 70vh;
     }
     
     .modal-body {
-        padding: 16px;
+        padding: 8px 12px;
+    }
+    
+    .image-info {
+        margin-top: 8px;
+    }
+    
+    .image-info h3 {
+        font-size: 1rem;
+        margin-bottom: 4px;
+    }
+    
+    .image-info p {
+        font-size: 0.8rem;
+        margin-bottom: 2px;
+    }
+    
+    .modal-actions {
+        padding: 12px;
+    }
+    
+    .modal-header {
+        padding: 8px 12px;
+        flex-shrink: 0;
+    }
+    
+    .modal-close {
+        font-size: 1.2rem;
+        padding: 2px;
     }
 }
 
