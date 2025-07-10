@@ -23,6 +23,35 @@ let currentEditingSide = 'front'; // 현재 편집 중인 면 ('front' 또는 'b
 let frontImageEditState = null; // 앞면 이미지 편집 상태
 let backImageEditState = null; // 뒷면 이미지 편집 상태
 
+// 포토카드 편집 상태
+let photoCardEditState = {
+    front: {
+        image: null,
+        rotation: 0,
+        flip: { horizontal: false, vertical: false },
+        filter: 'none',
+        emojis: []
+    },
+    back: {
+        image: null,
+        rotation: 0,
+        flip: { horizontal: false, vertical: false },
+        filter: 'none',
+        emojis: []
+    }
+};
+
+// 편집 모드 상태
+let editMode = 'single'; // 'single' 또는 'photoCard'
+
+// 이미지 편집 상태 (기존 단일 이미지용)
+let imageEditState = {
+    rotation: 0,
+    flip: { horizontal: false, vertical: false },
+    filter: 'none',
+    emojis: []
+};
+
 // DOM 요소들
 const editImage = document.getElementById('editImage');
 const imageFallback = document.getElementById('imageFallback');
@@ -1535,28 +1564,408 @@ function loadImageEditState(side) {
     }
 }
 
-// 포토카드 선택 화면으로 돌아가기
+// 포토카드 편집 모드로 전환
+function enterPhotoCardEditMode() {
+    editMode = 'photoCard';
+    
+    // 포토카드 동시 편집 화면 표시
+    document.getElementById('photoCardSimultaneousEdit').style.display = 'block';
+    document.getElementById('singleImageEdit').style.display = 'none';
+    
+    // 포토카드 데이터 로드
+    loadPhotoCardData();
+}
+
+// 포토카드 데이터 로드
+function loadPhotoCardData() {
+    const photoCardData = JSON.parse(localStorage.getItem('currentPhotoCardData') || '{}');
+    
+    // 앞면 이미지 처리
+    if (photoCardData.frontImage) {
+        photoCardEditState.front.image = photoCardData.frontImage;
+        document.getElementById('frontEditImage').src = photoCardData.frontImage;
+        document.getElementById('frontImageFallback').style.display = 'none';
+        document.getElementById('frontEditImage').style.display = 'block';
+    } else {
+        photoCardEditState.front.image = null;
+        document.getElementById('frontImageFallback').style.display = 'flex';
+        document.getElementById('frontEditImage').style.display = 'none';
+    }
+    
+    // 뒷면 이미지 처리
+    if (photoCardData.backImage) {
+        photoCardEditState.back.image = photoCardData.backImage;
+        document.getElementById('backEditImage').src = photoCardData.backImage;
+        document.getElementById('backImageFallback').style.display = 'none';
+        document.getElementById('backEditImage').style.display = 'block';
+    } else {
+        photoCardEditState.back.image = null;
+        document.getElementById('backImageFallback').style.display = 'flex';
+        document.getElementById('backEditImage').style.display = 'none';
+    }
+    
+    // 이미지 클릭 이벤트 추가
+    setupImageClickEvents();
+}
+
+// 이미지 클릭 이벤트 설정
+function setupImageClickEvents() {
+    const frontContainer = document.getElementById('frontImageEditContainer');
+    const backContainer = document.getElementById('backImageEditContainer');
+    
+    frontContainer.onclick = function(e) {
+        if (e.target === frontContainer || e.target.id === 'frontImageFallback') {
+            selectImageForUpload('front');
+        }
+    };
+    
+    backContainer.onclick = function(e) {
+        if (e.target === backContainer || e.target.id === 'backImageFallback') {
+            selectImageForUpload('back');
+        }
+    };
+}
+
+// 이미지 업로드 선택
+function selectImageForUpload(side) {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imageData = e.target.result;
+                photoCardEditState[side].image = imageData;
+                
+                const imageElement = document.getElementById(side === 'front' ? 'frontEditImage' : 'backEditImage');
+                const fallbackElement = document.getElementById(side === 'front' ? 'frontImageFallback' : 'backImageFallback');
+                
+                imageElement.src = imageData;
+                imageElement.style.display = 'block';
+                fallbackElement.style.display = 'none';
+                
+                // 편집 상태 초기화
+                resetImageEdit(side);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+    input.click();
+}
+
+// 이미지 편집 초기화
+function resetImageEdit(side) {
+    photoCardEditState[side] = {
+        image: photoCardEditState[side].image,
+        rotation: 0,
+        flip: { horizontal: false, vertical: false },
+        filter: 'none',
+        emojis: []
+    };
+    
+    applyImageEditState(side);
+    clearEmojisEdit(side);
+}
+
+// 이미지 편집 상태 적용
+function applyImageEditState(side) {
+    const imageElement = document.getElementById(side === 'front' ? 'frontEditImage' : 'backEditImage');
+    const state = photoCardEditState[side];
+    
+    // 회전 적용
+    let transform = `rotate(${state.rotation}deg)`;
+    
+    // 뒤집기 적용
+    if (state.flip.horizontal) {
+        transform += ' scaleX(-1)';
+    }
+    if (state.flip.vertical) {
+        transform += ' scaleY(-1)';
+    }
+    
+    imageElement.style.transform = transform;
+    
+    // 필터 적용
+    let filter = '';
+    switch (state.filter) {
+        case 'grayscale':
+            filter = 'grayscale(100%)';
+            break;
+        case 'sepia':
+            filter = 'sepia(100%)';
+            break;
+        case 'brightness':
+            filter = 'brightness(150%)';
+            break;
+        default:
+            filter = 'none';
+    }
+    imageElement.style.filter = filter;
+}
+
+// 이미지 회전
+function rotateImageEdit(side, angle) {
+    photoCardEditState[side].rotation += angle;
+    applyImageEditState(side);
+}
+
+// 이미지 뒤집기
+function flipImageEdit(side, direction) {
+    if (direction === 'horizontal') {
+        photoCardEditState[side].flip.horizontal = !photoCardEditState[side].flip.horizontal;
+    } else if (direction === 'vertical') {
+        photoCardEditState[side].flip.vertical = !photoCardEditState[side].flip.vertical;
+    }
+    applyImageEditState(side);
+}
+
+// 필터 적용
+function applyFilterEdit(side, filter) {
+    photoCardEditState[side].filter = filter;
+    applyImageEditState(side);
+    
+    // 필터 버튼 활성화 상태 업데이트
+    const container = document.getElementById(side === 'front' ? 'frontImageEditContainer' : 'backImageEditContainer');
+    const filterButtons = container.parentElement.querySelectorAll('.filter-btn');
+    filterButtons.forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.textContent === filter || (filter === 'none' && btn.textContent === '원본')) {
+            btn.classList.add('active');
+        }
+    });
+}
+
+// 이모지 추가
+function addEmojiEdit(side, emoji) {
+    const emojiLayer = document.getElementById(side === 'front' ? 'frontEmojiLayer' : 'backEmojiLayer');
+    const container = document.getElementById(side === 'front' ? 'frontImageEditContainer' : 'backImageEditContainer');
+    
+    const emojiElement = document.createElement('div');
+    emojiElement.className = 'emoji';
+    emojiElement.textContent = emoji;
+    emojiElement.style.left = '50%';
+    emojiElement.style.top = '50%';
+    emojiElement.style.transform = 'translate(-50%, -50%)';
+    
+    // 드래그 기능 추가
+    makeDraggable(emojiElement);
+    
+    // 클릭으로 삭제
+    emojiElement.onclick = function(e) {
+        e.stopPropagation();
+        emojiElement.remove();
+    };
+    
+    emojiLayer.appendChild(emojiElement);
+    photoCardEditState[side].emojis.push(emojiElement);
+}
+
+// 이모지 삭제
+function clearEmojisEdit(side) {
+    const emojiLayer = document.getElementById(side === 'front' ? 'frontEmojiLayer' : 'backEmojiLayer');
+    emojiLayer.innerHTML = '';
+    photoCardEditState[side].emojis = [];
+}
+
+// 포토카드 저장
+async function savePhotoCard() {
+    const photoCardName = localStorage.getItem('currentPhotoCardName') || '포토카드';
+    
+    try {
+        // 편집된 이미지들을 캡처하여 저장
+        const frontCanvas = await captureImageWithEmojis('front');
+        const backCanvas = await captureImageWithEmojis('back');
+        
+        const photoCardData = {
+            name: photoCardName,
+            frontImage: frontCanvas.toDataURL(),
+            backImage: backCanvas.toDataURL(),
+            createdAt: new Date().toISOString(),
+            id: Date.now().toString()
+        };
+        
+        // 갤러리에 저장
+        let gallery = JSON.parse(localStorage.getItem('gallery') || '[]');
+        gallery.push(photoCardData);
+        localStorage.setItem('gallery', JSON.stringify(gallery));
+        
+        alert('포토카드가 성공적으로 저장되었습니다!');
+        
+        // 갤러리로 이동
+        window.location.href = 'gallery.html';
+    } catch (error) {
+        console.error('포토카드 저장 중 오류:', error);
+        alert('포토카드 저장 중 오류가 발생했습니다.');
+    }
+}
+
+// 이미지와 이모지를 캡처
+function captureImageWithEmojis(side) {
+    return new Promise((resolve) => {
+        const container = document.getElementById(side === 'front' ? 'frontImageEditContainer' : 'backImageEditContainer');
+        const imageElement = document.getElementById(side === 'front' ? 'frontEditImage' : 'backEditImage');
+        const emojiLayer = document.getElementById(side === 'front' ? 'frontEmojiLayer' : 'backEmojiLayer');
+        
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // 캔버스 크기 설정
+        canvas.width = container.offsetWidth;
+        canvas.height = container.offsetHeight;
+        
+        // 배경을 흰색으로 설정
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // 이미지가 없는 경우 빈 캔버스 반환
+        if (!imageElement.src || imageElement.style.display === 'none') {
+            resolve(canvas);
+            return;
+        }
+        
+        // 이미지 그리기
+        const img = new Image();
+        img.onload = function() {
+            // 이미지 크기 계산
+            const containerRatio = canvas.width / canvas.height;
+            const imageRatio = img.width / img.height;
+            
+            let drawWidth, drawHeight, offsetX, offsetY;
+            
+            if (imageRatio > containerRatio) {
+                drawWidth = canvas.width;
+                drawHeight = canvas.width / imageRatio;
+                offsetX = 0;
+                offsetY = (canvas.height - drawHeight) / 2;
+            } else {
+                drawHeight = canvas.height;
+                drawWidth = canvas.height * imageRatio;
+                offsetX = (canvas.width - drawWidth) / 2;
+                offsetY = 0;
+            }
+            
+            // 변환 적용
+            ctx.save();
+            ctx.translate(offsetX + drawWidth / 2, offsetY + drawHeight / 2);
+            
+            // 회전 적용
+            const rotation = photoCardEditState[side].rotation * Math.PI / 180;
+            ctx.rotate(rotation);
+            
+            // 뒤집기 적용
+            const scaleX = photoCardEditState[side].flip.horizontal ? -1 : 1;
+            const scaleY = photoCardEditState[side].flip.vertical ? -1 : 1;
+            ctx.scale(scaleX, scaleY);
+            
+            // 필터 적용
+            if (photoCardEditState[side].filter === 'grayscale') {
+                ctx.filter = 'grayscale(100%)';
+            } else if (photoCardEditState[side].filter === 'sepia') {
+                ctx.filter = 'sepia(100%)';
+            } else if (photoCardEditState[side].filter === 'brightness') {
+                ctx.filter = 'brightness(150%)';
+            }
+            
+            ctx.drawImage(img, -drawWidth / 2, -drawHeight / 2, drawWidth, drawHeight);
+            ctx.restore();
+            
+            // 이모지 그리기
+            const emojis = emojiLayer.querySelectorAll('.emoji');
+            emojis.forEach(emoji => {
+                const rect = emoji.getBoundingClientRect();
+                const containerRect = container.getBoundingClientRect();
+                
+                const x = rect.left - containerRect.left;
+                const y = rect.top - containerRect.top;
+                
+                ctx.font = '24px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(emoji.textContent, x, y);
+            });
+            
+            resolve(canvas);
+        };
+        
+        img.onerror = function() {
+            console.error('이미지 로드 실패:', imageElement.src);
+            resolve(canvas);
+        };
+        
+        img.src = imageElement.src;
+    });
+}
+
+// 선택 화면으로 돌아가기
 function backToPhotoCardSelector() {
-    console.log('포토카드 선택 화면으로 돌아가기');
-    
-    // 편집 섹션 숨기기
-    editSection.style.display = 'none';
-    
-    // 편집 모드 헤더 숨기기
-    const editModeHeader = document.getElementById('editModeHeader');
-    if (editModeHeader) {
-        editModeHeader.style.display = 'none';
+    document.getElementById('photoCardSimultaneousEdit').style.display = 'none';
+    document.getElementById('photoCardSelector').style.display = 'block';
+}
+
+// 요소를 드래그 가능하게 만드는 함수
+function makeDraggable(element) {
+    let isDragging = false;
+    let currentX;
+    let currentY;
+    let initialX;
+    let initialY;
+    let xOffset = 0;
+    let yOffset = 0;
+
+    element.addEventListener('mousedown', dragStart);
+    element.addEventListener('touchstart', dragStart);
+
+    function dragStart(e) {
+        e.preventDefault();
+        
+        if (e.type === 'touchstart') {
+            initialX = e.touches[0].clientX - xOffset;
+            initialY = e.touches[0].clientY - yOffset;
+        } else {
+            initialX = e.clientX - xOffset;
+            initialY = e.clientY - yOffset;
+        }
+
+        if (e.target === element) {
+            isDragging = true;
+        }
     }
-    
-    // 포토카드 편집 컨트롤 표시
-    photoCardEditControls.style.display = 'block';
-    
-    // 현재 편집 상태 저장
-    if (currentPhotoCard && currentEditingSide) {
-        saveCurrentEditState();
+
+    function dragEnd(e) {
+        initialX = currentX;
+        initialY = currentY;
+        isDragging = false;
     }
-    
-    POKA.Toast.success('포토카드 선택 화면으로 돌아갔습니다');
+
+    function drag(e) {
+        if (isDragging) {
+            e.preventDefault();
+
+            if (e.type === 'touchmove') {
+                currentX = e.touches[0].clientX - initialX;
+                currentY = e.touches[0].clientY - initialY;
+            } else {
+                currentX = e.clientX - initialX;
+                currentY = e.clientY - initialY;
+            }
+
+            xOffset = currentX;
+            yOffset = currentY;
+
+            setTranslate(currentX, currentY, element);
+        }
+    }
+
+    function setTranslate(xPos, yPos, el) {
+        el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
+    }
+
+    document.addEventListener('mousemove', drag);
+    document.addEventListener('touchmove', drag);
+    document.addEventListener('mouseup', dragEnd);
+    document.addEventListener('touchend', dragEnd);
 }
 
 // 현재 편집 상태 저장
@@ -1665,14 +2074,14 @@ function loadCurrentImageOrPhotoCard() {
         return;
     }
     
-    // 둘 다 없는 경우 포토카드 만들기 모드로 전환
-    console.log('포토카드 만들기 모드로 전환');
+    // 둘 다 없는 경우 포토카드 동시 편집 모드로 전환
+    console.log('포토카드 동시 편집 모드로 전환');
     showPhotoCardCreationMode();
 }
 
-// 포토카드 만들기 모드 표시
+// 포토카드 동시 편집 모드 표시
 function showPhotoCardCreationMode() {
-    console.log('포토카드 만들기 모드 표시');
+    console.log('포토카드 동시 편집 모드 표시');
     
     // 편집 섹션 숨기기
     editSection.style.display = 'none';
@@ -1683,19 +2092,12 @@ function showPhotoCardCreationMode() {
         editModeHeader.style.display = 'none';
     }
     
-    // 포토카드 편집 컨트롤 표시
-    photoCardEditControls.style.display = 'block';
+    // 포토카드 동시 편집 모드 표시
+    document.getElementById('photoCardSimultaneousEdit').style.display = 'block';
+    document.getElementById('singleImageEdit').style.display = 'none';
     
-    // 선택 상태 초기화
-    selectedFrontImage = null;
-    selectedBackImage = null;
+    // 포토카드 데이터 로드
+    loadPhotoCardData();
     
-    // 이미지 선택기 초기화
-    updateImageSelector('front', null);
-    updateImageSelector('back', null);
-    
-    // 버튼 상태 업데이트
-    updateCreatePhotoCardButton();
-    
-    console.log('포토카드 만들기 모드 초기화 완료');
+    console.log('포토카드 동시 편집 모드 초기화 완료');
 } 
