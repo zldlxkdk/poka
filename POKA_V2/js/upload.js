@@ -333,24 +333,67 @@ function createImagePreviewItem(image, index) {
     item.className = 'image-preview-item';
     item.dataset.imageId = image.id;
     
+    // 클릭 이벤트 추가
+    item.addEventListener('click', () => {
+        showImageActionModal(image, index);
+    });
+    
     item.innerHTML = `
         <img src="${image.dataUrl}" alt="${image.name}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
         <div class="image-fallback">
             🖼️
         </div>
-        <div class="image-preview-overlay">
-            <div class="image-preview-actions">
-                <button class="image-preview-btn edit" onclick="editImage(${index})" title="편집">
-                    ✏️
+    `;
+    
+    return item;
+}
+
+// 이미지 액션 모달 표시
+function showImageActionModal(image, index) {
+    const modalContent = `
+        <div class="image-action-modal">
+            <div class="image-preview-large">
+                <img src="${image.dataUrl}" alt="${image.name}" loading="lazy">
+            </div>
+            <div class="image-info">
+                <h4>${image.name}</h4>
+                <p>크기: ${formatFileSize(image.size)}</p>
+                <p>업로드: ${new Date(image.uploadedAt).toLocaleString()}</p>
+            </div>
+            <div class="image-actions">
+                <button class="btn btn-primary" onclick="editImageFromModal(${index})">
+                    <span class="btn-icon">✏️</span>
+                    편집하기
                 </button>
-                <button class="image-preview-btn delete" onclick="deleteImage(${index})" title="삭제">
-                    🗑️
+                <button class="btn btn-secondary" onclick="deleteImageFromModal(${index})">
+                    <span class="btn-icon">🗑️</span>
+                    삭제하기
                 </button>
             </div>
         </div>
     `;
     
-    return item;
+    POKA.Modal.show(modalContent, {
+        title: '이미지 관리',
+        buttons: [
+            {
+                text: '닫기',
+                class: 'btn-secondary'
+            }
+        ]
+    });
+}
+
+// 모달에서 편집하기
+function editImageFromModal(index) {
+    POKA.Modal.close();
+    editImage(index);
+}
+
+// 모달에서 삭제하기
+function deleteImageFromModal(index) {
+    POKA.Modal.close();
+    deleteImage(index);
 }
 
 // 이미지 편집
