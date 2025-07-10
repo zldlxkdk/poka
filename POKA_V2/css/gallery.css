@@ -450,6 +450,28 @@
     transition: var(--transition);
 }
 
+.modal-header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.modal-close-btn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+    padding: 4px;
+    border-radius: 50%;
+    transition: var(--transition);
+}
+
+.modal-close-btn:hover {
+    background: var(--border-color);
+    color: var(--text-primary);
+}
+
 .modal-close:hover {
     background: var(--border-color);
     color: var(--text-primary);
@@ -603,16 +625,26 @@
     .modal-header {
         padding: 8px 12px;
         flex-shrink: 0;
+        justify-content: space-between;
+        gap: 8px;
     }
     
     .modal-delete {
-        font-size: 1rem;
+        font-size: 0.9rem;
         padding: 4px;
+        min-width: 32px;
+        height: 32px;
+    }
+    
+    .modal-header-right {
+        display: none;
     }
     
     .modal-close {
-        font-size: 1.2rem;
-        padding: 2px;
+        font-size: 1.1rem;
+        padding: 4px;
+        min-width: 32px;
+        height: 32px;
     }
 }
 

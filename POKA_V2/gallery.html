@@ -108,7 +108,12 @@
                 <button class="modal-delete" onclick="deleteCurrentImage()" title="삭제">
                     <span class="btn-icon">🗑️</span>
                 </button>
-                <button class="modal-close" onclick="closeImageModal()" title="닫기">×</button>
+                <div class="modal-header-right">
+                    <button class="modal-close-btn" onclick="closeImageModal()" title="닫기">
+                        <span class="btn-icon">✕</span>
+                    </button>
+                    <button class="modal-close" onclick="closeImageModal()" title="닫기">×</button>
+                </div>
             </div>
             <div class="modal-body">
                 <img id="modalImage" src="" alt="">

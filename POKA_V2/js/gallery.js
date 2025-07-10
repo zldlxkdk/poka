@@ -417,17 +417,19 @@ function openImageModal(image, index) {
     // 모달 오버레이 클릭 시 모달 닫기
     const modalOverlay = document.querySelector('.modal-overlay');
     if (modalOverlay) {
-        modalOverlay.onclick = function(e) {
-            closeImageModal();
-        };
+        modalOverlay.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeImageModal();
+            }
+        });
     }
     
     // 모달 컨텐츠 클릭 시 이벤트 전파 방지
     const modalContent = document.querySelector('.modal-content');
     if (modalContent) {
-        modalContent.onclick = function(e) {
+        modalContent.addEventListener('click', function(e) {
             e.stopPropagation();
-        };
+        });
     }
 }
 
@@ -447,15 +449,7 @@ function closeImageModal() {
     modalImage.style.display = 'none';
     modalImageFallback.style.display = 'none';
     
-    // 모달 오버레이와 컨텐츠 이벤트 리스너 제거
-    const modalOverlay = document.querySelector('.modal-overlay');
-    const modalContent = document.querySelector('.modal-content');
-    if (modalOverlay) {
-        modalOverlay.onclick = null;
-    }
-    if (modalContent) {
-        modalContent.onclick = null;
-    }
+    // 이벤트 리스너는 자동으로 정리되므로 별도 제거 불필요
 }
 
 // 현재 이미지 편집
