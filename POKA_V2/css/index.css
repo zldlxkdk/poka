@@ -139,49 +139,132 @@
     transition: opacity 0.1s ease;
 }
 
-/* 카드 측면 (두께감) */
+/* 카드 측면 (두께감) - 3D 모델링 */
 .card-side {
     position: absolute;
     background: linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(200, 200, 200, 0.8));
-    border: 6px solid rgba(255, 255, 255, 1);
+    border: 2px solid rgba(255, 255, 255, 1);
     will-change: transform;
-    box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.3);
 }
 
+/* 메인 측면 */
 .card-side-top {
     width: 100%;
-    height: 24px;
+    height: 8px;
     top: 0;
     left: 0;
-    transform: rotateX(90deg) translateZ(1px);
+    transform: rotateX(90deg) translateZ(4px);
     border-radius: 12px 12px 0 0;
 }
 
 .card-side-bottom {
     width: 100%;
-    height: 24px;
+    height: 8px;
     bottom: 0;
     left: 0;
-    transform: rotateX(-90deg) translateZ(1px);
+    transform: rotateX(-90deg) translateZ(4px);
     border-radius: 0 0 12px 12px;
 }
 
 .card-side-left {
-    width: 24px;
+    width: 8px;
     height: 100%;
     top: 0;
     left: 0;
-    transform: rotateY(-90deg) translateZ(1px);
+    transform: rotateY(-90deg) translateZ(4px);
     border-radius: 12px 0 0 12px;
 }
 
 .card-side-right {
-    width: 24px;
+    width: 8px;
     height: 100%;
     top: 0;
     right: 0;
-    transform: rotateY(90deg) translateZ(1px);
+    transform: rotateY(90deg) translateZ(4px);
     border-radius: 0 12px 12px 0;
+}
+
+/* 내부 측면 */
+.card-side-top-inner {
+    width: 100%;
+    height: 6px;
+    top: 0;
+    left: 0;
+    transform: rotateX(90deg) translateZ(2px);
+    border-radius: 12px 12px 0 0;
+    background: linear-gradient(135deg, rgba(220, 220, 220, 1), rgba(180, 180, 180, 0.8));
+}
+
+.card-side-bottom-inner {
+    width: 100%;
+    height: 6px;
+    bottom: 0;
+    left: 0;
+    transform: rotateX(-90deg) translateZ(2px);
+    border-radius: 0 0 12px 12px;
+    background: linear-gradient(135deg, rgba(220, 220, 220, 1), rgba(180, 180, 180, 0.8));
+}
+
+.card-side-left-inner {
+    width: 6px;
+    height: 100%;
+    top: 0;
+    left: 0;
+    transform: rotateY(-90deg) translateZ(2px);
+    border-radius: 12px 0 0 12px;
+    background: linear-gradient(135deg, rgba(220, 220, 220, 1), rgba(180, 180, 180, 0.8));
+}
+
+.card-side-right-inner {
+    width: 6px;
+    height: 100%;
+    top: 0;
+    right: 0;
+    transform: rotateY(90deg) translateZ(2px);
+    border-radius: 0 12px 12px 0;
+    background: linear-gradient(135deg, rgba(220, 220, 220, 1), rgba(180, 180, 180, 0.8));
+}
+
+/* 외부 측면 */
+.card-side-top-outer {
+    width: 100%;
+    height: 6px;
+    top: 0;
+    left: 0;
+    transform: rotateX(90deg) translateZ(6px);
+    border-radius: 12px 12px 0 0;
+    background: linear-gradient(135deg, rgba(240, 240, 240, 1), rgba(200, 200, 200, 0.8));
+}
+
+.card-side-bottom-outer {
+    width: 100%;
+    height: 6px;
+    bottom: 0;
+    left: 0;
+    transform: rotateX(-90deg) translateZ(6px);
+    border-radius: 0 0 12px 12px;
+    background: linear-gradient(135deg, rgba(240, 240, 240, 1), rgba(200, 200, 200, 0.8));
+}
+
+.card-side-left-outer {
+    width: 6px;
+    height: 100%;
+    top: 0;
+    left: 0;
+    transform: rotateY(-90deg) translateZ(6px);
+    border-radius: 12px 0 0 12px;
+    background: linear-gradient(135deg, rgba(240, 240, 240, 1), rgba(200, 200, 200, 0.8));
+}
+
+.card-side-right-outer {
+    width: 6px;
+    height: 100%;
+    top: 0;
+    right: 0;
+    transform: rotateY(90deg) translateZ(6px);
+    border-radius: 0 12px 12px 0;
+    background: linear-gradient(135deg, rgba(240, 240, 240, 1), rgba(200, 200, 200, 0.8));
 }
 
 /* 카드 앞면 이미지 특별 효과 */
@@ -549,12 +632,32 @@
     
     .card-side-top,
     .card-side-bottom {
-        height: 20px;
+        height: 6px;
     }
     
     .card-side-left,
     .card-side-right {
-        width: 20px;
+        width: 6px;
+    }
+    
+    .card-side-top-inner,
+    .card-side-bottom-inner {
+        height: 4px;
+    }
+    
+    .card-side-left-inner,
+    .card-side-right-inner {
+        width: 4px;
+    }
+    
+    .card-side-top-outer,
+    .card-side-bottom-outer {
+        height: 4px;
+    }
+    
+    .card-side-left-outer,
+    .card-side-right-outer {
+        width: 4px;
     }
     
     .card-front {
