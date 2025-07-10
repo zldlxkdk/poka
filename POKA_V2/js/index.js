@@ -8,17 +8,64 @@ function cardClickEffect(element) {
     // 햇빛 반짝임 효과 클래스 추가
     element.classList.add('sunshine');
     
+    // 3D 카드 회전 효과 추가
+    const cardContainer = element.querySelector('.card-3d-container');
+    if (cardContainer) {
+        cardContainer.style.animation = 'cardClick 0.6s ease-out, cardRotate 12s ease-in-out infinite 0.6s';
+    }
+    
     // 클릭 사운드 효과 (선택사항)
     playClickSound();
     
     // 클래스 제거 (애니메이션 완료 후)
     setTimeout(() => {
         element.classList.remove('clicked');
+        if (cardContainer) {
+            cardContainer.style.animation = 'cardRotate 12s ease-in-out infinite';
+        }
     }, 600);
     
     setTimeout(() => {
         element.classList.remove('sunshine');
     }, 1200);
+}
+
+// 3D 카드 마우스 호버 효과
+function init3DCardEffects() {
+    const cardContainer = document.querySelector('.card-3d-container');
+    if (!cardContainer) return;
+    
+    cardContainer.addEventListener('mouseenter', () => {
+        cardContainer.style.animationPlayState = 'paused';
+    });
+    
+    cardContainer.addEventListener('mouseleave', () => {
+        cardContainer.style.animationPlayState = 'running';
+    });
+    
+    // 마우스 움직임에 따른 3D 효과
+    cardContainer.addEventListener('mousemove', (e) => {
+        const rect = cardContainer.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        
+        const rotateX = (y - centerY) / 8;
+        const rotateY = (centerX - x) / 8;
+        
+        // 더 넓은 회전 범위로 뒷면이 더 잘 보이도록 조정
+        const clampedRotateY = Math.max(-60, Math.min(60, rotateY));
+        const clampedRotateX = Math.max(-30, Math.min(30, rotateX));
+        
+        cardContainer.style.transform = `rotateX(${clampedRotateX}deg) rotateY(${clampedRotateY}deg) translateZ(0)`;
+    });
+    
+    cardContainer.addEventListener('mouseleave', () => {
+        cardContainer.style.transform = 'translateZ(0)';
+        cardContainer.style.animationPlayState = 'running';
+    });
 }
 
 // 클릭 사운드 효과
@@ -48,6 +95,9 @@ function playClickSound() {
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log('POKA V2 Index page loaded');
+    
+    // 3D 카드 효과 초기화
+    init3DCardEffects();
     
     // 기능 카드 클릭 이벤트
     const featureCards = document.querySelectorAll('.feature-card');
