@@ -51,20 +51,6 @@ function setupEventListeners() {
             closeImageModal();
         }
     });
-    
-    // 모달 오버레이 클릭 시 모달 닫기
-    document.addEventListener('click', (e) => {
-        if (e.target.classList.contains('modal-overlay')) {
-            closeImageModal();
-        }
-    });
-    
-    // 모달 컨텐츠 클릭 시 이벤트 전파 방지
-    document.addEventListener('click', (e) => {
-        if (e.target.closest('.modal-content')) {
-            e.stopPropagation();
-        }
-    });
 }
 
 // 이미지 로드
@@ -440,6 +426,24 @@ function openImageModal(image, index) {
     setTimeout(() => {
         modalImage.src = image.dataUrl;
     }, 100);
+    
+    // 모달 오버레이 클릭 시 모달 닫기
+    const modalOverlay = document.querySelector('.modal-overlay');
+    if (modalOverlay) {
+        modalOverlay.onclick = function(e) {
+            if (e.target === this) {
+                closeImageModal();
+            }
+        };
+    }
+    
+    // 모달 컨텐츠 클릭 시 이벤트 전파 방지
+    const modalContent = document.querySelector('.modal-content');
+    if (modalContent) {
+        modalContent.onclick = function(e) {
+            e.stopPropagation();
+        };
+    }
 }
 
 // 이미지 모달 닫기
@@ -457,6 +461,16 @@ function closeImageModal() {
     modalImage.src = '';
     modalImage.style.display = 'none';
     modalImageFallback.style.display = 'none';
+    
+    // 모달 오버레이와 컨텐츠 이벤트 리스너 제거
+    const modalOverlay = document.querySelector('.modal-overlay');
+    const modalContent = document.querySelector('.modal-content');
+    if (modalOverlay) {
+        modalOverlay.onclick = null;
+    }
+    if (modalContent) {
+        modalContent.onclick = null;
+    }
 }
 
 // 현재 이미지 편집
