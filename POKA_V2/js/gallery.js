@@ -159,12 +159,12 @@ function createGalleryItem(image, index) {
     const formattedDate = imageDate.toLocaleDateString('ko-KR');
     
     const isFavorite = image.favorite ? 'favorite' : '';
-    const favoriteIcon = image.favorite ? '⭐' : '☆';
+    const favoriteIcon = image.favorite ? '?' : '☆';
     
     item.innerHTML = `
         <img src="${image.dataUrl}" alt="${image.name || '이미지'}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
         <div class="image-fallback">
-            🖼️
+            ??
         </div>
         <div class="gallery-item-overlay">
             <div class="gallery-item-info">
@@ -176,10 +176,10 @@ function createGalleryItem(image, index) {
                     ${favoriteIcon}
                 </button>
                 <button class="gallery-item-btn edit" onclick="editImage(${index})" title="편집">
-                    ✏️
+                    ??
                 </button>
                 <button class="gallery-item-btn delete" onclick="deleteImage(${index})" title="삭제">
-                    🗑️
+                    ??
                 </button>
             </div>
         </div>
@@ -222,10 +222,10 @@ function toggleViewMode() {
     
     if (isListView) {
         galleryContainer.classList.add('list-view');
-        document.querySelector('.header-btn .btn-icon').textContent = '📋';
+        document.querySelector('.header-btn .btn-icon').textContent = '?';
     } else {
         galleryContainer.classList.remove('list-view');
-        document.querySelector('.header-btn .btn-icon').textContent = '👁️';
+        document.querySelector('.header-btn .btn-icon').textContent = '??';
     }
     
     // 갤러리 다시 렌더링
@@ -383,23 +383,35 @@ function openImageModal(image, index) {
     currentModalImage = { image, index };
     
     const modalImage = document.getElementById('modalImage');
+    const modalImageFallback = document.getElementById('modalImageFallback');
     const modalTitle = document.getElementById('modalTitle');
     const modalDate = document.getElementById('modalDate');
     const modalSize = document.getElementById('modalSize');
     const favoriteIcon = document.getElementById('favoriteIcon');
     const favoriteText = document.getElementById('favoriteText');
     
-    modalImage.src = image.dataUrl;
-    modalImage.onerror = function() {
-        this.style.display = 'none';
-        document.getElementById('modalImageFallback').style.display = 'flex';
+    // 초기 상태 설정
+    modalImage.style.display = 'none';
+    modalImageFallback.style.display = 'flex';
+    
+    // 이미지 로드 완료 후 표시
+    modalImage.onload = function() {
+        modalImage.style.display = 'block';
+        modalImageFallback.style.display = 'none';
     };
+    
+    modalImage.onerror = function() {
+        modalImage.style.display = 'none';
+        modalImageFallback.style.display = 'flex';
+    };
+    
+    modalImage.src = image.dataUrl;
     modalTitle.textContent = image.name || '제목 없음';
     modalDate.textContent = `생성일: ${new Date(image.createdAt || image.uploadedAt).toLocaleString('ko-KR')}`;
     modalSize.textContent = `크기: ${formatFileSize(image.size || 0)}`;
     
     if (image.favorite) {
-        favoriteIcon.textContent = '⭐';
+        favoriteIcon.textContent = '?';
         favoriteText.textContent = '즐겨찾기 해제';
     } else {
         favoriteIcon.textContent = '☆';
@@ -417,8 +429,9 @@ function closeImageModal() {
     // 모달 이미지와 폴백 초기화
     const modalImage = document.getElementById('modalImage');
     const modalImageFallback = document.getElementById('modalImageFallback');
-    modalImage.style.display = 'block';
+    modalImage.style.display = 'none';
     modalImageFallback.style.display = 'none';
+    modalImage.src = '';
 }
 
 // 현재 이미지 편집
