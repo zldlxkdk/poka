@@ -2,147 +2,621 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>POKA V2 - 포토카드 제작</title>
-    <link rel="stylesheet" href="css/common.css">
-    <link rel="stylesheet" href="css/index.css">
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#00d4ff">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>POKA 시스템 매뉴얼</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body { 
+            font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', 'Noto Sans KR', Arial, sans-serif; 
+            background: #000000;
+            color: #ffffff; 
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: rgba(20, 20, 20, 0.95);
+            padding: clamp(15px, 3vw, 20px) clamp(10px, 2vw, 20px);
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            margin-bottom: 15px;
+            backdrop-filter: blur(10px);
+            border-bottom: 3px solid #00d4ff;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: #ffffff;
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            line-height: 1.2;
+        }
+
+        .header p {
+            margin: 10px 0 0 0;
+            color: #cccccc;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            font-weight: 500;
+        }
+
+        .nav {
+            background: rgba(20, 20, 20, 0.95);
+            padding: 10px 5px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+            border-bottom: 2px solid #333333;
+        }
+
+        .nav::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .nav::-webkit-scrollbar-track {
+            background: #333333;
+        }
+
+        .nav::-webkit-scrollbar-thumb {
+            background: #00d4ff;
+            border-radius: 2px;
+        }
+
+        .nav a {
+            color: #ffffff;
+            text-decoration: none;
+            margin: 0 8px;
+            padding: 10px 15px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            display: inline-block;
+            font-size: clamp(0.8rem, 2.2vw, 0.9rem);
+            white-space: nowrap;
+            font-weight: 500;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .nav a:hover, .nav a:active {
+            background: #00d4ff;
+            color: #000000;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
+        }
+
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto 20px auto; 
+            background: rgba(20, 20, 20, 0.95); 
+            border-radius: 20px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5); 
+            padding: clamp(20px, 4vw, 40px);
+            overflow: hidden;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        h2 { 
+            color: #ffffff; 
+            border-bottom: 3px solid #00d4ff; 
+            padding-bottom: 15px; 
+            margin-top: 0; 
+            font-size: clamp(1.3rem, 3.5vw, 1.8rem);
+            font-weight: bold;
+        }
+
+        h3 { 
+            color: #cccccc; 
+            margin-top: 25px; 
+            font-size: clamp(1.1rem, 2.8vw, 1.4rem);
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #ffffff;
+            margin-top: 20px;
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            font-weight: 600;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: clamp(15px, 3vw, 20px);
+            margin: 20px 0;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border: 2px solid #333333;
+            border-radius: 15px;
+            padding: clamp(20px, 3vw, 25px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #00d4ff, #0099cc);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+            border-color: #00d4ff;
+        }
+
+        .feature-card h4 {
+            color: #ffffff;
+            margin-top: 0;
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        ul {
+            margin: 0 0 20px 20px;
+            line-height: 1.6;
+            font-size: clamp(0.85rem, 2.2vw, 0.95rem);
+            color: #cccccc;
+        }
+
+        li {
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+
+        .desc {
+            color: #cccccc;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            margin-bottom: 25px;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .back-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: #000000;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .back-button:hover {
+            background: linear-gradient(135deg, #0099cc, #006699);
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
+        }
+
+        /* 모바일 최적화 */
+        @media (max-width: 768px) {
+            .container {
+                margin: 0 10px 20px 10px;
+                border-radius: 15px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .nav {
+                padding: 8px 5px;
+            }
+
+            .nav a {
+                margin: 0 5px;
+                padding: 8px 12px;
+            }
+        }
+
+        /* 태블릿 최적화 */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .feature-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* 작은 모바일 화면 */
+        @media (max-width: 480px) {
+            .container {
+                margin: 0 5px 15px 5px;
+                padding: 15px;
+            }
+
+            .nav a {
+                margin: 0 3px;
+                padding: 6px 10px;
+                font-size: 0.75rem;
+            }
+
+            .back-button {
+                bottom: 15px;
+                right: 15px;
+                width: 45px;
+                height: 45px;
+                font-size: 1rem;
+            }
+        }
+
+        /* 터치 디바이스 최적화 */
+        @media (hover: none) and (pointer: coarse) {
+            .feature-card:hover {
+                transform: none;
+            }
+
+            .feature-card:active {
+                transform: scale(0.98);
+            }
+        }
+
+        /* 접근성 개선 */
+        .feature-card:focus {
+            outline: 2px solid #00d4ff;
+            outline-offset: 2px;
+        }
+
+        /* 로딩 애니메이션 */
+        .feature-card {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 강조 효과 */
+        .main-highlight {
+            background: linear-gradient(45deg, #00d4ff, #0099cc);
+            color: #000000;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: center;
+            font-weight: bold;
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
+        }
+
+        /* 카테고리 아이콘 */
+        .category-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        /* 호버 효과 개선 */
+        .feature-card:hover .category-icon {
+            transform: scale(1.1);
+            transition: transform 0.3s ease;
+        }
+
+        /* 텍스트 강조 */
+        strong {
+            color: #00d4ff;
+            font-weight: bold;
+        }
+
+        /* 링크 스타일 */
+        a {
+            color: #00d4ff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        /* 바로가기 버튼 스타일 */
+        .quick-link-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: #000000;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 212, 255, 0.4);
+            transition: all 0.3s ease;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quick-link-btn:hover {
+            background: linear-gradient(135deg, #0099cc, #006699);
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.6);
+        }
+
+        .quick-link-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* 카드 호버 시 버튼 강조 */
+        .feature-card:hover .quick-link-btn {
+            transform: scale(1.1);
+        }
+
+        /* 모바일에서 버튼 크기 조정 */
+        @media (max-width: 768px) {
+            .quick-link-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 0.9rem;
+                top: 10px;
+                right: 10px;
+            }
+        }
+
+        /* 작은 모바일 화면 */
+        @media (max-width: 480px) {
+            .quick-link-btn {
+                width: 30px;
+                height: 30px;
+                font-size: 0.8rem;
+                top: 8px;
+                right: 8px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="app-container">
-        <!-- 헤더 -->
-        <header class="header">
-            <div class="header-content">
-                <h1 class="logo">POKA V2</h1>
-                <p class="subtitle">포토카드 제작 서비스</p>
-            </div>
-        </header>
-
-        <!-- 메인 컨텐츠 -->
-        <main class="main-content">
-            <!-- 환영 메시지 -->
-            <section class="welcome-section">
-                <div class="welcome-card">
-                    <div class="welcome-icon" onclick="cardClickEffect(this)">
-                    <img src="images/icons/welcome-icon.png" alt="환영 아이콘" onerror="this.style.display='none';">
-                </div>
-                    <h2>포토카드 제작을 시작하세요</h2>
-                    <p>스마트폰으로 편리하게 사진을 편집하고 키오스크에서 인화하세요</p>
-                </div>
-            </section>
-
-            <!-- 빠른 시작 버튼 -->
-            <section class="quick-start-section">
-                <button class="quick-start-btn" onclick="location.href='upload.html'">
-                    <span class="btn-icon">
-                        🚀
-                    </span>
-                    <span class="btn-text">바로 시작하기</span>
-                </button>
-            </section>
-
-            <!-- 사용 방법 가이드 -->
-            <section class="guide-section">
-                <h3 class="section-title">📖 사용 방법</h3>
-                <div class="guide-steps">
-                    <div class="guide-step">
-                        <div class="step-number">1</div>
-                        <div class="step-content">
-                            <h4>📷 사진 업로드</h4>
-                            <p>갤러리에서 사진을 선택하거나 카메라로 촬영하세요</p>
-                        </div>
-                    </div>
-                    
-                    <div class="guide-step">
-                        <div class="step-number">2</div>
-                        <div class="step-content">
-                            <h4>🎨 편집하기</h4>
-                            <p>필터, 스티커, 텍스트 등으로 사진을 꾸며줍니다</p>
-                        </div>
-                    </div>
-                    
-                    <div class="guide-step">
-                        <div class="step-number">3</div>
-                        <div class="step-content">
-                            <h4>🔑 키오스크에서 인화</h4>
-                            <p>편집 완료 후 키오스크에서 단말번호를 입력합니다</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 주요 기능 카드 -->
-            <section class="features-section">
-                <div class="feature-grid">
-                    <div class="feature-card" onclick="location.href='upload.html'">
-                        <div class="feature-icon">
-                            📷
-                        </div>
-                        <h3>사진 업로드</h3>
-                        <p>갤러리에서 사진을 선택하거나 카메라로 촬영하세요</p>
-                    </div>
-                    
-                    <div class="feature-card" onclick="location.href='edit.html'">
-                        <div class="feature-icon">
-                            🎨
-                        </div>
-                        <h3>사진 편집</h3>
-                        <p>필터, 스티커, 텍스트로 멋진 포토카드를 만들어보세요</p>
-                    </div>
-                    
-                    <div class="feature-card" onclick="location.href='print.html'">
-                        <div class="feature-icon">
-                            🔑
-                        </div>
-                        <h3>인화하기</h3>
-                        <p>편집 완료 후 키오스크에서 단말번호로 인화하세요</p>
-                    </div>
-                    
-                    <div class="feature-card" onclick="location.href='gallery.html'">
-                        <div class="feature-icon">
-                            📁
-                        </div>
-                        <h3>갤러리</h3>
-                        <p>제작한 포토카드들을 확인하고 관리하세요</p>
-                    </div>
-                </div>
-            </section>
-
-        </main>
-
-        <!-- 하단 네비게이션 -->
-        <nav class="bottom-nav">
-            <a href="index.html" class="nav-item active">
-                <span class="nav-icon">
-                    🏠
-                </span>
-                <span class="nav-text">홈</span>
-            </a>
-            <a href="upload.html" class="nav-item">
-                <span class="nav-icon">
-                    📷
-                </span>
-                <span class="nav-text">업로드</span>
-            </a>
-            <a href="gallery.html" class="nav-item">
-                <span class="nav-icon">
-                    📁
-                </span>
-                <span class="nav-text">갤러리</span>
-            </a>
-            <a href="profile.html" class="nav-item">
-                <span class="nav-icon">
-                    👤
-                </span>
-                <span class="nav-text">프로필</span>
-            </a>
-        </nav>
+    <div class="header">
+        <h1>POKA 시스템 매뉴얼</h1>
+        <p>포토카드 제작 키오스크 시스템 - 종합 가이드</p>
     </div>
 
-    <script src="js/common.js"></script>
-    <script src="js/index.js"></script>
+    <div class="nav">
+        <a href="01_시스템개요.html">?? 시스템 개요</a>
+        <a href="02_주요기능화면.html">? 주요 기능/화면</a>
+        <a href="03_URL_API목록.html">? URL/API 목록</a>
+        <a href="04_데이터구조.html">?? 데이터 구조</a>
+        <a href="05_로그인보안.html">? 로그인/보안</a>
+        <a href="06_결제업로드.html">? 결제/업로드</a>
+        <a href="07_운영관리.html">?? 운영/관리</a>
+        <a href="08_참고부록.html">? 참고/부록</a>
+        <a href="09_실제화면샘플.html">? 실제 화면 샘플</a>
+        <a href="10_개선방향제안.html">? 개선방향 제안</a>
+    </div>
+
+    <div class="container">
+        <h2>POKA 시스템 개요</h2>
+        <div class="desc">
+            POKA는 <strong>포토카드 제작 키오스크 시스템</strong>으로, 사용자가 쉽고 편리하게<br>
+            개인화된 포토카드를 제작할 수 있는 종합 솔루션입니다.
+        </div>
+
+        <div class="main-highlight">
+            ? 포토카드 제작부터 결제까지 원스톱 서비스
+        </div>
+
+        <div class="feature-grid">
+            <div class="feature-card">
+                <button class="quick-link-btn" onclick="window.location.href='01_시스템개요.html'" title="시스템 개요로 바로가기">??</button>
+                <span class="category-icon">??</span>
+                <h4>시스템 개요</h4>
+                <ul>
+                    <li><strong>프로젝트 정보:</strong> 개발사, 기술 스택, 목적</li>
+                    <li><strong>아키텍처:</strong> 시스템 구조 및 구성 요소</li>
+                    <li><strong>기술 스택:</strong> 사용된 기술 및 라이브러리</li>
+                    <li><strong>외부 연동:</strong> API 서버 및 서비스 연동</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <button class="quick-link-btn" onclick="window.location.href='02_주요기능화면.html'" title="주요 기능/화면으로 바로가기">?</button>
+                <span class="category-icon">?</span>
+                <h4>주요 기능/화면</h4>
+                <ul>
+                    <li><strong>사용자 인터페이스:</strong> 메인 메뉴 및 화면 구성</li>
+                    <li><strong>이미지 편집:</strong> 포토카드 편집 기능</li>
+                    <li><strong>결제 시스템:</strong> 다양한 결제 수단 지원</li>
+                    <li><strong>프린팅:</strong> 고품질 출력 시스템</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <button class="quick-link-btn" onclick="window.location.href='03_URL_API목록.html'" title="URL/API 목록으로 바로가기">?</button>
+                <span class="category-icon">?</span>
+                <h4>URL/API 목록</h4>
+                <ul>
+                    <li><strong>API 엔드포인트:</strong> 서버 통신 인터페이스</li>
+                    <li><strong>인증 시스템:</strong> 로그인 및 권한 관리</li>
+                    <li><strong>결제 API:</strong> 현금/LinePay 결제 처리</li>
+                    <li><strong>파일 업로드:</strong> 이미지 업로드 서비스</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <button class="quick-link-btn" onclick="window.location.href='04_데이터구조.html'" title="데이터 구조로 바로가기">??</button>
+                <span class="category-icon">??</span>
+                <h4>데이터 구조</h4>
+                <ul>
+                    <li><strong>데이터베이스:</strong> 테이블 구조 및 관계</li>
+                    <li><strong>JSON 스키마:</strong> 데이터 형식 정의</li>
+                    <li><strong>파일 구조:</strong> 이미지 및 설정 파일</li>
+                    <li><strong>캐시 시스템:</strong> 성능 최적화</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <button class="quick-link-btn" onclick="window.location.href='05_로그인보안.html'" title="로그인/보안으로 바로가기">?</button>
+                <span class="category-icon">?</span>
+                <h4>로그인/보안</h4>
+                <ul>
+                    <li><strong>인증 시스템:</strong> JWT 토큰 기반 인증</li>
+                    <li><strong>권한 관리:</strong> 사용자 역할 및 권한</li>
+                    <li><strong>보안 정책:</strong> 데이터 보호 및 암호화</li>
+                    <li><strong>세션 관리:</strong> 로그인 상태 관리</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <button class="quick-link-btn" onclick="window.location.href='06_결제업로드.html'" title="결제/업로드로 바로가기">?</button>
+                <span class="category-icon">?</span>
+                <h4>결제/업로드</h4>
+                <ul>
+                    <li><strong>결제 수단:</strong> 현금, LinePay, 쿠폰</li>
+                    <li><strong>QR코드 업로드:</strong> 모바일 이미지 업로드</li>
+                    <li><strong>하드웨어 연동:</strong> 지폐 인식기, 호퍼</li>
+                    <li><strong>결제 상태:</strong> 실시간 결제 모니터링</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <button class="quick-link-btn" onclick="window.location.href='07_운영관리.html'" title="운영/관리로 바로가기">??</button>
+                <span class="category-icon">??</span>
+                <h4>운영/관리</h4>
+                <ul>
+                    <li><strong>시스템 모니터링:</strong> 실시간 상태 확인</li>
+                    <li><strong>설정 관리:</strong> 환경 설정 및 구성</li>
+                    <li><strong>로그 분석:</strong> 시스템 로그 및 오류</li>
+                    <li><strong>백업/복구:</strong> 데이터 백업 및 복원</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <button class="quick-link-btn" onclick="window.location.href='08_참고부록.html'" title="참고/부록으로 바로가기">?</button>
+                <span class="category-icon">?</span>
+                <h4>참고/부록</h4>
+                <ul>
+                    <li><strong>프로젝트 구조:</strong> 파일 및 디렉토리</li>
+                    <li><strong>소스 코드:</strong> 주요 소스 파일 목록</li>
+                    <li><strong>설정 파일:</strong> 환경 설정 예시</li>
+                    <li><strong>참고 문서:</strong> 개발 및 사용 가이드</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <button class="quick-link-btn" onclick="window.location.href='09_실제화면샘플.html'" title="실제 화면 샘플로 바로가기">?</button>
+                <span class="category-icon">?</span>
+                <h4>실제 화면 샘플</h4>
+                <ul>
+                    <li><strong>인터랙티브 데모:</strong> 실제 구동 화면 체험</li>
+                    <li><strong>화면 전환:</strong> 다양한 화면 간 이동</li>
+                    <li><strong>동영상 데모:</strong> 실제 사용 과정 영상</li>
+                    <li><strong>터치 인터페이스:</strong> 키오스크 조작 체험</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <button class="quick-link-btn" onclick="window.location.href='10_개선방향제안.html'" title="개선방향 제안으로 바로가기">?</button>
+                <span class="category-icon">?</span>
+                <h4>개선방향 제안</h4>
+                <ul>
+                    <li><strong>모바일 중심 설계:</strong> 셀픽 사이트 참조 개선안</li>
+                    <li><strong>QR코드 웹사이트 연동:</strong> 모바일 회원관리</li>
+                    <li><strong>키오스크 단말번호:</strong> 인화 명령 처리 시스템</li>
+                    <li><strong>효율적인 워크플로우:</strong> 사용자 경험 최적화</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <button class="back-button" onclick="window.location.href='index.html'" title="홈으로 돌아가기">?</button>
+
+    <script>
+        // 터치 이벤트 최적화
+        document.addEventListener('DOMContentLoaded', function() {
+            // 터치 디바이스 감지
+            if ('ontouchstart' in window) {
+                document.body.classList.add('touch-device');
+            }
+
+            // 스크롤 성능 최적화
+            let ticking = false;
+            function updateScroll() {
+                ticking = false;
+            }
+
+            function requestTick() {
+                if (!ticking) {
+                    requestAnimationFrame(updateScroll);
+                    ticking = true;
+                }
+            }
+
+            window.addEventListener('scroll', requestTick);
+
+            // 네비게이션 스크롤 최적화
+            const nav = document.querySelector('.nav');
+            let isScrolling = false;
+
+            nav.addEventListener('scroll', function() {
+                if (!isScrolling) {
+                    isScrolling = true;
+                    requestAnimationFrame(function() {
+                        isScrolling = false;
+                    });
+                }
+            });
+
+            // 뒤로가기 버튼 표시/숨김
+            const backButton = document.querySelector('.back-button');
+            let lastScrollTop = 0;
+
+            window.addEventListener('scroll', function() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                if (scrollTop > 100) {
+                    backButton.style.opacity = '1';
+                    backButton.style.visibility = 'visible';
+                } else {
+                    backButton.style.opacity = '0';
+                    backButton.style.visibility = 'hidden';
+                }
+                
+                lastScrollTop = scrollTop;
+            });
+
+            // 초기 상태 설정
+            backButton.style.opacity = '0';
+            backButton.style.visibility = 'hidden';
+            backButton.style.transition = 'opacity 0.3s ease, visibility 0.3s ease';
+
+            // 키보드 네비게이션
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeModal();
+                }
+            });
+        });
+
+        // PWA 지원
+        if ('serviceWorker' in navigator) {
+            const meta = document.createElement('meta');
+            meta.name = 'theme-color';
+            meta.content = '#000000';
+            document.head.appendChild(meta);
+        }
+    </script>
 </body>
 </html> 
