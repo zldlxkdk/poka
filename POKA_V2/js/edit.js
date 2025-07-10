@@ -23,6 +23,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (window.POKA && window.POKA.AppState) {
             console.log('POKA 객체 준비됨');
             
+            // AppState 초기화 확인
+            if (!window.POKA.AppState.currentImage) {
+                console.log('AppState 초기화 중...');
+                window.POKA.AppState.init();
+            }
+            
             // 현재 이미지 로드
             loadCurrentImage();
             
@@ -64,7 +70,23 @@ function loadCurrentImage() {
     console.log('AppState:', POKA.AppState);
     console.log('currentImage from AppState:', POKA.AppState.currentImage);
     
+    // AppState에서 이미지 가져오기
     currentImage = POKA.AppState.currentImage;
+    
+    // AppState에 없으면 로컬 스토리지에서 직접 가져오기 시도
+    if (!currentImage) {
+        console.log('AppState에서 이미지를 찾을 수 없음, 로컬 스토리지에서 시도...');
+        try {
+            const storedImage = POKA.AppState.getFromStorage('currentImage');
+            if (storedImage) {
+                currentImage = storedImage;
+                POKA.AppState.currentImage = storedImage;
+                console.log('로컬 스토리지에서 이미지 복원됨:', currentImage);
+            }
+        } catch (error) {
+            console.error('로컬 스토리지에서 이미지 로드 오류:', error);
+        }
+    }
     
     if (!currentImage) {
         console.error('편집할 이미지가 없습니다');
@@ -94,6 +116,9 @@ function loadCurrentImage() {
     console.log('편집할 이미지:', currentImage);
     console.log('원본 이미지 저장됨:', originalImage);
     console.log('이미지 데이터 URL 길이:', currentImage.dataUrl.length);
+    
+    // 성공 메시지
+    POKA.Toast.success('이미지가 성공적으로 로드되었습니다');
 }
 
 // 테스트용 샘플 이미지 생성

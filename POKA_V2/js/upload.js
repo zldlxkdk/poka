@@ -526,9 +526,17 @@ function editImage(index) {
         const image = uploadedImages[index];
         console.log('편집할 이미지 설정:', image);
         
-        // AppState에 저장
-        POKA.AppState.currentImage = image;
-        console.log('AppState.currentImage 설정 후:', POKA.AppState.currentImage);
+        // AppState에 저장 (더 안전한 방법)
+        try {
+            POKA.AppState.currentImage = image;
+            POKA.AppState.saveToStorage('currentImage', image);
+            console.log('AppState.currentImage 설정 후:', POKA.AppState.currentImage);
+            console.log('저장된 이미지 데이터 길이:', image.dataUrl ? image.dataUrl.length : '없음');
+        } catch (error) {
+            console.error('AppState 저장 오류:', error);
+            POKA.Toast.error('이미지 데이터 저장 중 오류가 발생했습니다');
+            return;
+        }
         
         // 편집 페이지로 이동 (URL 파라미터 없이)
         const editUrl = 'edit.html';
@@ -606,7 +614,18 @@ function proceedToEdit() {
     
     // 첫 번째 이미지를 현재 이미지로 설정
     const image = uploadedImages[0];
-    POKA.AppState.currentImage = image;
+    
+    // AppState에 저장 (더 안전한 방법)
+    try {
+        POKA.AppState.currentImage = image;
+        POKA.AppState.saveToStorage('currentImage', image);
+        console.log('AppState.currentImage 설정 후:', POKA.AppState.currentImage);
+        console.log('저장된 이미지 데이터 길이:', image.dataUrl ? image.dataUrl.length : '없음');
+    } catch (error) {
+        console.error('AppState 저장 오류:', error);
+        POKA.Toast.error('이미지 데이터 저장 중 오류가 발생했습니다');
+        return;
+    }
     
     // 편집 페이지로 이동 (URL 파라미터 없이)
     const editUrl = 'edit.html';

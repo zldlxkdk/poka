@@ -23,9 +23,17 @@ const AppState = {
     // 로컬 스토리지에서 상태 복원
     init() {
         this.user = this.getFromStorage('user');
+        this.currentImage = this.getFromStorage('currentImage');
         this.editedImages = this.getFromStorage('editedImages') || [];
         this.deviceId = this.getFromStorage('deviceId') || this.generateDeviceId();
         this.saveToStorage('deviceId', this.deviceId);
+        
+        console.log('AppState 초기화 완료:', {
+            user: this.user ? '설정됨' : '없음',
+            currentImage: this.currentImage ? '설정됨' : '없음',
+            editedImages: this.editedImages.length,
+            deviceId: this.deviceId
+        });
     },
     
     // 로컬 스토리지에 저장
