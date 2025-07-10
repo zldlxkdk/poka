@@ -1,5 +1,11 @@
 // POKA V2 - 메인 페이지 JavaScript
 
+// 모바일 디바이스 감지
+function isMobileDevice() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+           (window.innerWidth <= 768 && window.innerHeight <= 1024);
+}
+
 // 카드 클릭 효과 함수
 function cardClickEffect(element) {
     // 클릭 애니메이션 클래스 추가
@@ -35,6 +41,10 @@ function init3DCardEffects() {
     const cardContainer = document.querySelector('.card-3d-container');
     if (!cardContainer) return;
     
+    // 모바일 디바이스 확인
+    const isMobile = isMobileDevice();
+    console.log('모바일 디바이스:', isMobile);
+    
     // 이미지 로딩 상태 확인
     const frontImg = cardContainer.querySelector('.card-front img');
     const backImg = cardContainer.querySelector('.card-back img');
@@ -69,7 +79,9 @@ function init3DCardEffects() {
                 const angle = Math.atan2(matrix.m31, matrix.m11) * (180 / Math.PI);
                 const normalizedAngle = ((angle % 360) + 360) % 360;
                 
-                console.log('카드 회전 각도:', normalizedAngle);
+                if (isMobile) {
+                    console.log('모바일 카드 회전 각도:', normalizedAngle);
+                }
                 
                 // 90도~270도 범위에서는 뒷면을 앞으로
                 if (normalizedAngle >= 90 && normalizedAngle <= 270) {
@@ -77,19 +89,35 @@ function init3DCardEffects() {
                         cardBack.style.zIndex = '10';
                         cardBack.style.opacity = '1';
                         cardBack.style.visibility = 'visible';
+                        // 모바일에서 추가 최적화
+                        if (isMobile) {
+                            cardBack.style.transform = 'rotateY(180deg) translateZ(-25px) scale(1.02)';
+                        }
                     }
                     if (cardFront) {
                         cardFront.style.zIndex = '5';
                         cardFront.style.opacity = '0.3';
+                        // 모바일에서 추가 최적화
+                        if (isMobile) {
+                            cardFront.style.transform = 'translateZ(25px) scale(0.98)';
+                        }
                     }
                 } else {
                     if (cardFront) {
                         cardFront.style.zIndex = '10';
                         cardFront.style.opacity = '1';
+                        // 모바일에서 추가 최적화
+                        if (isMobile) {
+                            cardFront.style.transform = 'translateZ(25px) scale(1.02)';
+                        }
                     }
                     if (cardBack) {
                         cardBack.style.zIndex = '5';
                         cardBack.style.opacity = '0.3';
+                        // 모바일에서 추가 최적화
+                        if (isMobile) {
+                            cardBack.style.transform = 'rotateY(180deg) translateZ(-25px) scale(0.98)';
+                        }
                     }
                 }
             } catch (error) {
@@ -98,14 +126,44 @@ function init3DCardEffects() {
         }
     }
     
-    // 애니메이션 프레임마다 z-index 업데이트
+    // 애니메이션 프레임마다 z-index 업데이트 (모바일에서는 더 자주)
     function animateZIndex() {
         updateCardZIndex();
-        requestAnimationFrame(animateZIndex);
+        // 모바일에서는 더 높은 프레임레이트로 업데이트
+        const nextFrame = isMobile ? 16 : 33; // 모바일: 60fps, PC: 30fps
+        setTimeout(() => requestAnimationFrame(animateZIndex), nextFrame);
     }
     
     // z-index 애니메이션 시작
     animateZIndex();
+    
+    // 모바일에서만 적용되는 추가 최적화
+    if (isMobile) {
+        // 모바일에서 GPU 가속 강화
+        cardContainer.style.transform = 'translate3d(0, 0, 0)';
+        cardContainer.style.webkitTransform = 'translate3d(0, 0, 0)';
+        cardContainer.style.willChange = 'transform';
+        
+        // 모바일에서 터치 이벤트 최적화
+        cardContainer.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            cardContainer.style.animationPlayState = 'paused';
+        }, { passive: false });
+        
+        cardContainer.addEventListener('touchend', () => {
+            cardContainer.style.animationPlayState = 'running';
+        });
+        
+        // 모바일에서 이미지 렌더링 최적화
+        if (frontImg) {
+            frontImg.style.imageRendering = 'optimizeSpeed';
+            frontImg.style.webkitImageRendering = 'optimizeSpeed';
+        }
+        if (backImg) {
+            backImg.style.imageRendering = 'optimizeSpeed';
+            backImg.style.webkitImageRendering = 'optimizeSpeed';
+        }
+    }
     
     cardContainer.addEventListener('mouseenter', () => {
         cardContainer.style.animationPlayState = 'paused';
@@ -115,37 +173,39 @@ function init3DCardEffects() {
         cardContainer.style.animationPlayState = 'running';
     });
     
-    // 마우스 움직임에 따른 3D 효과
-    cardContainer.addEventListener('mousemove', (e) => {
-        const rect = cardContainer.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
+    // 마우스 움직임에 따른 3D 효과 (PC에서만)
+    if (!isMobile) {
+        cardContainer.addEventListener('mousemove', (e) => {
+            const rect = cardContainer.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            // 더 자연스러운 회전을 위한 감도 조정
+            const rotateX = (y - centerY) / 12;
+            const rotateY = (centerX - x) / 12;
+            
+            // 부드러운 회전 범위 설정
+            const clampedRotateY = Math.max(-45, Math.min(45, rotateY));
+            const clampedRotateX = Math.max(-25, Math.min(25, rotateX));
+            
+            // GPU 가속을 위한 transform3d 사용
+            cardContainer.style.transform = `translate3d(0, 0, 0) rotateX(${clampedRotateX}deg) rotateY(${clampedRotateY}deg)`;
+            cardContainer.style.webkitTransform = `translate3d(0, 0, 0) rotateX(${clampedRotateX}deg) rotateY(${clampedRotateY}deg)`;
+            
+            // 성능 최적화
+            cardContainer.style.willChange = 'transform';
+        });
         
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        
-        // 더 자연스러운 회전을 위한 감도 조정
-        const rotateX = (y - centerY) / 12;
-        const rotateY = (centerX - x) / 12;
-        
-        // 부드러운 회전 범위 설정
-        const clampedRotateY = Math.max(-45, Math.min(45, rotateY));
-        const clampedRotateX = Math.max(-25, Math.min(25, rotateX));
-        
-        // GPU 가속을 위한 transform3d 사용
-        cardContainer.style.transform = `translate3d(0, 0, 0) rotateX(${clampedRotateX}deg) rotateY(${clampedRotateY}deg)`;
-        cardContainer.style.webkitTransform = `translate3d(0, 0, 0) rotateX(${clampedRotateX}deg) rotateY(${clampedRotateY}deg)`;
-        
-        // 성능 최적화
-        cardContainer.style.willChange = 'transform';
-    });
-    
-    cardContainer.addEventListener('mouseleave', () => {
-        cardContainer.style.transform = 'translate3d(0, 0, 0)';
-        cardContainer.style.webkitTransform = 'translate3d(0, 0, 0)';
-        cardContainer.style.animationPlayState = 'running';
-        cardContainer.style.willChange = 'auto';
-    });
+        cardContainer.addEventListener('mouseleave', () => {
+            cardContainer.style.transform = 'translate3d(0, 0, 0)';
+            cardContainer.style.webkitTransform = 'translate3d(0, 0, 0)';
+            cardContainer.style.animationPlayState = 'running';
+            cardContainer.style.willChange = 'auto';
+        });
+    }
 }
 
 // 클릭 사운드 효과
@@ -249,7 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // 터치 디바이스 최적화
-    if (POKA.DeviceInfo.isMobile()) {
+    if (isMobileDevice()) {
         // 터치 이벤트 최적화
         let touchStartY = 0;
         let touchEndY = 0;
@@ -408,7 +468,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         debugPanel.innerHTML = `
             <div>POKA V2 Debug</div>
-            <div>Device: ${POKA.DeviceInfo.isMobile() ? 'Mobile' : 'Desktop'}</div>
+            <div>Device: ${isMobileDevice() ? 'Mobile' : 'Desktop'}</div>
             <div>User: ${POKA.AppState.user ? 'Logged in' : 'Guest'}</div>
             <div>Images: ${POKA.AppState.editedImages.length}</div>
         `;
