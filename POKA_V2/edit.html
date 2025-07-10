@@ -82,6 +82,26 @@
 
             <!-- 이미지 편집 영역 -->
             <section class="edit-section" id="editSection" style="display: none;">
+                <!-- 포토카드 편집 모드일 때만 표시되는 이미지 선택 토글 -->
+                <div class="photo-card-edit-controls" id="photoCardEditControls" style="display: none;">
+                    <div class="image-toggle-container">
+                        <h3 class="toggle-title">편집할 면 선택</h3>
+                        <div class="image-toggle-buttons">
+                            <button class="toggle-btn active" id="frontToggleBtn" onclick="switchToFrontImage()">
+                                <span class="btn-icon">🖼️</span>
+                                <span class="btn-text">앞면</span>
+                            </button>
+                            <button class="toggle-btn" id="backToggleBtn" onclick="switchToBackImage()">
+                                <span class="btn-icon">🖼️</span>
+                                <span class="btn-text">뒷면</span>
+                            </button>
+                        </div>
+                        <div class="current-image-info" id="currentImageInfo">
+                            <span class="info-text">현재 편집 중: 앞면</span>
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="image-container" id="imageContainer">
                     <img id="editImage" src="" alt="편집할 이미지">
                     <div class="image-fallback" id="imageFallback">

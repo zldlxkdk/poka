@@ -710,3 +710,93 @@
 .name-counter.error {
     color: #f44336;
 } 
+
+/* 포토카드 편집 컨트롤 */
+.photo-card-edit-controls {
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 2px solid var(--border-color);
+}
+
+.image-toggle-container {
+    text-align: center;
+}
+
+.toggle-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--text-primary);
+    margin-bottom: 15px;
+}
+
+.image-toggle-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.toggle-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 15px 20px;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 100px;
+}
+
+.toggle-btn:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+}
+
+.toggle-btn.active {
+    border-color: var(--primary-color);
+    background: var(--primary-color);
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
+}
+
+.toggle-btn .btn-icon {
+    font-size: 1.5rem;
+}
+
+.toggle-btn .btn-text {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.current-image-info {
+    padding: 10px;
+    background: var(--bg-primary);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.info-text {
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .image-toggle-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .toggle-btn {
+        width: 100%;
+        max-width: 200px;
+    }
+} 
