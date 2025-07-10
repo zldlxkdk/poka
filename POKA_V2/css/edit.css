@@ -71,17 +71,21 @@
     overflow: hidden;
     box-shadow: var(--shadow-light);
     margin-bottom: 20px;
-    min-height: 250px;
+    min-height: 300px;
     display: flex;
     align-items: center;
     justify-content: center;
+    border: 2px solid var(--border-color);
 }
 
 #editImage {
     max-width: 100%;
-    max-height: 300px;
+    max-height: 400px;
+    width: auto;
+    height: auto;
     object-fit: contain;
     border-radius: var(--border-radius);
+    display: block;
 }
 
 .image-fallback {
@@ -96,6 +100,14 @@
     font-size: 4rem;
     color: var(--text-secondary);
     border: 2px dashed var(--border-color);
+    flex-direction: column;
+    gap: 10px;
+}
+
+.image-fallback::after {
+    content: '이미지를 불러올 수 없습니다';
+    font-size: 1rem;
+    color: var(--text-secondary);
 }
 
 /* 편집 도구 */
