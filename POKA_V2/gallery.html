@@ -123,24 +123,34 @@
             </div>
             <div class="modal-actions">
                 <button class="btn btn-secondary" onclick="editCurrentImage()">
-                    <span class="btn-icon">✏️</span>
-                    편집
+                    <div class="btn-content">
+                        <span class="btn-icon">✏️</span>
+                        <span class="btn-text">편집</span>
+                    </div>
                 </button>
                 <button class="btn btn-primary" onclick="downloadImage()">
-                    <span class="btn-icon">⬇️</span>
-                    다운로드
+                    <div class="btn-content">
+                        <span class="btn-icon">⬇️</span>
+                        <span class="btn-text">다운로드</span>
+                    </div>
                 </button>
                 <button class="btn btn-secondary" onclick="shareImage()">
-                    <span class="btn-icon">📤</span>
-                    공유
+                    <div class="btn-content">
+                        <span class="btn-icon">📤</span>
+                        <span class="btn-text">공유</span>
+                    </div>
                 </button>
                 <button class="btn btn-secondary" onclick="toggleFavorite()">
-                    <span class="btn-icon" id="favoriteIcon">⭐</span>
-                    <span id="favoriteText">즐겨찾기</span>
+                    <div class="btn-content">
+                        <span class="btn-icon" id="favoriteIcon">⭐</span>
+                        <span class="btn-text" id="favoriteText">즐겨찾기</span>
+                    </div>
                 </button>
                 <button class="btn btn-close" onclick="closeImageModal()">
-                    <span class="btn-icon">✕</span>
-                    닫기
+                    <div class="btn-content">
+                        <span class="btn-icon">✕</span>
+                        <span class="btn-text">닫기</span>
+                    </div>
                 </button>
             </div>
         </div>
