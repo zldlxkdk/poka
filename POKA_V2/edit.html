@@ -84,20 +84,66 @@
             <section class="edit-section" id="editSection" style="display: none;">
                 <!-- 포토카드 편집 모드일 때만 표시되는 이미지 선택 토글 -->
                 <div class="photo-card-edit-controls" id="photoCardEditControls" style="display: none;">
-                    <div class="image-toggle-container">
-                        <h3 class="toggle-title">편집할 면 선택</h3>
-                        <div class="image-toggle-buttons">
-                            <button class="toggle-btn active" id="frontToggleBtn" onclick="switchToFrontImage()">
-                                <span class="btn-icon">🖼️</span>
-                                <span class="btn-text">앞면</span>
-                            </button>
-                            <button class="toggle-btn" id="backToggleBtn" onclick="switchToBackImage()">
-                                <span class="btn-icon">🖼️</span>
-                                <span class="btn-text">뒷면</span>
+                    <div class="photo-card-image-selector">
+                        <h3 class="selector-title">포토카드 이미지 선택</h3>
+                        <div class="image-selector-container">
+                            <div class="image-selector-item" id="frontImageSelector">
+                                <div class="selector-placeholder" onclick="selectImageForUpload('front')">
+                                    <span class="placeholder-icon">📷</span>
+                                    <span class="placeholder-text">앞면 이미지 선택</span>
+                                    <span class="placeholder-hint">클릭하여 이미지 업로드</span>
+                                </div>
+                                <img class="selected-image" id="frontSelectedImage" src="" alt="앞면 이미지" style="display: none;">
+                                <div class="image-overlay" id="frontImageOverlay" style="display: none;">
+                                    <button class="edit-btn" onclick="editSelectedImage('front')">
+                                        <span class="btn-icon">✏️</span>
+                                        <span class="btn-text">편집</span>
+                                    </button>
+                                    <button class="change-btn" onclick="selectImageForUpload('front')">
+                                        <span class="btn-icon">🔄</span>
+                                        <span class="btn-text">변경</span>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="image-selector-item" id="backImageSelector">
+                                <div class="selector-placeholder" onclick="selectImageForUpload('back')">
+                                    <span class="placeholder-icon">📷</span>
+                                    <span class="placeholder-text">뒷면 이미지 선택</span>
+                                    <span class="placeholder-hint">클릭하여 이미지 업로드</span>
+                                </div>
+                                <img class="selected-image" id="backSelectedImage" src="" alt="뒷면 이미지" style="display: none;">
+                                <div class="image-overlay" id="backImageOverlay" style="display: none;">
+                                    <button class="edit-btn" onclick="editSelectedImage('back')">
+                                        <span class="btn-icon">✏️</span>
+                                        <span class="btn-text">편집</span>
+                                    </button>
+                                    <button class="change-btn" onclick="selectImageForUpload('back')">
+                                        <span class="btn-icon">🔄</span>
+                                        <span class="btn-text">변경</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="photo-card-actions">
+                            <button class="btn btn-primary" id="createPhotoCardBtn" onclick="createPhotoCard()" disabled>
+                                <span class="btn-icon">🎴</span>
+                                <span class="btn-text">포토카드 만들기</span>
                             </button>
                         </div>
-                        <div class="current-image-info" id="currentImageInfo">
-                            <span class="info-text">현재 편집 중: 앞면</span>
+                    </div>
+                </div>
+                
+                <!-- 편집 모드 헤더 -->
+                <div class="edit-mode-header" id="editModeHeader" style="display: none;">
+                    <div class="edit-mode-info">
+                        <button class="back-to-selector-btn" onclick="backToPhotoCardSelector()">
+                            <span class="btn-icon">←</span>
+                            <span class="btn-text">포토카드 선택으로</span>
+                        </button>
+                        <div class="current-editing-info">
+                            <span class="editing-side-text" id="editingSideText">앞면 편집 중</span>
                         </div>
                     </div>
                 </div>
