@@ -167,6 +167,21 @@ function editSelectedImage(side) {
     // 편집 섹션 표시
     editSection.style.display = 'block';
     
+    // 편집 모드 헤더 표시
+    const editModeHeader = document.getElementById('editModeHeader');
+    if (editModeHeader) {
+        editModeHeader.style.display = 'block';
+    }
+    
+    // 편집 중인 면 텍스트 업데이트
+    const editingSideText = document.getElementById('editingSideText');
+    if (editingSideText) {
+        editingSideText.textContent = `${side === 'front' ? '앞면' : '뒷면'} 편집 중`;
+    }
+    
+    // 포토카드 편집 컨트롤 숨기기 (편집 중에는 숨김)
+    photoCardEditControls.style.display = 'none';
+    
     // 이미지 편집 상태 로드
     loadImageEditState(side);
     
@@ -228,10 +243,6 @@ function loadPhotoCardForEdit(photoCard) {
 
     // 이미지 선택 섹션 숨기기
     imageSelectionSection.style.display = 'none';
-    editSection.style.display = 'block';
-    
-    // 포토카드 편집 컨트롤 표시
-    photoCardEditControls.style.display = 'block';
     
     // 선택된 이미지들을 UI에 표시
     if (photoCard.frontImage) {
@@ -275,6 +286,18 @@ function loadPhotoCardForEdit(photoCard) {
     
     // 회전 슬라이더 초기화
     initRotationSlider();
+    
+    // 포토카드 편집 컨트롤 표시
+    photoCardEditControls.style.display = 'block';
+    
+    // 편집 모드 헤더 숨기기
+    const editModeHeader = document.getElementById('editModeHeader');
+    if (editModeHeader) {
+        editModeHeader.style.display = 'none';
+    }
+    
+    // 편집 섹션은 숨김 (이미지 선택 후 편집 버튼을 통해 표시)
+    editSection.style.display = 'none';
     
     POKA.Toast.success('포토카드 편집 모드로 전환되었습니다');
 }
@@ -325,6 +348,12 @@ function loadCurrentImage() {
     
     // 포토카드 편집 컨트롤 숨기기 (일반 이미지 편집 모드)
     photoCardEditControls.style.display = 'none';
+    
+    // 편집 모드 헤더 숨기기 (일반 이미지 편집 모드)
+    const editModeHeader = document.getElementById('editModeHeader');
+    if (editModeHeader) {
+        editModeHeader.style.display = 'none';
+    }
     
     // 이미지 표시
     editImage.src = currentImage.dataUrl;
@@ -1470,6 +1499,30 @@ function loadImageEditState(side) {
     initRotationSlider();
 }
 
+// 포토카드 선택 화면으로 돌아가기
+function backToPhotoCardSelector() {
+    console.log('포토카드 선택 화면으로 돌아가기');
+    
+    // 편집 섹션 숨기기
+    editSection.style.display = 'none';
+    
+    // 편집 모드 헤더 숨기기
+    const editModeHeader = document.getElementById('editModeHeader');
+    if (editModeHeader) {
+        editModeHeader.style.display = 'none';
+    }
+    
+    // 포토카드 편집 컨트롤 표시
+    photoCardEditControls.style.display = 'block';
+    
+    // 현재 편집 상태 저장
+    if (currentPhotoCard && currentEditingSide) {
+        saveCurrentEditState();
+    }
+    
+    POKA.Toast.success('포토카드 선택 화면으로 돌아갔습니다');
+}
+
 // 현재 편집 상태 저장
 function saveCurrentEditState() {
     if (!currentPhotoCard) return;
@@ -1587,6 +1640,12 @@ function showPhotoCardCreationMode() {
     
     // 편집 섹션 숨기기
     editSection.style.display = 'none';
+    
+    // 편집 모드 헤더 숨기기
+    const editModeHeader = document.getElementById('editModeHeader');
+    if (editModeHeader) {
+        editModeHeader.style.display = 'none';
+    }
     
     // 포토카드 편집 컨트롤 표시
     photoCardEditControls.style.display = 'block';
