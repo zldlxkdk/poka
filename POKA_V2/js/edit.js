@@ -110,19 +110,43 @@ function loadCurrentImageOrPhotoCard() {
     
     // 둘 다 없는 경우 이미지 선택 모드로 전환
     console.log('이미지 선택 모드로 전환');
+    
+    // 업로드된 이미지가 있는지 확인
+    const uploadedImages = POKA.AppState.getFromStorage('uploadedImages') || [];
+    if (uploadedImages.length === 0) {
+        console.log('업로드된 이미지가 없음, 업로드 페이지로 안내');
+        POKA.Toast.warning('편집할 이미지가 없습니다. 먼저 이미지를 업로드해주세요.');
+        setTimeout(() => {
+            POKA.Navigation.navigateTo('upload.html');
+        }, 2000);
+        return;
+    }
+    
     showImageSelectionMode();
 }
 
 // 이미지 선택 모드 표시
 function showImageSelectionMode() {
+    console.log('이미지 선택 모드 표시');
+    
+    // 섹션 표시/숨김
     imageSelectionSection.style.display = 'block';
     editSection.style.display = 'none';
+    
+    // 선택 상태 초기화
+    selectedFrontImage = null;
+    selectedBackImage = null;
     
     // 업로드된 이미지 로드
     loadUploadedImages();
     
     // 이미지 그리드 렌더링
     renderImageGrids();
+    
+    // 버튼 상태 업데이트
+    updateCreatePhotoCardButton();
+    
+    console.log('이미지 선택 모드 초기화 완료');
 }
 
 // 업로드된 이미지 로드
@@ -130,10 +154,14 @@ function loadUploadedImages() {
     const savedImages = POKA.AppState.getFromStorage('uploadedImages') || [];
     uploadedImages = savedImages;
     console.log('업로드된 이미지 로드:', uploadedImages.length);
+    console.log('업로드된 이미지 데이터:', uploadedImages);
 }
 
 // 이미지 그리드 렌더링
 function renderImageGrids() {
+    console.log('이미지 그리드 렌더링 시작');
+    console.log('업로드된 이미지 개수:', uploadedImages.length);
+    
     // 앞면 이미지 그리드
     frontImageGrid.innerHTML = '';
     uploadedImages.forEach((image, index) => {
@@ -150,13 +178,26 @@ function renderImageGrids() {
     
     // 이미지가 없을 경우 안내 메시지
     if (uploadedImages.length === 0) {
-        frontImageGrid.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">업로드된 이미지가 없습니다</p>';
-        backImageGrid.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">업로드된 이미지가 없습니다</p>';
+        frontImageGrid.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 20px;">업로드된 이미지가 없습니다</p>';
+        backImageGrid.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 20px;">업로드된 이미지가 없습니다</p>';
+        
+        // 업로드 페이지로 이동하는 버튼 추가
+        const uploadButton = document.createElement('button');
+        uploadButton.className = 'btn btn-primary';
+        uploadButton.innerHTML = '<span class="btn-icon">📤</span>이미지 업로드하기';
+        uploadButton.onclick = () => POKA.Navigation.navigateTo('upload.html');
+        uploadButton.style.marginTop = '10px';
+        
+        frontImageGrid.appendChild(uploadButton);
     }
+    
+    console.log('이미지 그리드 렌더링 완료');
 }
 
 // 이미지 그리드 아이템 생성
 function createImageGridItem(image, index, type) {
+    console.log(`그리드 아이템 생성: ${type}, 인덱스: ${index}`, image);
+    
     const item = document.createElement('div');
     item.className = 'image-grid-item';
     item.dataset.imageIndex = index;
@@ -168,7 +209,10 @@ function createImageGridItem(image, index, type) {
     `;
     
     // 클릭 이벤트
-    item.addEventListener('click', () => {
+    item.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log(`이미지 선택됨: ${type}, 인덱스: ${index}`, image);
         selectImageForPhotoCard(image, type);
     });
     
@@ -185,14 +229,22 @@ function selectImageForPhotoCard(image, type) {
         frontImageGrid.querySelectorAll('.image-grid-item').forEach(item => {
             item.classList.remove('selected');
         });
-        event.target.closest('.image-grid-item').classList.add('selected');
+        // 클릭된 아이템 찾기
+        const clickedItem = frontImageGrid.querySelector(`[data-image-index="${uploadedImages.indexOf(image)}"]`);
+        if (clickedItem) {
+            clickedItem.classList.add('selected');
+        }
     } else {
         selectedBackImage = image;
         // 뒷면 이미지 그리드에서 선택 표시
         backImageGrid.querySelectorAll('.image-grid-item').forEach(item => {
             item.classList.remove('selected');
         });
-        event.target.closest('.image-grid-item').classList.add('selected');
+        // 클릭된 아이템 찾기
+        const clickedItem = backImageGrid.querySelector(`[data-image-index="${uploadedImages.indexOf(image)}"]`);
+        if (clickedItem) {
+            clickedItem.classList.add('selected');
+        }
     }
     
     // 포토카드 만들기 버튼 활성화 확인
@@ -205,9 +257,9 @@ function updateCreatePhotoCardButton() {
     createPhotoCardBtn.disabled = !canCreate;
     
     if (canCreate) {
-        createPhotoCardBtn.textContent = '포토카드 만들기';
+        createPhotoCardBtn.innerHTML = '<span class="btn-icon">🎴</span>포토카드 만들기';
     } else {
-        createPhotoCardBtn.textContent = '앞면과 뒷면 이미지를 선택하세요';
+        createPhotoCardBtn.innerHTML = '<span class="btn-icon">⚠️</span>앞면과 뒷면 이미지를 선택하세요';
     }
 }
 
@@ -1122,11 +1174,24 @@ function debugInfo() {
             <p><strong>editImage.naturalWidth:</strong> ${editImage.naturalWidth || '로드 안됨'}</p>
             <p><strong>editImage.naturalHeight:</strong> ${editImage.naturalHeight || '로드 안됨'}</p>
             <br>
+            <p><strong>포토카드 관련:</strong></p>
+            <p><strong>selectedFrontImage:</strong> ${selectedFrontImage ? '선택됨' : '없음'}</p>
+            <p><strong>selectedBackImage:</strong> ${selectedBackImage ? '선택됨' : '없음'}</p>
+            <p><strong>uploadedImages 개수:</strong> ${uploadedImages.length}</p>
+            <p><strong>imageSelectionSection 표시:</strong> ${imageSelectionSection.style.display}</p>
+            <p><strong>editSection 표시:</strong> ${editSection.style.display}</p>
+            <br>
             <p><strong>이모지 목록:</strong></p>
             <pre>${JSON.stringify(emojis, null, 2)}</pre>
             <br>
             <p><strong>AppState.currentImage:</strong></p>
             <pre>${JSON.stringify(window.POKA?.AppState?.currentImage, null, 2)}</pre>
+            <br>
+            <p><strong>AppState.currentPhotoCard:</strong></p>
+            <pre>${JSON.stringify(window.POKA?.AppState?.getFromStorage('currentPhotoCard'), null, 2)}</pre>
+            <br>
+            <p><strong>업로드된 이미지:</strong></p>
+            <pre>${JSON.stringify(uploadedImages, null, 2)}</pre>
         </div>
     `;
     
@@ -1134,21 +1199,25 @@ function debugInfo() {
         title: '디버그 정보',
         buttons: [
             {
-                text: '이모지 테스트 삭제',
-                class: 'btn-danger',
+                text: '이미지 선택 모드 강제 실행',
+                class: 'btn-primary',
                 onclick: () => {
-                    if (emojis.length > 0) {
-                        const firstEmoji = emojis[0];
-                        console.log('테스트 삭제 - 첫 번째 이모지:', firstEmoji);
-                        deleteEmoji(firstEmoji.id);
-                    } else {
-                        POKA.Toast.info('삭제할 이모지가 없습니다');
-                    }
+                    showImageSelectionMode();
+                    POKA.Toast.success('이미지 선택 모드가 강제로 실행되었습니다');
+                }
+            },
+            {
+                text: '업로드된 이미지 새로고침',
+                class: 'btn-secondary',
+                onclick: () => {
+                    loadUploadedImages();
+                    renderImageGrids();
+                    POKA.Toast.success('업로드된 이미지가 새로고침되었습니다');
                 }
             },
             {
                 text: '닫기',
-                class: 'btn-primary'
+                class: 'btn-secondary'
             }
         ]
     });
