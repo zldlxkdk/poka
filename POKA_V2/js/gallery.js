@@ -468,7 +468,7 @@ function editCurrentImage() {
         
         // 편집 페이지로 이동하면서 이미지 데이터 전달
         POKA.AppState.saveToStorage('currentEditImage', image);
-        POKA.Navigation.navigateTo('edit.html');
+        window.location.href = 'edit.html';
     }
 }
 
@@ -484,7 +484,7 @@ function downloadImage() {
         link.click();
         document.body.removeChild(link);
         
-        POKA.Toast.success('다운로드가 시작되었습니다');
+        showToast('다운로드가 시작되었습니다', 'success');
     }
 }
 
@@ -498,18 +498,18 @@ function shareImage() {
             text: 'POKA V2로 만든 포토카드입니다',
             url: window.location.href
         }).then(() => {
-            POKA.Toast.success('공유되었습니다');
+            showToast('공유되었습니다', 'success');
         }).catch(() => {
-            POKA.Toast.error('공유에 실패했습니다');
+            showToast('공유에 실패했습니다', 'error');
         });
     } else {
         // 공유 API가 지원되지 않는 경우 클립보드에 복사
         if (currentModalImage) {
             const { image } = currentModalImage;
             navigator.clipboard.writeText(image.dataUrl).then(() => {
-                POKA.Toast.success('이미지 링크가 클립보드에 복사되었습니다');
+                showToast('이미지 링크가 클립보드에 복사되었습니다', 'success');
             }).catch(() => {
-                POKA.Toast.error('클립보드 복사에 실패했습니다');
+                showToast('클립보드 복사에 실패했습니다', 'error');
             });
         }
     }
@@ -529,41 +529,61 @@ function deleteCurrentImage() {
         const { image, index } = currentModalImage;
         
         // 확인 다이얼로그 표시
-        POKA.Modal.confirm(
-            '이미지 삭제',
-            '정말로 이 이미지를 삭제하시겠습니까?',
-            {
-                buttons: [
-                    {
-                        text: '취소',
-                        class: 'btn-secondary'
-                    },
-                    {
-                        text: '삭제',
-                        class: 'btn-primary',
-                        onClick: () => {
-                            // 원본 배열에서 제거
-                            const originalIndex = allImages.findIndex(img => img.id === image.id);
-                            if (originalIndex !== -1) {
-                                allImages.splice(originalIndex, 1);
-                            }
-                            
-                            // 저장
-                            saveImages();
-                            
-                            // 모달 닫기
-                            closeImageModal();
-                            
-                            // 갤러리 업데이트
-                            updateGallery();
-                            
-                            POKA.Toast.success('이미지가 삭제되었습니다');
-                        }
-                    }
-                ]
+        if (confirm('정말로 이 이미지를 삭제하시겠습니까?')) {
+            // 원본 배열에서 제거
+            const originalIndex = allImages.findIndex(img => img.id === image.id);
+            if (originalIndex !== -1) {
+                allImages.splice(originalIndex, 1);
             }
-        );
+            
+            // 저장
+            saveImages();
+            
+            // 모달 닫기
+            closeImageModal();
+            
+            // 갤러리 업데이트
+            updateGallery();
+            
+            // 성공 메시지 표시
+            showToast('이미지가 삭제되었습니다', 'success');
+        }
     }
+}
+
+// 토스트 메시지 표시 함수
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#007bff'};
+        color: white;
+        padding: 12px 24px;
+        border-radius: 8px;
+        z-index: 10000;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    `;
+    
+    document.body.appendChild(toast);
+    
+    // 애니메이션
+    setTimeout(() => {
+        toast.style.opacity = '1';
+    }, 100);
+    
+    // 자동 제거
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => {
+            document.body.removeChild(toast);
+        }, 300);
+    }, 3000);
 }
 
 // 이미지 저장
