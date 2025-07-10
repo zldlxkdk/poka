@@ -3,6 +3,7 @@
 // 전역 변수
 let uploadedImages = [];
 let isUploading = false;
+let isFileInputProcessing = false; // 파일 입력 처리 중 플래그 추가
 
 // DOM 요소들
 const uploadArea = document.getElementById('uploadArea');
@@ -59,40 +60,104 @@ function setupDragAndDrop() {
         }
     });
     
-    // 클릭으로 파일 선택
-    uploadArea.addEventListener('click', (e) => {
-        if (e.target === uploadArea || e.target.closest('.upload-placeholder')) {
-            fileInput.click();
-        }
-    });
+    // 클릭으로 파일 선택 - 중복 이벤트 방지를 위해 제거
+    // uploadArea.addEventListener('click', (e) => {
+    //     if (e.target === uploadArea || e.target.closest('.upload-placeholder')) {
+    //         fileInput.click();
+    //     }
+    // });
 }
 
 // 파일 입력 설정
 function setupFileInputs() {
     fileInput.addEventListener('change', (e) => {
+        if (isFileInputProcessing) return; // 중복 처리 방지
+        
         const files = Array.from(e.target.files);
         if (files.length > 0) {
-            handleFiles(files);
+            isFileInputProcessing = true;
+            handleFiles(files).finally(() => {
+                // 파일 처리 완료 후 초기화 - 더 안전한 방법
+                setTimeout(() => {
+                    try {
+                        fileInput.value = '';
+                    } catch (error) {
+                        console.warn('파일 입력 초기화 중 오류:', error);
+                    }
+                    isFileInputProcessing = false;
+                }, 200);
+            });
+        } else {
+            // 파일이 선택되지 않은 경우에도 플래그 초기화
+            setTimeout(() => {
+                isFileInputProcessing = false;
+            }, 100);
         }
     });
     
     cameraInput.addEventListener('change', (e) => {
+        if (isFileInputProcessing) return; // 중복 처리 방지
+        
         const files = Array.from(e.target.files);
         if (files.length > 0) {
-            handleFiles(files);
+            isFileInputProcessing = true;
+            handleFiles(files).finally(() => {
+                // 파일 처리 완료 후 초기화 - 더 안전한 방법
+                setTimeout(() => {
+                    try {
+                        cameraInput.value = '';
+                    } catch (error) {
+                        console.warn('카메라 입력 초기화 중 오류:', error);
+                    }
+                    isFileInputProcessing = false;
+                }, 200);
+            });
+        } else {
+            // 파일이 선택되지 않은 경우에도 플래그 초기화
+            setTimeout(() => {
+                isFileInputProcessing = false;
+            }, 100);
         }
     });
 }
 
 // 갤러리 열기
 function openGallery() {
-    fileInput.click();
+    if (isFileInputProcessing) {
+        POKA.Toast.warning('파일 처리 중입니다. 잠시 기다려주세요.');
+        return;
+    }
+    
+    // 모바일에서 더 안정적인 파일 선택을 위한 지연
+    setTimeout(() => {
+        try {
+            fileInput.click();
+        } catch (error) {
+            console.error('파일 선택 오류:', error);
+            POKA.Toast.error('파일 선택에 실패했습니다. 다시 시도해주세요.');
+            isFileInputProcessing = false;
+        }
+    }, 100);
 }
 
 // 카메라 열기
 function openCamera() {
+    if (isFileInputProcessing) {
+        POKA.Toast.warning('파일 처리 중입니다. 잠시 기다려주세요.');
+        return;
+    }
+    
     if (POKA.DeviceInfo.isMobile()) {
-        cameraInput.click();
+        // 모바일에서 더 안정적인 카메라 선택을 위한 지연
+        setTimeout(() => {
+            try {
+                cameraInput.click();
+            } catch (error) {
+                console.error('카메라 선택 오류:', error);
+                POKA.Toast.error('카메라 선택에 실패했습니다. 다시 시도해주세요.');
+                isFileInputProcessing = false;
+            }
+        }, 100);
     } else {
         POKA.Toast.warning('카메라는 모바일 기기에서만 사용할 수 있습니다');
     }
@@ -104,6 +169,8 @@ async function handleFiles(files) {
         POKA.Toast.warning('업로드 중입니다. 잠시 기다려주세요.');
         return;
     }
+    
+    console.log('파일 처리 시작:', files.length, '개 파일');
     
     isUploading = true;
     uploadArea.classList.add('loading');
@@ -125,15 +192,19 @@ async function handleFiles(files) {
             return true;
         });
         
+        console.log('유효한 파일:', validFiles.length, '개');
+        
         if (validFiles.length === 0) {
             return;
         }
         
         // 이미지 처리 및 압축
+        const processedImages = [];
         for (const file of validFiles) {
             try {
+                console.log('이미지 처리 중:', file.name);
                 const processedImage = await processImage(file);
-                uploadedImages.push({
+                processedImages.push({
                     id: Date.now() + Math.random(),
                     file: file,
                     dataUrl: processedImage,
@@ -142,18 +213,24 @@ async function handleFiles(files) {
                     type: file.type,
                     uploadedAt: new Date().toISOString()
                 });
+                console.log('이미지 처리 완료:', file.name);
             } catch (error) {
                 console.error('Image processing error:', error);
                 POKA.Toast.error(`${file.name} 처리 중 오류가 발생했습니다`);
             }
         }
         
+        // 업로드된 이미지 배열에 추가
+        uploadedImages.push(...processedImages);
+        
         // 미리보기 업데이트
         updateImagePreview();
         
         // 성공 메시지
-        if (validFiles.length > 0) {
-            POKA.Toast.success(`${validFiles.length}개의 이미지가 업로드되었습니다`);
+        if (processedImages.length > 0) {
+            POKA.Toast.success(`${processedImages.length}개의 이미지가 업로드되었습니다`);
+            // 업로드된 이미지 저장
+            saveUploadedImages();
         }
         
     } catch (error) {
@@ -163,9 +240,10 @@ async function handleFiles(files) {
         isUploading = false;
         uploadArea.classList.remove('loading');
         
-        // 파일 입력 초기화
-        fileInput.value = '';
-        cameraInput.value = '';
+        // 오류 발생 시에도 파일 입력 처리 플래그 초기화
+        setTimeout(() => {
+            isFileInputProcessing = false;
+        }, 100);
     }
 }
 
