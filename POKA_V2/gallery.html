@@ -105,7 +105,10 @@
         <div class="modal-overlay" onclick="closeImageModal()"></div>
         <div class="modal-content">
             <div class="modal-header">
-                <button class="modal-close" onclick="closeImageModal()">×</button>
+                <button class="modal-delete" onclick="deleteCurrentImage()" title="삭제">
+                    <span class="btn-icon">🗑️</span>
+                </button>
+                <button class="modal-close" onclick="closeImageModal()" title="닫기">×</button>
             </div>
             <div class="modal-body">
                 <img id="modalImage" src="" alt="">
@@ -134,10 +137,6 @@
                 <button class="btn btn-secondary" onclick="toggleFavorite()">
                     <span class="btn-icon" id="favoriteIcon">⭐</span>
                     <span id="favoriteText">즐겨찾기</span>
-                </button>
-                <button class="btn btn-secondary" onclick="deleteCurrentImage()">
-                    <span class="btn-icon">🗑️</span>
-                    삭제
                 </button>
             </div>
         </div>

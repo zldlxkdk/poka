@@ -418,9 +418,7 @@ function openImageModal(image, index) {
     const modalOverlay = document.querySelector('.modal-overlay');
     if (modalOverlay) {
         modalOverlay.onclick = function(e) {
-            if (e.target === this) {
-                closeImageModal();
-            }
+            closeImageModal();
         };
     }
     
