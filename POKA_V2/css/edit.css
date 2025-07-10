@@ -875,3 +875,71 @@
         min-width: 70px;
     }
 } 
+
+/* 편집 모드 헤더 */
+.edit-mode-header {
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    border: 2px solid var(--border-color);
+}
+
+.edit-mode-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.back-to-selector-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.back-to-selector-btn:hover {
+    border-color: var(--primary-color);
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-1px);
+}
+
+.current-editing-info {
+    padding: 8px 16px;
+    background: var(--bg-primary);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.editing-side-text {
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .edit-mode-info {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .back-to-selector-btn {
+        justify-content: center;
+    }
+    
+    .current-editing-info {
+        text-align: center;
+    }
+} 
