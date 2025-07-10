@@ -171,26 +171,13 @@ function createGalleryItem(image, index) {
                 <div class="gallery-item-title">${image.name || '제목 없음'}</div>
                 <div class="gallery-item-date">${formattedDate}</div>
             </div>
-            <div class="gallery-item-actions">
-                <button class="gallery-item-btn favorite ${isFavorite}" onclick="toggleImageFavorite(${index})" title="즐겨찾기">
-                    ${favoriteIcon}
-                </button>
-                <button class="gallery-item-btn edit" onclick="editImage(${index})" title="편집">
-                    ??
-                </button>
-                <button class="gallery-item-btn delete" onclick="deleteImage(${index})" title="삭제">
-                    ??
-                </button>
-            </div>
         </div>
         ${image.type === 'edited' ? '<div class="gallery-item-badge">편집됨</div>' : ''}
     `;
     
     // 클릭 이벤트
     item.addEventListener('click', (e) => {
-        if (!e.target.closest('.gallery-item-btn')) {
-            openImageModal(image, index);
-        }
+        openImageModal(image, index);
     });
     
     return item;
@@ -476,8 +463,12 @@ function closeImageModal() {
 // 현재 이미지 편집
 function editCurrentImage() {
     if (currentModalImage) {
+        const { image, index } = currentModalImage;
         closeImageModal();
-        editImage(currentModalImage.index);
+        
+        // 편집 페이지로 이동하면서 이미지 데이터 전달
+        POKA.AppState.saveToStorage('currentEditImage', image);
+        POKA.Navigation.navigateTo('edit.html');
     }
 }
 
@@ -529,6 +520,49 @@ function toggleFavorite() {
     if (currentModalImage) {
         toggleImageFavorite(currentModalImage.index);
         closeImageModal();
+    }
+}
+
+// 현재 이미지 삭제 (모달에서)
+function deleteCurrentImage() {
+    if (currentModalImage) {
+        const { image, index } = currentModalImage;
+        
+        // 확인 다이얼로그 표시
+        POKA.Modal.confirm(
+            '이미지 삭제',
+            '정말로 이 이미지를 삭제하시겠습니까?',
+            {
+                buttons: [
+                    {
+                        text: '취소',
+                        class: 'btn-secondary'
+                    },
+                    {
+                        text: '삭제',
+                        class: 'btn-primary',
+                        onClick: () => {
+                            // 원본 배열에서 제거
+                            const originalIndex = allImages.findIndex(img => img.id === image.id);
+                            if (originalIndex !== -1) {
+                                allImages.splice(originalIndex, 1);
+                            }
+                            
+                            // 저장
+                            saveImages();
+                            
+                            // 모달 닫기
+                            closeImageModal();
+                            
+                            // 갤러리 업데이트
+                            updateGallery();
+                            
+                            POKA.Toast.success('이미지가 삭제되었습니다');
+                        }
+                    }
+                ]
+            }
+        );
     }
 }
 
