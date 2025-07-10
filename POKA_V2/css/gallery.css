@@ -392,9 +392,9 @@
     background: var(--surface-color);
     border-radius: var(--border-radius-large);
     max-width: 90vw;
-    max-height: 85vh;
+    max-height: 75vh;
     width: 90vw;
-    height: 85vh;
+    height: 75vh;
     overflow: hidden;
     box-shadow: var(--shadow-heavy);
     animation: modalSlideIn 0.3s ease-out;
@@ -643,9 +643,9 @@
     
     .modal-content {
         max-width: 95vw;
-        max-height: 90vh;
+        max-height: 80vh;
         width: 95vw;
-        height: 90vh;
+        height: 80vh;
     }
     
     .modal-body {
