@@ -379,6 +379,7 @@
     bottom: 0;
     background: rgba(0, 0, 0, 0.8);
     cursor: pointer;
+    z-index: 1;
 }
 
 .modal-content {
@@ -394,6 +395,7 @@
     animation: modalSlideIn 0.3s ease-out;
     display: flex;
     flex-direction: column;
+    z-index: 2;
 }
 
 @keyframes modalSlideIn {
@@ -434,11 +436,12 @@
     padding: 20px;
     text-align: center;
     flex: 1;
-    overflow: hidden;
+    overflow: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
+    min-height: 0;
 }
 
 .modal-body img {
@@ -453,7 +456,10 @@
 
 .image-info {
     margin-top: 16px;
+    margin-bottom: 16px;
     text-align: left;
+    width: 100%;
+    padding: 0 8px;
 }
 
 .image-info h3 {
@@ -542,6 +548,8 @@
     
     .image-info {
         margin-top: 8px;
+        margin-bottom: 12px;
+        padding: 0 4px;
     }
     
     .image-info h3 {
