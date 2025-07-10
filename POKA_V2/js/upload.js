@@ -3,7 +3,6 @@
 // 전역 변수
 let uploadedImages = [];
 let isUploading = false;
-let isFileInputProcessing = false; // 파일 입력 처리 중 플래그 추가
 
 // DOM 요소들
 const uploadArea = document.getElementById('uploadArea');
@@ -71,93 +70,79 @@ function setupDragAndDrop() {
 // 파일 입력 설정
 function setupFileInputs() {
     fileInput.addEventListener('change', (e) => {
-        if (isFileInputProcessing) return; // 중복 처리 방지
+        console.log('파일 입력 변경 감지:', e.target.files.length, '개 파일');
         
         const files = Array.from(e.target.files);
         if (files.length > 0) {
-            isFileInputProcessing = true;
+            // 파일이 선택되면 즉시 처리
             handleFiles(files).finally(() => {
-                // 파일 처리 완료 후 초기화 - 더 안전한 방법
+                // 파일 처리 완료 후 초기화
                 setTimeout(() => {
                     try {
                         fileInput.value = '';
                     } catch (error) {
                         console.warn('파일 입력 초기화 중 오류:', error);
                     }
-                    isFileInputProcessing = false;
-                }, 200);
+                }, 100);
             });
-        } else {
-            // 파일이 선택되지 않은 경우에도 플래그 초기화
-            setTimeout(() => {
-                isFileInputProcessing = false;
-            }, 100);
         }
     });
     
     cameraInput.addEventListener('change', (e) => {
-        if (isFileInputProcessing) return; // 중복 처리 방지
+        console.log('카메라 입력 변경 감지:', e.target.files.length, '개 파일');
         
         const files = Array.from(e.target.files);
         if (files.length > 0) {
-            isFileInputProcessing = true;
+            // 파일이 선택되면 즉시 처리
             handleFiles(files).finally(() => {
-                // 파일 처리 완료 후 초기화 - 더 안전한 방법
+                // 파일 처리 완료 후 초기화
                 setTimeout(() => {
                     try {
                         cameraInput.value = '';
                     } catch (error) {
                         console.warn('카메라 입력 초기화 중 오류:', error);
                     }
-                    isFileInputProcessing = false;
-                }, 200);
+                }, 100);
             });
-        } else {
-            // 파일이 선택되지 않은 경우에도 플래그 초기화
-            setTimeout(() => {
-                isFileInputProcessing = false;
-            }, 100);
         }
     });
 }
 
 // 갤러리 열기
 function openGallery() {
-    if (isFileInputProcessing) {
-        POKA.Toast.warning('파일 처리 중입니다. 잠시 기다려주세요.');
+    if (isUploading) {
+        POKA.Toast.warning('업로드 중입니다. 잠시 기다려주세요.');
         return;
     }
     
-    // 모바일에서 더 안정적인 파일 선택을 위한 지연
-    setTimeout(() => {
-        try {
-            fileInput.click();
-        } catch (error) {
-            console.error('파일 선택 오류:', error);
-            POKA.Toast.error('파일 선택에 실패했습니다. 다시 시도해주세요.');
-            isFileInputProcessing = false;
-        }
-    }, 100);
+    console.log('갤러리 열기 시도');
+    
+    // 즉시 파일 선택 실행
+    try {
+        fileInput.click();
+    } catch (error) {
+        console.error('파일 선택 오류:', error);
+        POKA.Toast.error('파일 선택에 실패했습니다. 다시 시도해주세요.');
+    }
 }
 
 // 카메라 열기
 function openCamera() {
-    if (isFileInputProcessing) {
-        POKA.Toast.warning('파일 처리 중입니다. 잠시 기다려주세요.');
+    if (isUploading) {
+        POKA.Toast.warning('업로드 중입니다. 잠시 기다려주세요.');
         return;
     }
     
     if (POKA.DeviceInfo.isMobile()) {
-        // 모바일에서 더 안정적인 카메라 선택을 위한 지연
-        setTimeout(() => {
-            try {
-                cameraInput.click();
-            } catch (error) {
-                console.error('카메라 선택 오류:', error);
-                POKA.Toast.error('카메라 선택에 실패했습니다. 다시 시도해주세요.');
-                isFileInputProcessing = false;
-            }
-        }, 100);
+        console.log('카메라 열기 시도');
+        
+        // 즉시 카메라 선택 실행
+        try {
+            cameraInput.click();
+        } catch (error) {
+            console.error('카메라 선택 오류:', error);
+            POKA.Toast.error('카메라 선택에 실패했습니다. 다시 시도해주세요.');
+        }
     } else {
         POKA.Toast.warning('카메라는 모바일 기기에서만 사용할 수 있습니다');
     }
@@ -239,11 +224,6 @@ async function handleFiles(files) {
     } finally {
         isUploading = false;
         uploadArea.classList.remove('loading');
-        
-        // 오류 발생 시에도 파일 입력 처리 플래그 초기화
-        setTimeout(() => {
-            isFileInputProcessing = false;
-        }, 100);
     }
 }
 
@@ -350,50 +330,138 @@ function createImagePreviewItem(image, index) {
 
 // 이미지 액션 모달 표시
 function showImageActionModal(image, index) {
-    const modalContent = `
-        <div class="image-action-modal">
-            <div class="image-preview-large">
-                <img src="${image.dataUrl}" alt="${image.name}" loading="lazy">
-            </div>
-            <div class="image-info">
-                <h4>${image.name}</h4>
-                <p>크기: ${formatFileSize(image.size)}</p>
-                <p>업로드: ${new Date(image.uploadedAt).toLocaleString()}</p>
-            </div>
-            <div class="image-actions">
-                <button class="btn btn-primary" onclick="editImageFromModal(${index})">
-                    <span class="btn-icon">✏️</span>
-                    편집하기
-                </button>
-                <button class="btn btn-secondary" onclick="deleteImageFromModal(${index})">
-                    <span class="btn-icon">🗑️</span>
-                    삭제하기
-                </button>
-            </div>
-        </div>
-    `;
+    // 모달 오버레이 생성
+    const modalOverlay = document.createElement('div');
+    modalOverlay.className = 'modal-overlay';
     
-    POKA.Modal.show(modalContent, {
-        title: '이미지 관리',
-        buttons: [
-            {
-                text: '닫기',
-                class: 'btn-secondary'
-            }
-        ]
-    });
+    // 모달 컨테이너 생성
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    
+    // 헤더 생성
+    const header = document.createElement('div');
+    header.className = 'modal-header';
+    
+    const title = document.createElement('div');
+    title.className = 'modal-title';
+    title.textContent = '이미지 관리';
+    
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'modal-close';
+    closeBtn.innerHTML = '&times;';
+    closeBtn.onclick = () => closeModal(modalOverlay);
+    
+    header.appendChild(title);
+    header.appendChild(closeBtn);
+    modal.appendChild(header);
+    
+    // 컨텐츠 생성
+    const content = document.createElement('div');
+    content.className = 'modal-content';
+    
+    // 이미지 미리보기
+    const imagePreview = document.createElement('div');
+    imagePreview.className = 'image-preview-large';
+    
+    const img = document.createElement('img');
+    img.src = image.dataUrl;
+    img.alt = image.name;
+    img.loading = 'lazy';
+    
+    imagePreview.appendChild(img);
+    content.appendChild(imagePreview);
+    
+    // 이미지 정보
+    const imageInfo = document.createElement('div');
+    imageInfo.className = 'image-info';
+    
+    const imageName = document.createElement('h4');
+    imageName.textContent = image.name;
+    
+    const imageSize = document.createElement('p');
+    imageSize.textContent = `크기: ${formatFileSize(image.size)}`;
+    
+    const imageDate = document.createElement('p');
+    imageDate.textContent = `업로드: ${new Date(image.uploadedAt).toLocaleString()}`;
+    
+    imageInfo.appendChild(imageName);
+    imageInfo.appendChild(imageSize);
+    imageInfo.appendChild(imageDate);
+    content.appendChild(imageInfo);
+    
+    // 액션 버튼들
+    const actions = document.createElement('div');
+    actions.className = 'image-actions';
+    
+    const editBtn = document.createElement('button');
+    editBtn.className = 'btn btn-primary';
+    editBtn.innerHTML = '<span class="btn-icon">✏️</span>편집하기';
+    editBtn.onclick = () => {
+        closeModal(modalOverlay);
+        editImage(index);
+    };
+    
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'btn btn-secondary';
+    deleteBtn.innerHTML = '<span class="btn-icon">🗑️</span>삭제하기';
+    deleteBtn.onclick = () => {
+        closeModal(modalOverlay);
+        deleteImage(index);
+    };
+    
+    actions.appendChild(editBtn);
+    actions.appendChild(deleteBtn);
+    content.appendChild(actions);
+    
+    // 닫기 버튼
+    const buttonContainer = document.createElement('div');
+    buttonContainer.style.display = 'flex';
+    buttonContainer.style.gap = '12px';
+    buttonContainer.style.justifyContent = 'flex-end';
+    buttonContainer.style.marginTop = '20px';
+    
+    const closeButton = document.createElement('button');
+    closeButton.className = 'btn btn-secondary';
+    closeButton.textContent = '닫기';
+    closeButton.onclick = () => closeModal(modalOverlay);
+    
+    buttonContainer.appendChild(closeButton);
+    content.appendChild(buttonContainer);
+    
+    modal.appendChild(content);
+    modalOverlay.appendChild(modal);
+    document.body.appendChild(modalOverlay);
+    
+    // 애니메이션을 위한 지연
+    setTimeout(() => {
+        modalOverlay.classList.add('show');
+    }, 100);
+    
+    // 배경 클릭으로 닫기
+    modalOverlay.onclick = (e) => {
+        if (e.target === modalOverlay) {
+            closeModal(modalOverlay);
+        }
+    };
+    
+    // ESC 키로 닫기
+    const handleEsc = (e) => {
+        if (e.key === 'Escape') {
+            closeModal(modalOverlay);
+            document.removeEventListener('keydown', handleEsc);
+        }
+    };
+    document.addEventListener('keydown', handleEsc);
 }
 
-// 모달에서 편집하기
-function editImageFromModal(index) {
-    POKA.Modal.close();
-    editImage(index);
-}
-
-// 모달에서 삭제하기
-function deleteImageFromModal(index) {
-    POKA.Modal.close();
-    deleteImage(index);
+// 모달 닫기 함수
+function closeModal(modalOverlay) {
+    modalOverlay.classList.remove('show');
+    setTimeout(() => {
+        if (modalOverlay.parentNode) {
+            modalOverlay.parentNode.removeChild(modalOverlay);
+        }
+    }, 300);
 }
 
 // 이미지 편집
