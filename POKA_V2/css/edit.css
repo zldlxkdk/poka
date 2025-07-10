@@ -657,3 +657,56 @@
         width: 100%;
     }
 } 
+
+/* 포토카드 이름 설정 */
+.photo-card-name-section {
+    background: var(--bg-primary);
+    border-radius: 12px;
+    padding: 15px;
+    border: 2px solid var(--border-color);
+    margin-bottom: 20px;
+}
+
+.name-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.name-input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    transition: border-color 0.3s ease;
+}
+
+.name-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.2);
+}
+
+.name-input::placeholder {
+    color: var(--text-secondary);
+}
+
+.name-counter {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    min-width: 40px;
+    text-align: right;
+}
+
+.name-counter.warning {
+    color: #ff9800;
+}
+
+.name-counter.error {
+    color: #f44336;
+} 

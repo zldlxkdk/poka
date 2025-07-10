@@ -27,6 +27,8 @@ const editSection = document.getElementById('editSection');
 const frontImageGrid = document.getElementById('frontImageGrid');
 const backImageGrid = document.getElementById('backImageGrid');
 const createPhotoCardBtn = document.getElementById('createPhotoCardBtn');
+const photoCardNameInput = document.getElementById('photoCardNameInput');
+const nameCounter = document.getElementById('nameCounter');
 
 // 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', function() {
@@ -59,6 +61,14 @@ function setupEventListeners() {
     if (rotationSlider) {
         rotationSlider.addEventListener('input', function() {
             setRotation(parseInt(this.value));
+        });
+    }
+    
+    // 포토카드 이름 입력 이벤트
+    if (photoCardNameInput) {
+        photoCardNameInput.addEventListener('input', function() {
+            updateNameCounter();
+            updateCreatePhotoCardButton();
         });
     }
     
@@ -136,6 +146,12 @@ function showImageSelectionMode() {
     // 선택 상태 초기화
     selectedFrontImage = null;
     selectedBackImage = null;
+    
+    // 이름 입력 필드 초기화
+    if (photoCardNameInput) {
+        photoCardNameInput.value = '';
+        updateNameCounter();
+    }
     
     // 업로드된 이미지 로드
     loadUploadedImages();
@@ -254,12 +270,16 @@ function selectImageForPhotoCard(image, type) {
 // 포토카드 만들기 버튼 상태 업데이트
 function updateCreatePhotoCardButton() {
     const canCreate = selectedFrontImage && selectedBackImage;
-    createPhotoCardBtn.disabled = !canCreate;
+    const hasName = photoCardNameInput && photoCardNameInput.value.trim().length > 0;
     
-    if (canCreate) {
+    createPhotoCardBtn.disabled = !canCreate || !hasName;
+    
+    if (canCreate && hasName) {
         createPhotoCardBtn.innerHTML = '<span class="btn-icon">🎴</span>포토카드 만들기';
-    } else {
+    } else if (!canCreate) {
         createPhotoCardBtn.innerHTML = '<span class="btn-icon">⚠️</span>앞면과 뒷면 이미지를 선택하세요';
+    } else if (!hasName) {
+        createPhotoCardBtn.innerHTML = '<span class="btn-icon">⚠️</span>포토카드 이름을 입력하세요';
     }
 }
 
@@ -270,12 +290,22 @@ function createPhotoCard() {
         return;
     }
     
-    console.log('포토카드 생성:', { front: selectedFrontImage, back: selectedBackImage });
+    const photoCardName = photoCardNameInput.value.trim();
+    if (!photoCardName) {
+        POKA.Toast.warning('포토카드 이름을 입력해주세요');
+        return;
+    }
+    
+    console.log('포토카드 생성:', { 
+        name: photoCardName,
+        front: selectedFrontImage, 
+        back: selectedBackImage 
+    });
     
     // 포토카드 데이터 생성
     const photoCard = {
         id: Date.now() + Math.random(),
-        name: `포토카드_${new Date().toLocaleDateString()}`,
+        name: photoCardName,
         frontImage: selectedFrontImage.dataUrl,
         frontImageName: selectedFrontImage.name,
         backImage: selectedBackImage.dataUrl,
@@ -315,24 +345,38 @@ function loadPhotoCardForEdit(photoCard) {
     editImage.style.display = 'block';
     imageFallback.style.display = 'none';
     
-    // 편집 상태 초기화
-    currentRotation = 0;
-    currentFlipHorizontal = false;
-    currentFlipVertical = false;
-    currentFilter = 'none';
-    isCropping = false;
-    emojis = photoCard.emojis || [];
-    renderEmojis();
+    // 이미지 로드 완료 대기
+    editImage.onload = function() {
+        console.log('포토카드 이미지 로드 완료');
+        editImage.style.display = 'block';
+        imageFallback.style.display = 'none';
+        
+        // 편집 상태 초기화
+        currentRotation = 0;
+        currentFlipHorizontal = false;
+        currentFlipVertical = false;
+        currentFilter = 'none';
+        isCropping = false;
+        emojis = photoCard.emojis || [];
+        renderEmojis();
+        
+        // 필터 버튼 초기화
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        // 회전 슬라이더 초기화
+        initRotationSlider();
+        
+        POKA.Toast.success('포토카드 편집 모드로 전환되었습니다');
+    };
     
-    // 필터 버튼 초기화
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    
-    // 회전 슬라이더 초기화
-    initRotationSlider();
-    
-    POKA.Toast.success('포토카드 편집 모드로 전환되었습니다');
+    editImage.onerror = function() {
+        console.error('포토카드 이미지 로드 실패');
+        editImage.style.display = 'none';
+        imageFallback.style.display = 'flex';
+        POKA.Toast.error('포토카드 이미지 로드에 실패했습니다');
+    };
 }
 
 // 현재 이미지 로드
@@ -381,14 +425,47 @@ function loadCurrentImage() {
     
     // 이미지 표시
     editImage.src = currentImage.dataUrl;
+    editImage.style.display = 'block';
+    imageFallback.style.display = 'none';
     
-    // 이미지 정보 표시
-    console.log('편집할 이미지:', currentImage);
-    console.log('원본 이미지 저장됨:', originalImage);
-    console.log('이미지 데이터 URL 길이:', currentImage.dataUrl.length);
+    // 이미지 로드 완료 대기
+    editImage.onload = function() {
+        console.log('일반 이미지 로드 완료');
+        editImage.style.display = 'block';
+        imageFallback.style.display = 'none';
+        
+        // 편집 상태 초기화
+        currentRotation = 0;
+        currentFlipHorizontal = false;
+        currentFlipVertical = false;
+        currentFilter = 'none';
+        isCropping = false;
+        emojis = currentImage.emojis || [];
+        renderEmojis();
+        
+        // 필터 버튼 초기화
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        // 회전 슬라이더 초기화
+        initRotationSlider();
+        
+        // 이미지 정보 표시
+        console.log('편집할 이미지:', currentImage);
+        console.log('원본 이미지 저장됨:', originalImage);
+        console.log('이미지 데이터 URL 길이:', currentImage.dataUrl.length);
+        
+        // 성공 메시지
+        POKA.Toast.success('이미지가 성공적으로 로드되었습니다');
+    };
     
-    // 성공 메시지
-    POKA.Toast.success('이미지가 성공적으로 로드되었습니다');
+    editImage.onerror = function() {
+        console.error('일반 이미지 로드 실패');
+        editImage.style.display = 'none';
+        imageFallback.style.display = 'flex';
+        POKA.Toast.error('이미지 로드에 실패했습니다');
+    };
 }
 
 // 테스트용 샘플 이미지 생성

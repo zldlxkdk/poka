@@ -134,8 +134,12 @@ function applyFiltersAndSearch() {
         const searchTerm = currentSearch.toLowerCase();
         filtered = filtered.filter(card => {
             const name = (card.name || '').toLowerCase();
-            const title = (card.title || '').toLowerCase();
-            return name.includes(searchTerm) || title.includes(searchTerm);
+            const frontImageName = (card.frontImageName || '').toLowerCase();
+            const backImageName = (card.backImageName || '').toLowerCase();
+            
+            return name.includes(searchTerm) || 
+                   frontImageName.includes(searchTerm) || 
+                   backImageName.includes(searchTerm);
         });
     }
     
