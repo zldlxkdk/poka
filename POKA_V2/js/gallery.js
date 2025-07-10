@@ -51,6 +51,14 @@ function setupEventListeners() {
             closeImageModal();
         }
     });
+    
+    // 모달 컨텐츠 클릭 시 이벤트 전파 방지
+    const modalContent = document.querySelector('.modal-content');
+    if (modalContent) {
+        modalContent.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+    }
 }
 
 // 이미지 로드
@@ -426,6 +434,14 @@ function openImageModal(image, index) {
     setTimeout(() => {
         modalImage.src = image.dataUrl;
     }, 100);
+    
+    // 모달 컨텐츠 클릭 시 이벤트 전파 방지 (모달이 열린 후)
+    const modalContent = document.querySelector('.modal-content');
+    if (modalContent) {
+        modalContent.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+    }
 }
 
 // 이미지 모달 닫기
@@ -443,6 +459,14 @@ function closeImageModal() {
     modalImage.src = '';
     modalImage.style.display = 'none';
     modalImageFallback.style.display = 'none';
+    
+    // 모달 컨텐츠 클릭 이벤트 리스너 제거
+    const modalContent = document.querySelector('.modal-content');
+    if (modalContent) {
+        modalContent.removeEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+    }
 }
 
 // 현재 이미지 편집
