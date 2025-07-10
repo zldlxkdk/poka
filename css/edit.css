@@ -1,0 +1,459 @@
+/* POKA V2 - 이미지 편집 페이지 스타일 */
+
+/* 헤더 스타일 */
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.back-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: var(--transition);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.back-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.page-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+.header-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.header-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: var(--transition);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+/* 편집 섹션 */
+.edit-section {
+    margin-bottom: 24px;
+}
+
+.image-container {
+    position: relative;
+    background: var(--surface-color);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-light);
+    margin-bottom: 20px;
+    min-height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#editImage {
+    max-width: 100%;
+    max-height: 300px;
+    object-fit: contain;
+    border-radius: var(--border-radius);
+}
+
+.image-fallback {
+    display: none;
+    width: 100%;
+    height: 300px;
+    background: var(--surface-color);
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    color: var(--text-secondary);
+    border: 2px dashed var(--border-color);
+}
+
+/* 편집 도구 */
+.edit-tools {
+    background: var(--surface-color);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    box-shadow: var(--shadow-light);
+    border: 1px solid var(--border-color);
+}
+
+.tool-group {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.tool-group:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.tool-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+}
+
+/* 회전 컨트롤 */
+.rotation-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.rotation-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.rotation-buttons .btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    min-width: 60px;
+    padding: 12px 8px;
+}
+
+.rotation-buttons .btn-icon {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.rotation-buttons .btn-text {
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+/* 회전 슬라이더 */
+.rotation-slider {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+    background: var(--background-color);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+}
+
+.rotation-slider label {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    font-weight: 500;
+    text-align: center;
+}
+
+#rotationSlider {
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--border-color);
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+#rotationSlider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#rotationSlider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.rotation-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-small {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    min-width: 50px;
+}
+
+/* 필터 버튼 */
+.filter-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 8px 16px;
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.filter-btn:hover {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+.filter-btn.active {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+/* 회전 버튼 */
+.rotation-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* 반전 버튼 특별 스타일 */
+.rotation-buttons .btn[onclick*="flipImage"] {
+    background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+    border-color: #ff9800;
+    color: #e65100;
+}
+
+.rotation-buttons .btn[onclick*="flipImage"]:hover {
+    background: linear-gradient(135deg, #ffe0b2 0%, #ffcc02 100%);
+    border-color: #f57c00;
+    color: #bf360c;
+}
+
+/* 이모지 컨트롤 */
+.emoji-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.emoji-picker {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.emoji-btn {
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 8px;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.emoji-btn:hover {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    transform: scale(1.1);
+}
+
+.emoji-instructions {
+    text-align: center;
+    margin: 8px 0;
+    padding: 8px;
+    background: rgba(0, 123, 255, 0.1);
+    border-radius: var(--border-radius);
+    border: 1px solid rgba(0, 123, 255, 0.2);
+}
+
+.emoji-instructions small {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    line-height: 1.4;
+}
+
+/* 이모지 레이어 */
+.emoji-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.emoji-item {
+    position: absolute;
+    font-size: 2rem;
+    cursor: move;
+    user-select: none;
+    pointer-events: auto;
+    transition: transform 0.1s ease;
+    z-index: 20;
+}
+
+.emoji-item:hover {
+    transform: scale(1.2);
+    z-index: 30;
+}
+
+.emoji-item.selected {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+.emoji-item.dragging {
+    opacity: 0.8;
+    transform: scale(1.1);
+}
+
+/* 액션 섹션 */
+.actions-section {
+    margin-bottom: 32px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.action-buttons .btn {
+    flex: 1;
+    min-width: 120px;
+    max-width: 200px;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 480px) {
+    .filter-buttons {
+        justify-content: center;
+    }
+    
+    .rotation-buttons {
+        justify-content: center;
+    }
+    
+    .rotation-buttons .btn {
+        min-width: 50px;
+        padding: 8px 6px;
+    }
+    
+    .rotation-actions {
+        gap: 6px;
+    }
+    
+    .btn-small {
+        padding: 4px 8px;
+        font-size: 0.7rem;
+        min-width: 40px;
+    }
+    
+    .emoji-picker {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .action-buttons .btn {
+        max-width: none;
+    }
+    
+    #editImage {
+        max-height: 300px;
+    }
+    
+    .image-container {
+        min-height: 250px;
+    }
+    
+    .emoji-item {
+        font-size: 1.5rem;
+    }
+}
+
+/* 애니메이션 */
+.image-container {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 터치 디바이스 최적화 */
+@media (hover: none) and (pointer: coarse) {
+    .header-btn:hover {
+        transform: none;
+    }
+    
+    .filter-btn:hover {
+        background: var(--background-color);
+        border-color: var(--border-color);
+        color: var(--text-primary);
+    }
+    
+    .filter-btn.active {
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+        color: white;
+    }
+} 
