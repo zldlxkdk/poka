@@ -11,7 +11,7 @@ function cardClickEffect(element) {
     // 3D 카드 회전 효과 추가
     const cardContainer = element.querySelector('.card-3d-container');
     if (cardContainer) {
-        cardContainer.style.animation = 'cardClick 0.6s ease-out, cardRotate 12s ease-in-out infinite 0.6s';
+        cardContainer.style.animation = 'cardClick 0.6s ease-out, cardRotate 15s linear infinite 0.6s';
     }
     
     // 클릭 사운드 효과 (선택사항)
@@ -21,7 +21,7 @@ function cardClickEffect(element) {
     setTimeout(() => {
         element.classList.remove('clicked');
         if (cardContainer) {
-            cardContainer.style.animation = 'cardRotate 12s ease-in-out infinite';
+            cardContainer.style.animation = 'cardRotate 15s linear infinite';
         }
     }, 600);
     
@@ -34,6 +34,78 @@ function cardClickEffect(element) {
 function init3DCardEffects() {
     const cardContainer = document.querySelector('.card-3d-container');
     if (!cardContainer) return;
+    
+    // 이미지 로딩 상태 확인
+    const frontImg = cardContainer.querySelector('.card-front img');
+    const backImg = cardContainer.querySelector('.card-back img');
+    const cardFront = cardContainer.querySelector('.card-front');
+    const cardBack = cardContainer.querySelector('.card-back');
+    
+    // 뒷면 이미지 로딩 확인
+    if (backImg) {
+        backImg.addEventListener('load', () => {
+            console.log('뒷면 이미지 로딩 완료');
+        });
+        
+        backImg.addEventListener('error', () => {
+            console.log('뒷면 이미지 로딩 실패');
+            // 뒷면 이미지가 없을 경우 기본 배경 설정
+            backImg.style.display = 'none';
+            if (cardBack) {
+                cardBack.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            }
+        });
+    }
+    
+    // 카드 회전 각도에 따른 z-index 조정
+    function updateCardZIndex() {
+        const computedStyle = window.getComputedStyle(cardContainer);
+        const transform = computedStyle.transform;
+        
+        if (transform && transform !== 'none') {
+            try {
+                const matrix = new DOMMatrix(transform);
+                // Y축 회전 각도 계산 (rotateY)
+                const angle = Math.atan2(matrix.m31, matrix.m11) * (180 / Math.PI);
+                const normalizedAngle = ((angle % 360) + 360) % 360;
+                
+                console.log('카드 회전 각도:', normalizedAngle);
+                
+                // 90도~270도 범위에서는 뒷면을 앞으로
+                if (normalizedAngle >= 90 && normalizedAngle <= 270) {
+                    if (cardBack) {
+                        cardBack.style.zIndex = '10';
+                        cardBack.style.opacity = '1';
+                        cardBack.style.visibility = 'visible';
+                    }
+                    if (cardFront) {
+                        cardFront.style.zIndex = '5';
+                        cardFront.style.opacity = '0.3';
+                    }
+                } else {
+                    if (cardFront) {
+                        cardFront.style.zIndex = '10';
+                        cardFront.style.opacity = '1';
+                    }
+                    if (cardBack) {
+                        cardBack.style.zIndex = '5';
+                        cardBack.style.opacity = '0.3';
+                    }
+                }
+            } catch (error) {
+                console.log('회전 각도 계산 오류:', error);
+            }
+        }
+    }
+    
+    // 애니메이션 프레임마다 z-index 업데이트
+    function animateZIndex() {
+        updateCardZIndex();
+        requestAnimationFrame(animateZIndex);
+    }
+    
+    // z-index 애니메이션 시작
+    animateZIndex();
     
     cardContainer.addEventListener('mouseenter', () => {
         cardContainer.style.animationPlayState = 'paused';
@@ -52,19 +124,27 @@ function init3DCardEffects() {
         const centerX = rect.width / 2;
         const centerY = rect.height / 2;
         
-        const rotateX = (y - centerY) / 8;
-        const rotateY = (centerX - x) / 8;
+        // 더 자연스러운 회전을 위한 감도 조정
+        const rotateX = (y - centerY) / 12;
+        const rotateY = (centerX - x) / 12;
         
-        // 더 넓은 회전 범위로 뒷면이 더 잘 보이도록 조정
-        const clampedRotateY = Math.max(-60, Math.min(60, rotateY));
-        const clampedRotateX = Math.max(-30, Math.min(30, rotateX));
+        // 부드러운 회전 범위 설정
+        const clampedRotateY = Math.max(-45, Math.min(45, rotateY));
+        const clampedRotateX = Math.max(-25, Math.min(25, rotateX));
         
-        cardContainer.style.transform = `rotateX(${clampedRotateX}deg) rotateY(${clampedRotateY}deg) translateZ(0)`;
+        // GPU 가속을 위한 transform3d 사용
+        cardContainer.style.transform = `translate3d(0, 0, 0) rotateX(${clampedRotateX}deg) rotateY(${clampedRotateY}deg)`;
+        cardContainer.style.webkitTransform = `translate3d(0, 0, 0) rotateX(${clampedRotateX}deg) rotateY(${clampedRotateY}deg)`;
+        
+        // 성능 최적화
+        cardContainer.style.willChange = 'transform';
     });
     
     cardContainer.addEventListener('mouseleave', () => {
-        cardContainer.style.transform = 'translateZ(0)';
+        cardContainer.style.transform = 'translate3d(0, 0, 0)';
+        cardContainer.style.webkitTransform = 'translate3d(0, 0, 0)';
         cardContainer.style.animationPlayState = 'running';
+        cardContainer.style.willChange = 'auto';
     });
 }
 
