@@ -1,20 +1,20 @@
 // POKA V2 - 갤러리 페이지 JavaScript
 
 // 전역 변수
-let allImages = [];
-let filteredImages = [];
+let allImages = []; // 업로드된 원본 이미지들
+let photoCards = []; // 포토카드들 (앞면+뒷면 조합)
+let filteredPhotoCards = []; // 필터링된 포토카드들
 let currentFilter = 'all';
 let currentSearch = '';
 let isListView = false;
-let currentModalImage = null;
+let currentModalPhotoCard = null;
 
 // DOM 요소들
-const searchInput = document.getElementById('searchInput');
-const filterTags = document.getElementById('filterTags');
 const galleryContainer = document.getElementById('galleryContainer');
-const imageCount = document.getElementById('imageCount');
 const emptyState = document.getElementById('emptyState');
 const loadingState = document.getElementById('loadingState');
+const searchInput = document.getElementById('searchInput');
+const imageCount = document.getElementById('imageCount');
 const imageModal = document.getElementById('imageModal');
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -23,8 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // 이벤트 리스너 설정
     setupEventListeners();
     
-    // 이미지 로드
-    loadImages();
+    // 포토카드 로드
+    loadPhotoCards();
     
     // 검색 입력 이벤트
     searchInput.addEventListener('input', debounce(performSearch, 300));
@@ -38,53 +38,47 @@ document.addEventListener('DOMContentLoaded', () => {
 // 이벤트 리스너 설정
 function setupEventListeners() {
     // 필터 태그 클릭 이벤트
-    filterTags.addEventListener('click', (e) => {
-        if (e.target.classList.contains('filter-tag')) {
-            const filter = e.target.dataset.filter;
+    document.querySelectorAll('.filter-tag').forEach(tag => {
+        tag.addEventListener('click', () => {
+            const filter = tag.dataset.filter;
             setActiveFilter(filter);
-        }
+        });
     });
     
     // ESC 키로 모달 닫기
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-            closeImageModal();
+            closePhotoCardModal();
         }
     });
 }
 
-// 이미지 로드
-function loadImages() {
+// 포토카드 로드
+function loadPhotoCards() {
     loadingState.style.display = 'block';
     galleryContainer.style.display = 'none';
     emptyState.style.display = 'none';
     
-    console.log('갤러리 이미지 로드 시작');
+    console.log('포토카드 로드 시작');
     
-    // 로컬 스토리지에서 이미지 로드
-    const savedImages = POKA.AppState.getFromStorage('editedImages') || [];
-    const uploadedImages = POKA.AppState.getFromStorage('uploadedImages') || [];
+    // 로컬 스토리지에서 포토카드 로드
+    const savedPhotoCards = POKA.AppState.getFromStorage('photoCards') || [];
     
-    console.log('로드된 이미지:', {
-        editedImages: savedImages.length,
-        uploadedImages: uploadedImages.length,
-        editedImagesData: savedImages,
-        uploadedImagesData: uploadedImages
+    console.log('로드된 포토카드:', {
+        photoCards: savedPhotoCards.length,
+        photoCardsData: savedPhotoCards
     });
     
-    // 모든 이미지 합치기
-    allImages = [
-        ...savedImages.map(img => ({ ...img, type: 'edited' })),
-        ...uploadedImages.map(img => ({ ...img, type: 'uploaded' }))
-    ];
+    // 포토카드 배열 설정
+    photoCards = savedPhotoCards;
     
-    console.log('전체 이미지 개수:', allImages.length);
-    console.log('전체 이미지 데이터:', allImages);
+    console.log('전체 포토카드 개수:', photoCards.length);
+    console.log('전체 포토카드 데이터:', photoCards);
     
     // 날짜순으로 정렬 (최신순)
-    allImages.sort((a, b) => {
-        const dateA = new Date(a.createdAt || a.uploadedAt);
-        const dateB = new Date(b.createdAt || b.uploadedAt);
+    photoCards.sort((a, b) => {
+        const dateA = new Date(a.createdAt);
+        const dateB = new Date(b.createdAt);
         return dateB - dateA;
     });
     
@@ -99,11 +93,11 @@ function updateGallery() {
     // 필터링 및 검색 적용
     applyFiltersAndSearch();
     
-    // 이미지 개수 업데이트
-    imageCount.textContent = filteredImages.length;
+    // 포토카드 개수 업데이트
+    imageCount.textContent = filteredPhotoCards.length;
     
     // 빈 상태 또는 갤러리 표시
-    if (filteredImages.length === 0) {
+    if (filteredPhotoCards.length === 0) {
         galleryContainer.style.display = 'none';
         emptyState.style.display = 'block';
     } else {
@@ -115,81 +109,86 @@ function updateGallery() {
 
 // 필터 및 검색 적용
 function applyFiltersAndSearch() {
-    let filtered = [...allImages];
+    let filtered = [...photoCards];
     
     // 필터 적용
     switch (currentFilter) {
         case 'recent':
             const oneWeekAgo = new Date();
             oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-            filtered = filtered.filter(img => {
-                const imgDate = new Date(img.createdAt || img.uploadedAt);
-                return imgDate >= oneWeekAgo;
+            filtered = filtered.filter(card => {
+                const cardDate = new Date(card.createdAt);
+                return cardDate >= oneWeekAgo;
             });
             break;
         case 'favorite':
-            filtered = filtered.filter(img => img.favorite);
-            break;
-        case 'edited':
-            filtered = filtered.filter(img => img.type === 'edited');
+            filtered = filtered.filter(card => card.favorite);
             break;
         default:
-            // 'all' - 모든 이미지
+            // 'all' - 모든 포토카드
             break;
     }
     
     // 검색 적용
     if (currentSearch.trim()) {
         const searchTerm = currentSearch.toLowerCase();
-        filtered = filtered.filter(img => {
-            const name = (img.name || '').toLowerCase();
-            const title = (img.title || '').toLowerCase();
+        filtered = filtered.filter(card => {
+            const name = (card.name || '').toLowerCase();
+            const title = (card.title || '').toLowerCase();
             return name.includes(searchTerm) || title.includes(searchTerm);
         });
     }
     
-    filteredImages = filtered;
+    filteredPhotoCards = filtered;
 }
 
 // 갤러리 렌더링
 function renderGallery() {
     galleryContainer.innerHTML = '';
     
-    filteredImages.forEach((image, index) => {
-        const galleryItem = createGalleryItem(image, index);
+    filteredPhotoCards.forEach((photoCard, index) => {
+        const galleryItem = createPhotoCardItem(photoCard, index);
         galleryContainer.appendChild(galleryItem);
     });
 }
 
-// 갤러리 아이템 생성
-function createGalleryItem(image, index) {
+// 포토카드 아이템 생성
+function createPhotoCardItem(photoCard, index) {
     const item = document.createElement('div');
-    item.className = 'gallery-item';
-    item.dataset.imageId = image.id;
+    item.className = 'gallery-item photo-card-item';
+    item.dataset.cardId = photoCard.id;
     
-    const imageDate = new Date(image.createdAt || image.uploadedAt);
-    const formattedDate = imageDate.toLocaleDateString('ko-KR');
+    const cardDate = new Date(photoCard.createdAt);
+    const formattedDate = cardDate.toLocaleDateString('ko-KR');
     
-    const isFavorite = image.favorite ? 'favorite' : '';
-    const favoriteIcon = image.favorite ? '?' : '☆';
+    const isFavorite = photoCard.favorite ? 'favorite' : '';
+    const favoriteIcon = photoCard.favorite ? '?' : '☆';
     
     item.innerHTML = `
-        <img src="${image.dataUrl}" alt="${image.name || '이미지'}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-        <div class="image-fallback">
-            ??
+        <div class="photo-card-container">
+            <div class="photo-card">
+                <div class="photo-card-front">
+                    <img src="${photoCard.frontImage}" alt="${photoCard.name || '앞면'}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="image-fallback">🖼️</div>
+                </div>
+                <div class="photo-card-back">
+                    <img src="${photoCard.backImage}" alt="${photoCard.name || '뒷면'}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="image-fallback">🖼️</div>
+                </div>
+            </div>
         </div>
         <div class="gallery-item-overlay">
             <div class="gallery-item-info">
-                <div class="gallery-item-title">${image.name || '제목 없음'}</div>
+                <div class="gallery-item-title">${photoCard.name || '제목 없음'}</div>
                 <div class="gallery-item-date">${formattedDate}</div>
             </div>
         </div>
-        ${image.type === 'edited' ? '<div class="gallery-item-badge">편집됨</div>' : ''}
+        <div class="gallery-item-badge">포토카드</div>
     `;
     
     // 클릭 이벤트
     item.addEventListener('click', (e) => {
-        openImageModal(image, index);
+        openPhotoCardModal(photoCard, index);
     });
     
     return item;
@@ -245,7 +244,7 @@ function showSortOptions() {
             <p><strong>정렬 기준을 선택하세요:</strong></p>
             ${options.map(option => `
                 <div style="padding: 8px 0; border-bottom: 1px solid var(--border-color);">
-                    <button onclick="sortImages('${option.value}')" style="background: none; border: none; color: var(--text-primary); cursor: pointer; width: 100%; text-align: left; padding: 8px;">
+                    <button onclick="sortPhotoCards('${option.value}')" style="background: none; border: none; color: var(--text-primary); cursor: pointer; width: 100%; text-align: left; padding: 8px;">
                         ${option.text}
                     </button>
                 </div>
@@ -264,137 +263,31 @@ function showSortOptions() {
     });
 }
 
-// 이미지 정렬
-function sortImages(sortBy) {
+// 포토카드 정렬
+function sortPhotoCards(sortBy) {
     switch (sortBy) {
         case 'newest':
-            allImages.sort((a, b) => {
-                const dateA = new Date(a.createdAt || a.uploadedAt);
-                const dateB = new Date(b.createdAt || b.uploadedAt);
-                return dateB - dateA;
-            });
+            photoCards.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             break;
         case 'oldest':
-            allImages.sort((a, b) => {
-                const dateA = new Date(a.createdAt || a.uploadedAt);
-                const dateB = new Date(b.createdAt || b.uploadedAt);
-                return dateA - dateB;
-            });
+            photoCards.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
             break;
         case 'name':
-            allImages.sort((a, b) => {
-                const nameA = (a.name || '').toLowerCase();
-                const nameB = (b.name || '').toLowerCase();
-                return nameA.localeCompare(nameB);
-            });
+            photoCards.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
             break;
         case 'size':
-            allImages.sort((a, b) => (b.size || 0) - (a.size || 0));
+            // 포토카드는 크기 정렬이 의미없으므로 최신순으로 정렬
+            photoCards.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             break;
     }
     
     updateGallery();
-    POKA.Toast.success('정렬이 완료되었습니다');
+    POKA.Toast.success('정렬이 적용되었습니다');
 }
 
-// 이미지 즐겨찾기 토글
-function toggleImageFavorite(index) {
-    if (index >= 0 && index < filteredImages.length) {
-        const image = filteredImages[index];
-        image.favorite = !image.favorite;
-        
-        // 원본 배열에서도 업데이트
-        const originalIndex = allImages.findIndex(img => img.id === image.id);
-        if (originalIndex !== -1) {
-            allImages[originalIndex].favorite = image.favorite;
-        }
-        
-        // 저장
-        saveImages();
-        
-        // 갤러리 업데이트
-        updateGallery();
-        
-        POKA.Toast.success(image.favorite ? '즐겨찾기에 추가되었습니다' : '즐겨찾기에서 제거되었습니다');
-    }
-}
-
-// 이미지 편집
-function editImage(index) {
-    console.log('editImage 호출됨, 인덱스:', index);
-    console.log('filteredImages 길이:', filteredImages.length);
-    console.log('filteredImages:', filteredImages);
-    
-    if (index >= 0 && index < filteredImages.length) {
-        const image = filteredImages[index];
-        console.log('편집할 이미지 설정:', image);
-        console.log('이미지 데이터 URL 존재:', !!image.dataUrl);
-        console.log('이미지 데이터 URL 길이:', image.dataUrl ? image.dataUrl.length : '없음');
-        
-        // AppState에 저장 (더 안전한 방법)
-        try {
-            POKA.AppState.currentImage = image;
-            POKA.AppState.saveToStorage('currentImage', image);
-            console.log('AppState.currentImage 설정 후:', POKA.AppState.currentImage);
-            console.log('저장된 이미지 데이터 길이:', image.dataUrl ? image.dataUrl.length : '없음');
-        } catch (error) {
-            console.error('AppState 저장 오류:', error);
-            POKA.Toast.error('이미지 데이터 저장 중 오류가 발생했습니다');
-            return;
-        }
-        
-        // 편집 페이지로 이동 (URL 파라미터 없이)
-        const editUrl = 'edit.html';
-        console.log('편집 페이지로 이동:', editUrl);
-        POKA.Navigation.navigateTo(editUrl);
-    } else {
-        console.error('유효하지 않은 이미지 인덱스:', index);
-        POKA.Toast.error('이미지를 찾을 수 없습니다');
-    }
-}
-
-// 이미지 삭제
-function deleteImage(index) {
-    if (index >= 0 && index < filteredImages.length) {
-        const image = filteredImages[index];
-        
-        POKA.Modal.show(
-            `<p>정말로 "${image.name || '이미지'}"을 삭제하시겠습니까?</p>`,
-            {
-                title: '이미지 삭제',
-                buttons: [
-                    {
-                        text: '취소',
-                        class: 'btn-secondary'
-                    },
-                    {
-                        text: '삭제',
-                        class: 'btn-primary',
-                        onClick: () => {
-                            // 원본 배열에서 제거
-                            const originalIndex = allImages.findIndex(img => img.id === image.id);
-                            if (originalIndex !== -1) {
-                                allImages.splice(originalIndex, 1);
-                            }
-                            
-                            // 저장
-                            saveImages();
-                            
-                            // 갤러리 업데이트
-                            updateGallery();
-                            
-                            POKA.Toast.success('이미지가 삭제되었습니다');
-                        }
-                    }
-                ]
-            }
-        );
-    }
-}
-
-// 이미지 모달 열기
-function openImageModal(image, index) {
-    currentModalImage = { image, index };
+// 포토카드 모달 열기
+function openPhotoCardModal(photoCard, index) {
+    currentModalPhotoCard = { photoCard, index };
     
     const modalImage = document.getElementById('modalImage');
     const modalImageFallback = document.getElementById('modalImageFallback');
@@ -407,7 +300,7 @@ function openImageModal(image, index) {
     // 모달 표시
     imageModal.style.display = 'flex';
     
-    // 초기 상태 설정 - 이미지 소스 초기화
+    // 초기 상태 설정 - 앞면 이미지 표시
     modalImage.src = '';
     modalImage.style.display = 'none';
     modalImageFallback.style.display = 'flex';
@@ -424,11 +317,11 @@ function openImageModal(image, index) {
     };
     
     // 정보 업데이트
-    modalTitle.textContent = image.name || '제목 없음';
-    modalDate.textContent = `생성일: ${new Date(image.createdAt || image.uploadedAt).toLocaleString('ko-KR')}`;
-    modalSize.textContent = `크기: ${formatFileSize(image.size || 0)}`;
+    modalTitle.textContent = photoCard.name || '제목 없음';
+    modalDate.textContent = `생성일: ${new Date(photoCard.createdAt).toLocaleString('ko-KR')}`;
+    modalSize.textContent = `앞면: ${photoCard.frontImageName || '앞면'}, 뒷면: ${photoCard.backImageName || '뒷면'}`;
     
-    if (image.favorite) {
+    if (photoCard.favorite) {
         favoriteIcon.textContent = '?';
         favoriteText.textContent = '즐겨찾기 해제';
     } else {
@@ -436,9 +329,9 @@ function openImageModal(image, index) {
         favoriteText.textContent = '즐겨찾기';
     }
     
-    // 이미지 소스 설정 (이벤트 리스너 설정 후)
+    // 앞면 이미지 소스 설정 (이벤트 리스너 설정 후)
     setTimeout(() => {
-        modalImage.src = image.dataUrl;
+        modalImage.src = photoCard.frontImage;
     }, 100);
     
     // 모달 오버레이 클릭 시 모달 닫기
@@ -446,7 +339,7 @@ function openImageModal(image, index) {
     if (modalOverlay) {
         modalOverlay.addEventListener('click', function(e) {
             if (e.target === this) {
-                closeImageModal();
+                closePhotoCardModal();
             }
         });
     }
@@ -460,10 +353,10 @@ function openImageModal(image, index) {
     }
 }
 
-// 이미지 모달 닫기
-function closeImageModal() {
+// 포토카드 모달 닫기
+function closePhotoCardModal() {
     imageModal.style.display = 'none';
-    currentModalImage = null;
+    currentModalPhotoCard = null;
     
     // 모달 이미지와 폴백 초기화
     const modalImage = document.getElementById('modalImage');
@@ -475,60 +368,134 @@ function closeImageModal() {
     modalImage.src = '';
     modalImage.style.display = 'none';
     modalImageFallback.style.display = 'none';
-    
-    // 이벤트 리스너는 자동으로 정리되므로 별도 제거 불필요
 }
 
-// 현재 이미지 편집
-function editCurrentImage() {
-    if (currentModalImage) {
-        const { image, index } = currentModalImage;
-        closeImageModal();
+// 현재 포토카드 편집
+function editCurrentPhotoCard() {
+    if (currentModalPhotoCard) {
+        const { photoCard, index } = currentModalPhotoCard;
+        closePhotoCardModal();
         
-        console.log('모달에서 편집할 이미지 설정:', image);
+        console.log('모달에서 편집할 포토카드 설정:', photoCard);
         
-        // AppState에 저장 (올바른 키 사용)
+        // AppState에 저장
         try {
-            POKA.AppState.currentImage = image;
-            POKA.AppState.saveToStorage('currentImage', image);
-            console.log('AppState.currentImage 설정 후:', POKA.AppState.currentImage);
-            console.log('저장된 이미지 데이터 길이:', image.dataUrl ? image.dataUrl.length : '없음');
+            POKA.AppState.currentPhotoCard = photoCard;
+            POKA.AppState.saveToStorage('currentPhotoCard', photoCard);
+            console.log('AppState.currentPhotoCard 설정 후:', POKA.AppState.currentPhotoCard);
         } catch (error) {
             console.error('AppState 저장 오류:', error);
-            POKA.Toast.error('이미지 데이터 저장 중 오류가 발생했습니다');
+            POKA.Toast.error('포토카드 데이터 저장 중 오류가 발생했습니다');
             return;
         }
         
-        // 편집 페이지로 이동 (POKA.Navigation 사용)
+        // 편집 페이지로 이동
         const editUrl = 'edit.html';
         console.log('편집 페이지로 이동:', editUrl);
         POKA.Navigation.navigateTo(editUrl);
     }
 }
 
-// 이미지 다운로드
-function downloadImage() {
-    if (currentModalImage) {
-        const { image } = currentModalImage;
+// 포토카드 삭제
+function deletePhotoCard(index) {
+    if (index >= 0 && index < filteredPhotoCards.length) {
+        const photoCard = filteredPhotoCards[index];
         
-        const link = document.createElement('a');
-        link.href = image.dataUrl;
-        link.download = image.name || 'poka_image.jpg';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        
-        showToast('다운로드가 시작되었습니다', 'success');
+        POKA.Modal.show(
+            `<p>정말로 "${photoCard.name || '포토카드'}"을 삭제하시겠습니까?</p>`,
+            {
+                title: '포토카드 삭제',
+                buttons: [
+                    {
+                        text: '취소',
+                        class: 'btn-secondary'
+                    },
+                    {
+                        text: '삭제',
+                        class: 'btn-primary',
+                        onClick: () => {
+                            // 원본 배열에서 제거
+                            const originalIndex = photoCards.findIndex(card => card.id === photoCard.id);
+                            if (originalIndex !== -1) {
+                                photoCards.splice(originalIndex, 1);
+                            }
+                            
+                            // 저장
+                            savePhotoCards();
+                            
+                            // 갤러리 업데이트
+                            updateGallery();
+                            
+                            POKA.Toast.success('포토카드가 삭제되었습니다');
+                        }
+                    }
+                ]
+            }
+        );
     }
 }
 
-// 이미지 공유
-function shareImage() {
-    if (currentModalImage && navigator.share) {
-        const { image } = currentModalImage;
+// 포토카드 즐겨찾기 토글
+function togglePhotoCardFavorite(index) {
+    if (index >= 0 && index < filteredPhotoCards.length) {
+        const photoCard = filteredPhotoCards[index];
+        photoCard.favorite = !photoCard.favorite;
+        
+        // 원본 배열에서도 업데이트
+        const originalIndex = photoCards.findIndex(card => card.id === photoCard.id);
+        if (originalIndex !== -1) {
+            photoCards[originalIndex].favorite = photoCard.favorite;
+        }
+        
+        // 저장
+        savePhotoCards();
+        
+        // 갤러리 업데이트
+        updateGallery();
+        
+        POKA.Toast.success(photoCard.favorite ? '즐겨찾기에 추가되었습니다' : '즐겨찾기에서 제거되었습니다');
+    }
+}
+
+// 포토카드 저장
+function savePhotoCards() {
+    POKA.AppState.saveToStorage('photoCards', photoCards);
+} 
+
+// 포토카드 다운로드
+function downloadPhotoCard() {
+    if (currentModalPhotoCard) {
+        const { photoCard } = currentModalPhotoCard;
+        
+        // 앞면 이미지 다운로드
+        const frontLink = document.createElement('a');
+        frontLink.href = photoCard.frontImage;
+        frontLink.download = `${photoCard.name || 'poka_photocard'}_front.jpg`;
+        document.body.appendChild(frontLink);
+        frontLink.click();
+        document.body.removeChild(frontLink);
+        
+        // 뒷면 이미지 다운로드
+        setTimeout(() => {
+            const backLink = document.createElement('a');
+            backLink.href = photoCard.backImage;
+            backLink.download = `${photoCard.name || 'poka_photocard'}_back.jpg`;
+            document.body.appendChild(backLink);
+            backLink.click();
+            document.body.removeChild(backLink);
+        }, 500);
+        
+        showToast('포토카드 다운로드가 시작되었습니다', 'success');
+    }
+}
+
+// 포토카드 공유
+function sharePhotoCard() {
+    if (currentModalPhotoCard && navigator.share) {
+        const { photoCard } = currentModalPhotoCard;
         
         navigator.share({
-            title: image.name || 'POKA V2 이미지',
+            title: photoCard.name || 'POKA V2 포토카드',
             text: 'POKA V2로 만든 포토카드입니다',
             url: window.location.href
         }).then(() => {
@@ -538,10 +505,10 @@ function shareImage() {
         });
     } else {
         // 공유 API가 지원되지 않는 경우 클립보드에 복사
-        if (currentModalImage) {
-            const { image } = currentModalImage;
-            navigator.clipboard.writeText(image.dataUrl).then(() => {
-                showToast('이미지 링크가 클립보드에 복사되었습니다', 'success');
+        if (currentModalPhotoCard) {
+            const { photoCard } = currentModalPhotoCard;
+            navigator.clipboard.writeText(photoCard.frontImage).then(() => {
+                showToast('포토카드 링크가 클립보드에 복사되었습니다', 'success');
             }).catch(() => {
                 showToast('클립보드 복사에 실패했습니다', 'error');
             });
@@ -549,41 +516,41 @@ function shareImage() {
     }
 }
 
-// 즐겨찾기 토글 (모달에서)
-function toggleFavorite() {
-    if (currentModalImage) {
-        toggleImageFavorite(currentModalImage.index);
-        closeImageModal();
+// 포토카드 즐겨찾기 토글 (모달에서)
+function togglePhotoCardFavorite() {
+    if (currentModalPhotoCard) {
+        togglePhotoCardFavorite(currentModalPhotoCard.index);
+        closePhotoCardModal();
     }
 }
 
-// 현재 이미지 삭제 (모달에서)
-function deleteCurrentImage() {
-    if (currentModalImage) {
-        const { image, index } = currentModalImage;
+// 현재 포토카드 삭제 (모달에서)
+function deleteCurrentPhotoCard() {
+    if (currentModalPhotoCard) {
+        const { photoCard, index } = currentModalPhotoCard;
         
         // 확인 다이얼로그 표시
-        if (confirm('정말로 이 이미지를 삭제하시겠습니까?')) {
+        if (confirm('정말로 이 포토카드를 삭제하시겠습니까?')) {
             // 원본 배열에서 제거
-            const originalIndex = allImages.findIndex(img => img.id === image.id);
+            const originalIndex = photoCards.findIndex(card => card.id === photoCard.id);
             if (originalIndex !== -1) {
-                allImages.splice(originalIndex, 1);
+                photoCards.splice(originalIndex, 1);
             }
             
             // 저장
-            saveImages();
+            savePhotoCards();
             
             // 모달 닫기
-            closeImageModal();
+            closePhotoCardModal();
             
             // 갤러리 업데이트
             updateGallery();
             
             // 성공 메시지 표시
-            showToast('이미지가 삭제되었습니다', 'success');
+            showToast('포토카드가 삭제되었습니다', 'success');
         }
     }
-}
+} 
 
 // 토스트 메시지 표시 함수
 function showToast(message, type = 'info') {
@@ -620,27 +587,6 @@ function showToast(message, type = 'info') {
     }, 3000);
 }
 
-// 이미지 저장
-function saveImages() {
-    // 편집된 이미지와 업로드된 이미지를 분리하여 저장
-    const editedImages = allImages.filter(img => img.type === 'edited');
-    const uploadedImages = allImages.filter(img => img.type === 'uploaded');
-    
-    POKA.AppState.saveToStorage('editedImages', editedImages);
-    POKA.AppState.saveToStorage('uploadedImages', uploadedImages);
-}
-
-// 파일 크기 포맷팅
-function formatFileSize(bytes) {
-    if (bytes === 0) return '0 Bytes';
-    
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-}
-
 // 디바운스 함수
 function debounce(func, wait) {
     let timeout;
@@ -659,25 +605,25 @@ document.addEventListener('keydown', (e) => {
     switch(e.key) {
         case 'Delete':
         case 'Backspace':
-            if (currentModalImage) {
-                deleteImage(currentModalImage.index);
-                closeImageModal();
+            if (currentModalPhotoCard) {
+                deletePhotoCard(currentModalPhotoCard.index);
+                closePhotoCardModal();
             }
             break;
         case 'Enter':
-            if (currentModalImage) {
-                editCurrentImage();
+            if (currentModalPhotoCard) {
+                editCurrentPhotoCard();
             }
             break;
         case 'Escape':
-            closeImageModal();
+            closePhotoCardModal();
             break;
     }
 });
 
 // 페이지 떠날 때 저장
 window.addEventListener('beforeunload', () => {
-    saveImages();
+    savePhotoCards();
 });
 
 // 온라인/오프라인 상태 감지

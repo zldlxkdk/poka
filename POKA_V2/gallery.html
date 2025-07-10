@@ -43,7 +43,6 @@
                     <span class="filter-tag active" data-filter="all">전체</span>
                     <span class="filter-tag" data-filter="recent">최근</span>
                     <span class="filter-tag" data-filter="favorite">즐겨찾기</span>
-                    <span class="filter-tag" data-filter="edited">편집됨</span>
                 </div>
             </section>
 
@@ -52,7 +51,7 @@
                 <div class="gallery-header">
                     <h3 class="section-title">내 포토카드</h3>
                     <div class="gallery-stats">
-                        <span id="imageCount">0</span>개의 이미지
+                        <span id="imageCount">0</span>개의 포토카드
                     </div>
                 </div>
                 
@@ -62,12 +61,12 @@
                 
                 <!-- 빈 상태 -->
                 <div class="empty-state" id="emptyState" style="display: none;">
-                    <div class="empty-icon">📷</div>
+                    <div class="empty-icon">🎴</div>
                     <h3>아직 포토카드가 없습니다</h3>
                     <p>첫 번째 포토카드를 만들어보세요!</p>
-                    <button class="btn btn-primary" onclick="POKA.Navigation.navigateTo('upload.html')">
-                        <span class="btn-icon">📤</span>
-                        사진 업로드하기
+                    <button class="btn btn-primary" onclick="POKA.Navigation.navigateTo('edit.html')">
+                        <span class="btn-icon">🎴</span>
+                        포토카드 만들기
                     </button>
                 </div>
             </section>
@@ -75,7 +74,7 @@
             <!-- 로딩 상태 -->
             <div class="loading-state" id="loadingState" style="display: none;">
                 <div class="loading-spinner"></div>
-                <p>이미지를 불러오는 중...</p>
+                <p>포토카드를 불러오는 중...</p>
             </div>
         </main>
 
@@ -105,7 +104,7 @@
         <div class="modal-overlay" onclick="closeImageModal()"></div>
         <div class="modal-content">
             <div class="modal-header">
-                <button class="modal-delete" onclick="deleteCurrentImage()" title="삭제">
+                <button class="modal-delete" onclick="deleteCurrentPhotoCard()" title="삭제">
                     <span class="btn-icon">🗑️</span>
                 </button>
                 <button class="modal-close" onclick="closeImageModal()" title="닫기">×</button>
@@ -122,31 +121,31 @@
                 </div>
             </div>
             <div class="modal-actions">
-                <button class="btn btn-secondary" onclick="editCurrentImage()">
+                <button class="btn btn-secondary" onclick="editCurrentPhotoCard()">
                     <div class="btn-content">
                         <span class="btn-icon">✏️</span>
                         <span class="btn-text">편집</span>
                     </div>
                 </button>
-                <button class="btn btn-primary" onclick="downloadImage()">
+                <button class="btn btn-primary" onclick="downloadPhotoCard()">
                     <div class="btn-content">
                         <span class="btn-icon">⬇️</span>
                         <span class="btn-text">다운로드</span>
                     </div>
                 </button>
-                <button class="btn btn-secondary" onclick="shareImage()">
+                <button class="btn btn-secondary" onclick="sharePhotoCard()">
                     <div class="btn-content">
                         <span class="btn-icon">📤</span>
                         <span class="btn-text">공유</span>
                     </div>
                 </button>
-                <button class="btn btn-secondary" onclick="toggleFavorite()">
+                <button class="btn btn-secondary" onclick="togglePhotoCardFavorite()">
                     <div class="btn-content">
                         <span class="btn-icon" id="favoriteIcon">⭐</span>
                         <span class="btn-text" id="favoriteText">즐겨찾기</span>
                     </div>
                 </button>
-                <button class="btn btn-close" onclick="closeImageModal()">
+                <button class="btn btn-close" onclick="closePhotoCardModal()">
                     <div class="btn-content">
                         <span class="btn-icon">✕</span>
                         <span class="btn-text">닫기</span>
