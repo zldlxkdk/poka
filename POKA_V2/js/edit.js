@@ -66,23 +66,9 @@ function loadCurrentImage() {
     
     currentImage = POKA.AppState.currentImage;
     
-    // URL 파라미터에서 이미지 데이터 확인
-    const urlParams = new URLSearchParams(window.location.search);
-    const imageData = urlParams.get('image');
-    
-    if (!currentImage && imageData) {
-        try {
-            currentImage = JSON.parse(decodeURIComponent(imageData));
-            console.log('URL 파라미터에서 이미지 로드:', currentImage);
-        } catch (error) {
-            console.error('URL 파라미터 파싱 오류:', error);
-        }
-    }
-    
     if (!currentImage) {
         console.error('편집할 이미지가 없습니다');
         console.log('AppState 전체:', POKA.AppState);
-        console.log('URL 파라미터:', window.location.search);
         
         // 테스트용 샘플 이미지 생성
         createSampleImage();
@@ -156,34 +142,17 @@ function createSampleImage() {
 
 // URL 파라미터에서 이미지 로드
 function loadFromUrl() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const imageData = urlParams.get('image');
+    POKA.Toast.warning('URL 파라미터 방식은 더 이상 지원되지 않습니다. AppState를 사용합니다.');
     
-    if (!imageData) {
-        POKA.Toast.error('URL에 이미지 데이터가 없습니다');
-        return;
-    }
+    // AppState에서 이미지 다시 로드 시도
+    currentImage = POKA.AppState.currentImage;
     
-    try {
-        const image = JSON.parse(decodeURIComponent(imageData));
-        console.log('URL에서 이미지 로드:', image);
-        
-        if (!image.dataUrl) {
-            POKA.Toast.error('이미지 데이터 URL이 없습니다');
-            return;
-        }
-        
-        currentImage = image;
+    if (currentImage && currentImage.dataUrl) {
         originalImage = JSON.parse(JSON.stringify(currentImage));
-        editImage.src = image.dataUrl;
-        
-        console.log('URL에서 로드된 이미지:', currentImage);
-        console.log('원본 이미지 저장됨:', originalImage);
-        POKA.Toast.success('URL에서 이미지를 성공적으로 로드했습니다');
-        
-    } catch (error) {
-        console.error('URL 파라미터 파싱 오류:', error);
-        POKA.Toast.error('이미지 데이터 파싱에 실패했습니다');
+        editImage.src = currentImage.dataUrl;
+        POKA.Toast.success('AppState에서 이미지를 성공적으로 로드했습니다');
+    } else {
+        POKA.Toast.error('AppState에서 이미지를 찾을 수 없습니다');
     }
 }
 
@@ -847,9 +816,6 @@ function createImageWithEmojis() {
 
 // 디버그 정보 표시
 function debugInfo() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const imageData = urlParams.get('image');
-    
     const debugInfo = `
         <div style="text-align: left; font-family: monospace; font-size: 12px;">
             <p><strong>POKA 객체:</strong> ${window.POKA ? '존재함' : '없음'}</p>
@@ -865,17 +831,12 @@ function debugInfo() {
             <p><strong>hasDragged:</strong> ${hasDragged}</p>
             <p><strong>editImage.naturalWidth:</strong> ${editImage.naturalWidth || '로드 안됨'}</p>
             <p><strong>editImage.naturalHeight:</strong> ${editImage.naturalHeight || '로드 안됨'}</p>
-            <p><strong>URL 파라미터:</strong> ${window.location.search || '없음'}</p>
-            <p><strong>이미지 데이터 파라미터:</strong> ${imageData ? '존재함' : '없음'}</p>
             <br>
             <p><strong>이모지 목록:</strong></p>
             <pre>${JSON.stringify(emojis, null, 2)}</pre>
             <br>
             <p><strong>AppState.currentImage:</strong></p>
             <pre>${JSON.stringify(window.POKA?.AppState?.currentImage, null, 2)}</pre>
-            <br>
-            <p><strong>URL 파라미터 이미지 데이터:</strong></p>
-            <pre>${imageData ? JSON.stringify(JSON.parse(decodeURIComponent(imageData)), null, 2) : '없음'}</pre>
         </div>
     `;
     

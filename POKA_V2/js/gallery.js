@@ -317,11 +317,9 @@ function editImage(index) {
         POKA.AppState.currentImage = image;
         console.log('AppState.currentImage 설정 후:', POKA.AppState.currentImage);
         
-        // URL 파라미터로도 전달 (백업용)
-        const imageData = encodeURIComponent(JSON.stringify(image));
-        const editUrl = `edit.html?image=${imageData}`;
-        
-        console.log('편집 URL:', editUrl);
+        // 편집 페이지로 이동 (URL 파라미터 없이)
+        const editUrl = 'edit.html';
+        console.log('편집 페이지로 이동:', editUrl);
         POKA.Navigation.navigateTo(editUrl);
     }
 }
