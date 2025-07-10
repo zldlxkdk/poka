@@ -444,15 +444,15 @@
     min-height: 0;
 }
 
-.modal-body img {
-    max-width: 100%;
-    max-height: 100%;
-    width: auto;
-    height: auto;
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow-medium);
-    object-fit: contain;
-}
+    .modal-body img {
+        max-width: 100%;
+        max-height: 60%;
+        width: auto;
+        height: auto;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-medium);
+        object-fit: contain;
+    }
 
 .image-info {
     margin-top: 16px;
@@ -537,18 +537,18 @@
     
     .modal-content {
         max-width: 95vw;
-        max-height: 70vh;
+        max-height: 60vh;
         width: 95vw;
-        height: 70vh;
+        height: 60vh;
     }
     
     .modal-body {
-        padding: 8px 12px;
+        padding: 6px 12px;
     }
     
     .image-info {
         margin-top: 8px;
-        margin-bottom: 12px;
+        margin-bottom: 20px;
         padding: 0 4px;
     }
     
@@ -563,7 +563,12 @@
     }
     
     .modal-actions {
-        padding: 12px;
+        padding: 8px 12px;
+    }
+    
+    .modal-actions .btn {
+        padding: 8px 12px;
+        font-size: 0.9rem;
     }
     
     .modal-header {
@@ -635,19 +640,19 @@
     animation: pulse 2s ease-in-out infinite;
 }
 
-.modal-fallback {
-    height: 300px;
-    width: 100%;
-    font-size: 4rem;
-    margin-bottom: 16px;
-    background: var(--background-color);
-    border-radius: var(--border-radius);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-secondary);
-    border: 2px dashed var(--border-color);
-}
+    .modal-fallback {
+        height: 200px;
+        width: 100%;
+        font-size: 3rem;
+        margin-bottom: 16px;
+        background: var(--background-color);
+        border-radius: var(--border-radius);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-secondary);
+        border: 2px dashed var(--border-color);
+    }
 
 @keyframes pulse {
     0%, 100% { opacity: 0.7; }
