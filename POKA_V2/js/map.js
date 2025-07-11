@@ -452,14 +452,14 @@ function searchAddress() {
         })
         .catch(error => {
             console.error('주소 검색 오류:', error);
-            showSearchError('주소 검색 중 오류가 발생했습니다.');
+            showSearchError('주소 검색 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
         });
 }
 
 // 검색 결과 표시
 function displaySearchResults(results) {
     if (results.length === 0) {
-        showSearchError('검색 결과가 없습니다.');
+        showSearchError('검색 결과가 없습니다. 다른 키워드로 다시 검색해보세요.');
         return;
     }
     
@@ -471,11 +471,16 @@ function displaySearchResults(results) {
         resultItem.className = 'search-result-item';
         resultItem.onclick = () => selectSearchResult(result);
         
+        // 주소 정보 파싱
+        const addressParts = result.display_name.split(', ');
+        const mainAddress = addressParts[0] || '알 수 없는 위치';
+        const subAddress = addressParts.slice(1, 3).join(', '); // 첫 번째와 두 번째 부분만 사용
+        
         resultItem.innerHTML = `
             <div class="search-result-icon">📍</div>
             <div class="search-result-content">
-                <div class="search-result-title">${result.display_name.split(',')[0]}</div>
-                <div class="search-result-address">${result.display_name}</div>
+                <div class="search-result-title">${mainAddress}</div>
+                <div class="search-result-address">${subAddress}</div>
             </div>
         `;
         
@@ -494,20 +499,29 @@ function selectSearchResult(result) {
     };
     
     // 검색한 위치의 주소 표시 (임시)
-    const searchAddress = result.display_name.split(',')[0];
+    const addressParts = result.display_name.split(', ');
+    const searchAddress = addressParts[0] || '알 수 없는 위치';
+    const searchSubAddress = addressParts.slice(1, 3).join(', ');
     const searchFullAddress = result.display_name;
     
     // 주소 표시 업데이트 (검색 위치임을 명시)
     currentAddressElement.textContent = `🔍 ${searchAddress}`;
-    locationDetailElement.textContent = `검색 위치: ${searchFullAddress}`;
+    locationDetailElement.textContent = `검색 위치: ${searchSubAddress}`;
+    
+    // 사용자에게 피드백 제공
+    console.log(`지도가 ${searchAddress}로 이동합니다...`);
     
     // 검색 결과 숨기기
     searchResults.style.display = 'none';
     addressSearchInput.value = '';
     
-    // 지도 중심 이동 (검색 위치로)
+    // 지도 중심 이동 (검색 위치로) - 부드러운 애니메이션
     if (map && typeof L !== 'undefined') {
-        map.setView([mapCenter.lat, mapCenter.lng], 15);
+        // 부드러운 이동 애니메이션으로 지도 중심 이동
+        map.flyTo([mapCenter.lat, mapCenter.lng], 15, {
+            animate: true,
+            duration: 1.0 // 1초 애니메이션
+        });
         
         // 기존 마커 제거
         if (userMarker && map.hasLayer(userMarker)) {
@@ -520,26 +534,29 @@ function selectSearchResult(result) {
         });
         kioskMarkers = [];
         
-        // 새로운 마커 추가 (실제 현재 위치 기준)
-        addUserMarker();
-        addKioskMarkers();
-        
-        // 거리 재계산 (실제 현재 위치 기준)
-        calculateDistances();
-        filteredKioskData.sort((a, b) => a.distance - b.distance);
-        renderKioskList();
+        // 애니메이션 완료 후 마커 추가
+        setTimeout(() => {
+            // 새로운 마커 추가 (실제 현재 위치 기준)
+            addUserMarker();
+            addKioskMarkers();
+            
+            // 거리 재계산 (실제 현재 위치 기준)
+            calculateDistances();
+            filteredKioskData.sort((a, b) => a.distance - b.distance);
+            renderKioskList();
+        }, 1000); // 애니메이션 완료 후 실행
     }
 }
 
 // 검색 로딩 표시
 function showSearchLoading() {
-    searchResults.innerHTML = '<div class="search-loading">검색 중...</div>';
+    searchResults.innerHTML = '<div class="search-loading">🔍 지역을 검색하고 있습니다...</div>';
     searchResults.style.display = 'block';
 }
 
 // 검색 오류 표시
 function showSearchError(message) {
-    searchResults.innerHTML = `<div class="search-error">${message}</div>`;
+    searchResults.innerHTML = `<div class="search-error">⚠️ ${message}</div>`;
     searchResults.style.display = 'block';
 }
 
