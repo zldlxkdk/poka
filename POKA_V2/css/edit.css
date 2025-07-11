@@ -523,7 +523,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
     gap: 10px;
-    max-height: 200px;
+    max-height: 250px;
     overflow-y: auto;
 }
 
@@ -658,8 +658,8 @@
     }
     
     .image-grid {
-        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-        max-height: 150px;
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        max-height: 200px;
     }
     
     .selection-actions {
@@ -1630,11 +1630,27 @@
     }
     
     .image-edit-container {
-        height: 220px;
+        height: 250px;
         min-width: 0;
         width: 100%;
         max-width: 100vw;
         padding: 0;
+    }
+    
+    .image-edit-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+    
+    .image-edit-panel {
+        min-height: 300px;
+    }
+    
+    .image-edit-container {
+        height: 280px;
+        min-height: 280px;
     }
     
     .upload-options {
@@ -1661,8 +1677,50 @@
     
     .unified-edit-controls .control-group {
         width: 100%;
-        padding: 12px;
+        padding: 15px;
         box-sizing: border-box;
+    }
+    
+    .rotation-controls {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .filter-controls {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .emoji-controls {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .btn-small {
+        min-width: 50px;
+        height: 40px;
+        font-size: 16px;
+        padding: 8px 12px;
+    }
+    
+    .filter-btn {
+        min-width: 60px;
+        height: 40px;
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+    
+    .emoji-btn {
+        min-width: 50px;
+        height: 40px;
+        font-size: 20px;
+        padding: 8px 12px;
     }
     
     .photo-card-simultaneous-edit {
@@ -1777,9 +1835,10 @@
     flex-wrap: wrap;
   }
   .btn-small, .emoji-btn {
-    font-size: 14px;
-    padding: 6px 8px;
-    min-width: 28px;
+    font-size: 16px;
+    padding: 8px 10px;
+    min-width: 40px;
+    height: 40px;
   }
 }
 .image-fallback .fallback-message {

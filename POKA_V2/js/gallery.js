@@ -277,6 +277,14 @@ function createPhotoCardItem(photoCard, index) {
                 <div class="photo-card-inner-side photo-card-inner-bottom"></div>
                 <div class="photo-card-inner-side photo-card-inner-left"></div>
                 <div class="photo-card-inner-side photo-card-inner-right"></div>
+                
+                <!-- 카드 정보 오버레이 (이미지 위에 표시) -->
+                <div class="photo-card-info-overlay">
+                    <div class="photo-card-info-content">
+                        <div class="photo-card-info-title">${photoCard.name || '제목 없음'}</div>
+                        <div class="photo-card-info-date">${formattedDate}</div>
+                    </div>
+                </div>
             </div>
         </div>
         <!-- 카드 이름 (카드 밑에 표시) -->
