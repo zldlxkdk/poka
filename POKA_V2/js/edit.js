@@ -392,8 +392,7 @@ function loadPhotoCardForEdit(photoCard) {
     // 이미지 클릭 이벤트 설정
     setupImageClickEvents();
     
-    // 초기 선택 상태 설정 (앞면을 기본으로 선택)
-    currentSelectedSide = 'front';
+    // 초기 선택 상태 설정
     updateImageSelectionState();
     
     POKA.Toast.success('포토카드 편집 모드로 전환되었습니다');
@@ -1915,8 +1914,7 @@ function addEmojiEdit(side, emoji) {
         id: emojiId,
         emoji: emoji,
         x: 50, // 중앙 위치
-        y: 50,
-        size: 28 // 기본 크기
+        y: 50
     };
     
     if (!photoCardEditState[side].emojis) {
@@ -1994,8 +1992,7 @@ function getEmojiState(side) {
             id: emoji.dataset.emojiId || Date.now() + Math.random(),
             emoji: emoji.textContent,
             x: rect.left - containerRect.left,
-            y: rect.top - containerRect.top,
-            size: parseInt(emoji.style.fontSize) || 28
+            y: rect.top - containerRect.top
         });
     });
     
@@ -2229,9 +2226,8 @@ function captureImageWithEmojis(side) {
                 const x = (rect.left - containerRect.left) * scaleX;
                 const y = (rect.top - containerRect.top) * scaleY;
                 
-                // 이모지 크기를 원본 이미지 비율에 맞게 조정 (저장된 크기 고려)
-                const originalSize = parseInt(emoji.style.fontSize) || 28;
-                const emojiSize = Math.max(16, Math.min(60, originalSize * Math.min(scaleX, scaleY)));
+                // 이모지 크기를 원본 이미지 비율에 맞게 조정
+                const emojiSize = Math.max(24, Math.min(48, Math.min(scaleX, scaleY) * 24));
                 
                 ctx.font = `${emojiSize}px Arial`;
                 ctx.textAlign = 'center';
@@ -2332,34 +2328,6 @@ function uploadFromGallery(side) {
     };
     
     input.click();
-}
-
-// 이미지 삭제 함수
-function deleteImage(side) {
-    const imageElement = document.getElementById(side === 'front' ? 'frontEditImage' : 'backEditImage');
-    const fallbackElement = document.getElementById(side === 'front' ? 'frontImageFallback' : 'backImageFallback');
-    const emojiLayer = document.getElementById(side === 'front' ? 'frontEmojiLayer' : 'backEmojiLayer');
-    
-    if (confirm(`${side === 'front' ? '앞면' : '뒷면'} 이미지를 삭제하시겠습니까?`)) {
-        // 이미지 초기화
-        imageElement.src = '';
-        imageElement.style.display = 'none';
-        fallbackElement.style.display = 'flex';
-        
-        // 이모지 레이어 초기화
-        emojiLayer.innerHTML = '';
-        
-        // 편집 상태 초기화
-        photoCardEditState[side] = {
-            image: null,
-            rotation: 0,
-            flip: { horizontal: false, vertical: false },
-            filter: 'none',
-            emojis: []
-        };
-        
-        POKA.Toast.success(`${side === 'front' ? '앞면' : '뒷면'} 이미지가 삭제되었습니다`);
-    }
 }
 
 // 카메라 촬영 함수 개선
@@ -2806,33 +2774,11 @@ function renderEmojisForSide(side) {
         emojiElement.textContent = emojiData.emoji;
         emojiElement.style.left = emojiData.x + 'px';
         emojiElement.style.top = emojiData.y + 'px';
-        emojiElement.style.fontSize = (emojiData.size || 28) + 'px';
         emojiElement.dataset.emojiId = emojiData.id;
         emojiElement.dataset.side = side;
         
         // 드래그 가능하게 만들기
         makeDraggable(emojiElement);
-        
-        // 크기 조정 이벤트 추가
-        emojiElement.addEventListener('wheel', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            const currentSize = parseInt(this.style.fontSize) || 28;
-            const delta = e.deltaY > 0 ? -2 : 2;
-            const newSize = Math.max(16, Math.min(60, currentSize + delta));
-            
-            this.style.fontSize = newSize + 'px';
-            
-            // 상태 업데이트
-            const emojiId = this.dataset.emojiId;
-            if (photoCardEditState[side] && photoCardEditState[side].emojis) {
-                const emojiData = photoCardEditState[side].emojis.find(emoji => emoji.id === emojiId);
-                if (emojiData) {
-                    emojiData.size = newSize;
-                }
-            }
-        });
         
         // 삭제 이벤트 추가 (클릭과 더블클릭 모두 지원)
         emojiElement.addEventListener('click', function(e) {
