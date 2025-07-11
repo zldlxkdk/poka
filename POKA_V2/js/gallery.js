@@ -768,7 +768,9 @@ function deleteCurrentPhotoCard() {
     }
 } 
 
-
+function printPhotoCard() {
+    alert('인쇄기능 작업 예정입니다.');
+}
 
 // 디바운스 함수
 function debounce(func, wait) {
