@@ -19,7 +19,7 @@
                 <h1 class="page-title">프로필</h1>
                 <div class="header-actions">
                     <button class="header-btn" onclick="showSettings()" title="설정">
-                        <span class="btn-icon">??</span>
+                        <span class="btn-icon">⚙️</span>
                     </button>
                 </div>
             </div>
@@ -27,189 +27,218 @@
 
         <!-- 메인 컨텐츠 -->
         <main class="main-content">
-            <!-- 사용자 정보 -->
-            <section class="user-section">
-                <div class="user-card">
-                    <div class="user-avatar">
-                        <div class="avatar-placeholder">?</div>
+            <!-- 로그인 상태 확인 -->
+            <div id="loginRequired" style="display: none;">
+                <section class="login-section">
+                    <div class="login-card">
+                        <div class="login-icon">👤</div>
+                        <h2 class="login-title">로그인이 필요합니다</h2>
+                        <p class="login-description">프로필을 사용하려면 로그인하거나 회원가입해주세요</p>
+                        <div class="login-actions">
+                            <button class="btn btn-primary" onclick="showLoginModal()">
+                                <span class="btn-icon">🔑</span>
+                                로그인
+                            </button>
+                            <button class="btn btn-secondary" onclick="showSignupModal()">
+                                <span class="btn-icon">📝</span>
+                                회원가입
+                            </button>
+                        </div>
                     </div>
-                    <div class="user-info">
-                        <h2 class="user-name" id="userName">사용자</h2>
-                        <p class="user-email" id="userEmail">사용자@example.com</p>
-                        <p class="user-join-date" id="userJoinDate">가입일: 2024년 1월 1일</p>
-                    </div>
-                    <button class="edit-profile-btn" onclick="editProfile()">
-                        <span class="btn-icon">??</span>
-                        편집
-                    </button>
-                </div>
-            </section>
+                </section>
+            </div>
 
-            <!-- 통계 -->
-            <section class="stats-section">
-                <h3 class="section-title">? 사용 통계</h3>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon">??</div>
-                        <div class="stat-content">
-                            <div class="stat-number" id="totalImages">0</div>
-                            <div class="stat-label">총 이미지</div>
+            <!-- 로그인된 사용자 컨텐츠 -->
+            <div id="userContent" style="display: none;">
+                <!-- 사용자 정보 -->
+                <section class="user-section">
+                    <div class="user-card">
+                        <div class="user-avatar">
+                            <div class="avatar-placeholder">👤</div>
                         </div>
-                    </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-icon">??</div>
-                        <div class="stat-content">
-                            <div class="stat-number" id="editedImages">0</div>
-                            <div class="stat-label">편집된 이미지</div>
+                        <div class="user-info">
+                            <h2 class="user-name" id="userName">사용자</h2>
+                            <p class="user-email" id="userEmail">사용자@example.com</p>
+                            <p class="user-join-date" id="userJoinDate">가입일: 2024년 1월 1일</p>
                         </div>
-                    </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-icon">?</div>
-                        <div class="stat-content">
-                            <div class="stat-number" id="favoriteImages">0</div>
-                            <div class="stat-label">즐겨찾기</div>
-                        </div>
-                    </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-icon">?</div>
-                        <div class="stat-content">
-                            <div class="stat-number" id="daysActive">0</div>
-                            <div class="stat-label">활동일</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 빠른 액션 -->
-            <section class="actions-section">
-                <h3 class="section-title">? 빠른 액션</h3>
-                <div class="actions-grid">
-                    <button class="action-btn" onclick="POKA.Navigation.navigateTo('gallery.html')">
-                        <div class="action-icon">🎴</div>
-                        <div class="action-text">포토카드 보기</div>
-                    </button>
-                    
-                    <button class="action-btn" onclick="exportData()">
-                        <div class="action-icon">📤</div>
-                        <div class="action-text">데이터 내보내기</div>
-                    </button>
-                    
-                    <button class="action-btn" onclick="importData()">
-                        <div class="action-icon">📥</div>
-                        <div class="action-text">데이터 가져오기</div>
-                    </button>
-                </div>
-            </section>
-
-            <!-- 설정 -->
-            <section class="settings-section">
-                <h3 class="section-title">?? 설정</h3>
-                <div class="settings-list">
-                    <div class="setting-item">
-                        <div class="setting-info">
-                            <div class="setting-icon">?</div>
-                            <div class="setting-content">
-                                <div class="setting-title">다크 모드</div>
-                                <div class="setting-description">어두운 테마 사용</div>
-                            </div>
-                        </div>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="darkModeToggle">
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-                    
-                    <div class="setting-item">
-                        <div class="setting-info">
-                            <div class="setting-icon">?</div>
-                            <div class="setting-content">
-                                <div class="setting-title">알림</div>
-                                <div class="setting-description">푸시 알림 받기</div>
-                            </div>
-                        </div>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="notificationToggle">
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-                    
-                    <div class="setting-item">
-                        <div class="setting-info">
-                            <div class="setting-icon">?</div>
-                            <div class="setting-content">
-                                <div class="setting-title">자동 저장</div>
-                                <div class="setting-description">작업 자동 저장</div>
-                            </div>
-                        </div>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="autoSaveToggle" checked>
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-                    
-                    <div class="setting-item">
-                        <div class="setting-info">
-                            <div class="setting-icon">?</div>
-                            <div class="setting-content">
-                                <div class="setting-title">PWA 설치</div>
-                                <div class="setting-description">앱으로 설치</div>
-                            </div>
-                        </div>
-                        <button class="install-btn" id="installBtn" style="display: none;">
-                            설치
+                        <button class="edit-profile-btn" onclick="editProfile()">
+                            <span class="btn-icon">✏️</span>
+                            편집
                         </button>
                     </div>
-                </div>
-            </section>
+                </section>
 
-            <!-- 정보 -->
-            <section class="info-section">
-                <h3 class="section-title">?? 정보</h3>
-                <div class="info-list">
-                    <div class="info-item">
-                        <div class="info-icon">?</div>
-                        <div class="info-content">
-                            <div class="info-title">앱 버전</div>
-                            <div class="info-value">POKA V2.0.0</div>
+                <!-- 쿠폰 관리 -->
+                <section class="coupon-section">
+                    <h3 class="section-title">🎫 쿠폰 관리</h3>
+                    <div class="coupon-overview">
+                        <div class="coupon-summary">
+                            <div class="coupon-icon">🎫</div>
+                            <div class="coupon-info">
+                                <div class="coupon-title">내 쿠폰</div>
+                                <div class="coupon-count" id="profileCouponCount">0개</div>
+                            </div>
                         </div>
+                        <button class="coupon-manage-btn" onclick="window.location.href='coupon.html'">
+                            <span class="btn-icon">🔍</span>
+                            관리하기
+                        </button>
                     </div>
-                    
-                    <div class="info-item">
-                        <div class="info-icon">?</div>
-                        <div class="info-content">
-                            <div class="info-title">웹사이트</div>
-                            <div class="info-value">poka-v2.com</div>
-                        </div>
-                    </div>
-                    
-                    <div class="info-item">
-                        <div class="info-icon">?</div>
-                        <div class="info-content">
-                            <div class="info-title">지원 이메일</div>
-                            <div class="info-value">support@poka-v2.com</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+                </section>
 
-            <!-- 계정 관리 -->
-            <section class="account-section">
-                <h3 class="section-title">? 계정 관리</h3>
-                <div class="account-actions">
-                    <button class="btn btn-secondary" onclick="clearAllData()">
-                        <span class="btn-icon">??</span>
-                        모든 데이터 삭제
-                    </button>
-                    
-                    <button class="btn btn-secondary" onclick="resetSettings()">
-                        <span class="btn-icon">?</span>
-                        설정 초기화
-                    </button>
-                </div>
-            </section>
+                <!-- 통계 -->
+                <section class="stats-section">
+                    <h3 class="section-title">📊 사용 통계</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">🎴</div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="createdPhotocards">0</div>
+                                <div class="stat-label">제작한 카드개수</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">🖨️</div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="printedPhotocards">0</div>
+                                <div class="stat-label">인쇄한 카드개수</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">⭐</div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="favoriteImages">0</div>
+                                <div class="stat-label">즐겨찾기</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">📅</div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="daysActive">0</div>
+                                <div class="stat-label">활동일</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 데이터 관리 -->
+                <section class="actions-section">
+                    <h3 class="section-title">💾 데이터 관리</h3>
+                    <div class="actions-grid">
+                        <button class="action-btn" onclick="exportData()">
+                            <div class="action-icon">📤</div>
+                            <div class="action-text">데이터 내보내기</div>
+                        </button>
+                        
+                        <button class="action-btn" onclick="importData()">
+                            <div class="action-icon">📥</div>
+                            <div class="action-text">데이터 가져오기</div>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- 설정 -->
+                <section class="settings-section">
+                    <h3 class="section-title">⚙️ 설정</h3>
+                    <div class="settings-list">
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-icon">🌙</div>
+                                <div class="setting-content">
+                                    <div class="setting-title">다크 모드</div>
+                                    <div class="setting-description">어두운 테마 사용</div>
+                                </div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="darkModeToggle">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-icon">🔔</div>
+                                <div class="setting-content">
+                                    <div class="setting-title">알림</div>
+                                    <div class="setting-description">푸시 알림 받기</div>
+                                </div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="notificationToggle">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-icon">💾</div>
+                                <div class="setting-content">
+                                    <div class="setting-title">자동 저장</div>
+                                    <div class="setting-description">작업 자동 저장</div>
+                                </div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="autoSaveToggle" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 정보 -->
+                <section class="info-section">
+                    <h3 class="section-title">ℹ️ 정보</h3>
+                    <div class="info-list">
+                        <div class="info-item">
+                            <div class="info-icon">📱</div>
+                            <div class="info-content">
+                                <div class="info-title">앱 버전</div>
+                                <div class="info-value">POKA V2.0.0</div>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <div class="info-icon">🌐</div>
+                            <div class="info-content">
+                                <div class="info-title">웹사이트</div>
+                                <div class="info-value">poka-v2.com</div>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <div class="info-icon">📧</div>
+                            <div class="info-content">
+                                <div class="info-title">지원 이메일</div>
+                                <div class="info-value">support@poka-v2.com</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 계정 관리 -->
+                <section class="account-section">
+                    <h3 class="section-title">🔧 계정 관리</h3>
+                    <div class="account-actions">
+                        <button class="btn btn-secondary" onclick="logout()">
+                            <span class="btn-icon">🚪</span>
+                            로그아웃
+                        </button>
+                        
+                        <button class="btn btn-secondary" onclick="clearAllData()">
+                            <span class="btn-icon">🗑️</span>
+                            모든 데이터 삭제
+                        </button>
+                        
+                        <button class="btn btn-secondary" onclick="resetSettings()">
+                            <span class="btn-icon">🔄</span>
+                            설정 초기화
+                        </button>
+                    </div>
+                </section>
+            </div>
         </main>
 
         <!-- 네비게이션 바 -->
@@ -219,7 +248,7 @@
                 <span class="nav-text">홈</span>
             </a>
             <a href="gallery.html" class="nav-item">
-                <span class="nav-icon">🎴</span>
+                <span class="nav-icon">🖼️</span>
                 <span class="nav-text">포토카드</span>
             </a>
             <a href="map.html" class="nav-item">

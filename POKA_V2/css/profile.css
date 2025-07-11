@@ -39,6 +39,67 @@
     transform: scale(1.1);
 }
 
+/* 로그인 섹션 */
+.login-section {
+    margin-bottom: 32px;
+}
+
+.login-card {
+    background: var(--surface-color);
+    border-radius: var(--border-radius-large);
+    padding: 40px 24px;
+    box-shadow: var(--shadow-medium);
+    border: 1px solid var(--border-color);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.login-icon {
+    font-size: 4rem;
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    box-shadow: var(--shadow-light);
+}
+
+.login-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.login-description {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.5;
+}
+
+.login-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    max-width: 300px;
+}
+
+.login-actions .btn {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
 /* 사용자 섹션 */
 .user-section {
     margin-bottom: 32px;
@@ -168,8 +229,11 @@
 }
 
 .stat-label {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: var(--text-secondary);
+    line-height: 1.2;
+    text-align: center;
+    word-break: keep-all;
 }
 
 /* 빠른 액션 섹션 */
@@ -185,32 +249,34 @@
 
 .action-btn {
     background: var(--surface-color);
-    border: 2px solid var(--border-color);
+    border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
-    padding: 20px 16px;
+    padding: 16px;
     cursor: pointer;
     transition: var(--transition);
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 8px;
-    text-align: center;
+    text-decoration: none;
+    color: var(--text-primary);
 }
 
 .action-btn:hover {
-    border-color: var(--primary-color);
-    background: rgba(0, 212, 255, 0.05);
+    background: var(--primary-color);
+    color: white;
     transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
 }
 
 .action-icon {
-    font-size: 2rem;
+    font-size: 1.5rem;
 }
 
 .action-text {
     font-size: 0.9rem;
     font-weight: 500;
-    color: var(--text-primary);
+    text-align: center;
 }
 
 /* 설정 섹션 */
@@ -244,6 +310,7 @@
     display: flex;
     align-items: center;
     gap: 16px;
+    flex: 1;
 }
 
 .setting-icon {
@@ -314,7 +381,66 @@ input:checked + .toggle-slider:before {
     transform: translateX(26px);
 }
 
-.install-btn {
+/* 쿠폰 섹션 */
+.coupon-section {
+    margin-bottom: 32px;
+}
+
+.coupon-overview {
+    background: var(--surface-color);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    box-shadow: var(--shadow-light);
+    border: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    transition: var(--transition);
+}
+
+.coupon-overview:hover {
+    box-shadow: var(--shadow-medium);
+    transform: translateY(-2px);
+}
+
+.coupon-summary {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.coupon-icon {
+    font-size: 2.5rem;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #ff6b6b, #ff5252);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    box-shadow: var(--shadow-light);
+}
+
+.coupon-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.coupon-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.coupon-count {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.coupon-manage-btn {
     background: var(--primary-color);
     border: none;
     color: white;
@@ -324,11 +450,17 @@ input:checked + .toggle-slider:before {
     font-weight: 500;
     cursor: pointer;
     transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
-.install-btn:hover {
+.coupon-manage-btn:hover {
     background: var(--primary-dark);
+    transform: translateY(-2px);
 }
+
+
 
 /* 정보 섹션 */
 .info-section {
@@ -390,8 +522,69 @@ input:checked + .toggle-slider:before {
     justify-content: center;
 }
 
+/* 버튼 스타일 */
+.btn {
+    background: var(--primary-color);
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
+}
+
+.btn-secondary {
+    background: var(--surface-color);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    background: var(--border-color);
+}
+
+.btn-danger {
+    background: #e74c3c;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #c0392b;
+}
+
+.btn-icon {
+    font-size: 1.2rem;
+}
+
 /* 반응형 디자인 */
 @media (max-width: 480px) {
+    .login-card {
+        padding: 32px 20px;
+    }
+    
+    .login-icon {
+        font-size: 3rem;
+        width: 60px;
+        height: 60px;
+    }
+    
+    .login-title {
+        font-size: 1.3rem;
+    }
+    
     .user-card {
         flex-direction: column;
         text-align: center;
@@ -409,9 +602,17 @@ input:checked + .toggle-slider:before {
         gap: 12px;
     }
     
+    .stat-label {
+        font-size: 0.8rem;
+    }
+    
     .actions-grid {
         grid-template-columns: 1fr;
         gap: 8px;
+    }
+    
+    .actions-grid .action-btn {
+        padding: 20px 16px;
     }
     
     .setting-item {
@@ -429,9 +630,32 @@ input:checked + .toggle-slider:before {
     .info-item {
         gap: 12px;
     }
+    
+    /* 쿠폰 섹션 반응형 */
+    .coupon-overview {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+    }
+    
+    .coupon-summary {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .coupon-manage-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+
 }
 
 /* 애니메이션 */
+.login-card {
+    animation: fadeInUp 0.6s ease-out;
+}
+
 .user-card {
     animation: fadeInUp 0.6s ease-out;
 }
@@ -449,10 +673,16 @@ input:checked + .toggle-slider:before {
     animation: fadeInUp 0.6s ease-out;
 }
 
-.action-btn:nth-child(1) { animation-delay: 0.5s; }
-.action-btn:nth-child(2) { animation-delay: 0.6s; }
-.action-btn:nth-child(3) { animation-delay: 0.7s; }
-.action-btn:nth-child(4) { animation-delay: 0.8s; }
+/* 쿠폰 섹션 애니메이션 */
+.coupon-overview {
+    animation: slideInRight 0.6s ease-out;
+    animation-delay: 0.5s;
+}
+
+
+
+.action-btn:nth-child(1) { animation-delay: 0.9s; }
+.action-btn:nth-child(2) { animation-delay: 1.0s; }
 
 @keyframes fadeInUp {
     from {
@@ -491,7 +721,17 @@ input:checked + .toggle-slider:before {
         transform: none;
     }
     
-    .install-btn:hover {
+    .btn:hover {
+        transform: none;
+    }
+    
+    .coupon-overview:hover {
+        transform: none;
+    }
+    
+
+    
+    .coupon-manage-btn:hover {
         transform: none;
     }
 }

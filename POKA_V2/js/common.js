@@ -90,6 +90,73 @@ const AppState = {
     }
 };
 
+// 전역 다크모드 관리
+const DarkMode = {
+    // 다크모드 초기화
+    init() {
+        this.loadSettings();
+        this.applyTheme();
+    },
+    
+    // 설정 로드
+    loadSettings() {
+        this.settings = AppState.getFromStorage('settings') || {
+            darkMode: false,
+            notifications: false,
+            autoSave: true
+        };
+    },
+    
+    // 테마 적용
+    applyTheme() {
+        if (this.settings.darkMode) {
+            document.body.classList.add('dark-mode');
+            document.documentElement.setAttribute('data-bs-theme', 'dark');
+        } else {
+            document.body.classList.remove('dark-mode');
+            document.documentElement.setAttribute('data-bs-theme', 'light');
+        }
+    },
+    
+    // 다크모드 토글
+    toggle() {
+        this.settings.darkMode = !this.settings.darkMode;
+        this.applyTheme();
+        this.saveSettings();
+        
+        // 이벤트 발생
+        const event = new CustomEvent('darkModeChanged', {
+            detail: { isDarkMode: this.settings.darkMode }
+        });
+        document.dispatchEvent(event);
+        
+        return this.settings.darkMode;
+    },
+    
+    // 다크모드 설정
+    setDarkMode(enabled) {
+        this.settings.darkMode = enabled;
+        this.applyTheme();
+        this.saveSettings();
+        
+        // 이벤트 발생
+        const event = new CustomEvent('darkModeChanged', {
+            detail: { isDarkMode: this.settings.darkMode }
+        });
+        document.dispatchEvent(event);
+    },
+    
+    // 설정 저장
+    saveSettings() {
+        AppState.saveToStorage('settings', this.settings);
+    },
+    
+    // 현재 다크모드 상태 확인
+    isDarkMode() {
+        return this.settings.darkMode;
+    }
+};
+
 // 토스트 메시지 관리
 const Toast = {
     show(message, type = 'info', duration = 3000) {
@@ -198,18 +265,6 @@ const Modal = {
         modalOverlay.appendChild(modal);
         document.body.appendChild(modalOverlay);
         
-        // 애니메이션을 위한 지연
-        setTimeout(() => {
-            modalOverlay.classList.add('show');
-        }, 100);
-        
-        // 배경 클릭으로 닫기
-        modalOverlay.onclick = (e) => {
-            if (e.target === modalOverlay) {
-                this.hide(modalOverlay);
-            }
-        };
-        
         // ESC 키로 닫기
         const handleEsc = (e) => {
             if (e.key === 'Escape') {
@@ -218,6 +273,18 @@ const Modal = {
             }
         };
         document.addEventListener('keydown', handleEsc);
+        
+        // 배경 클릭으로 닫기
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) {
+                this.hide(modalOverlay);
+            }
+        });
+        
+        // 애니메이션
+        setTimeout(() => {
+            modalOverlay.classList.add('show');
+        }, 10);
         
         return modalOverlay;
     },
@@ -234,7 +301,6 @@ const Modal = {
 
 // 이미지 처리 유틸리티
 const ImageUtils = {
-    // 이미지 압축
     compressImage(file, maxWidth = 1024, quality = 0.8) {
         return new Promise((resolve) => {
             const canvas = document.createElement('canvas');
@@ -242,16 +308,11 @@ const ImageUtils = {
             const img = new Image();
             
             img.onload = () => {
-                // 비율 유지하면서 크기 조정
                 const ratio = Math.min(maxWidth / img.width, maxWidth / img.height);
-                const newWidth = img.width * ratio;
-                const newHeight = img.height * ratio;
+                canvas.width = img.width * ratio;
+                canvas.height = img.height * ratio;
                 
-                canvas.width = newWidth;
-                canvas.height = newHeight;
-                
-                ctx.drawImage(img, 0, 0, newWidth, newHeight);
-                
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                 canvas.toBlob(resolve, 'image/jpeg', quality);
             };
             
@@ -259,7 +320,6 @@ const ImageUtils = {
         });
     },
     
-    // 이미지를 Base64로 변환
     toBase64(file) {
         return new Promise((resolve) => {
             const reader = new FileReader();
@@ -268,14 +328,13 @@ const ImageUtils = {
         });
     },
     
-    // 이미지 크기 조정
     resizeImage(base64, maxWidth, maxHeight) {
         return new Promise((resolve) => {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
             const img = new Image();
-            
             img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
                 let { width, height } = img;
                 
                 if (width > maxWidth) {
@@ -294,7 +353,6 @@ const ImageUtils = {
                 ctx.drawImage(img, 0, 0, width, height);
                 resolve(canvas.toDataURL('image/jpeg', 0.8));
             };
-            
             img.src = base64;
         });
     }
@@ -302,25 +360,20 @@ const ImageUtils = {
 
 // API 통신 유틸리티
 const API = {
-    baseURL: 'https://pkapi.ting.ovh',
-    
     async request(endpoint, options = {}) {
-        const url = `${this.baseURL}${endpoint}`;
-        const config = {
+        const defaultOptions = {
             headers: {
                 'Content-Type': 'application/json',
-                ...options.headers
             },
-            ...options
         };
         
+        const config = { ...defaultOptions, ...options };
+        
         try {
-            const response = await fetch(url, config);
-            
+            const response = await fetch(endpoint, config);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            
             return await response.json();
         } catch (error) {
             console.error('API request failed:', error);
@@ -328,64 +381,60 @@ const API = {
         }
     },
     
-    // 사용자 로그인
     async login(username, password) {
-        return this.request('/user/Kiosk/login', {
+        return this.request('/api/auth/login', {
             method: 'POST',
             body: JSON.stringify({ username, password })
         });
     },
     
-    // 현금 결제 생성
     async createCashPayment(orderData) {
-        return this.request('/api/Cash/create', {
+        return this.request('/api/payment/cash', {
             method: 'POST',
             body: JSON.stringify(orderData)
         });
     },
     
-    // LinePay 결제 생성
     async createLinePayPayment(orderData) {
-        return this.request('/api/LinePay/create', {
+        return this.request('/api/payment/linepay', {
             method: 'POST',
             body: JSON.stringify(orderData)
         });
     },
     
-    // 쿠폰 사용
     async useCoupon(code) {
-        return this.request(`/api/Kiosk/useCoupon?code=${code}`, {
-            method: 'GET'
+        return this.request('/api/coupon/use', {
+            method: 'POST',
+            body: JSON.stringify({ code })
         });
     }
 };
 
 // 네비게이션 관리
 const Navigation = {
-    // 현재 페이지 활성화
     setActivePage(pageName) {
+        // 모든 네비게이션 아이템에서 active 클래스 제거
         const navItems = document.querySelectorAll('.nav-item');
-        navItems.forEach(item => {
-            item.classList.remove('active');
-            if (item.getAttribute('href') === pageName) {
-                item.classList.add('active');
-            }
-        });
+        navItems.forEach(item => item.classList.remove('active'));
+        
+        // 현재 페이지에 active 클래스 추가
+        const currentNavItem = document.querySelector(`[data-page="${pageName}"]`);
+        if (currentNavItem) {
+            currentNavItem.classList.add('active');
+        }
     },
     
-    // 페이지 이동
     navigateTo(page) {
         window.location.href = page;
     },
     
-    // 뒤로가기
     goBack() {
         window.history.back();
     }
 };
 
-// 디바이스 정보
-const DeviceInfo = {
+// 디바이스 감지
+const DeviceUtils = {
     isMobile() {
         return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     },
@@ -401,27 +450,37 @@ const DeviceInfo = {
     getScreenSize() {
         return {
             width: window.innerWidth,
-            height: window.innerHeight
+            height: window.innerHeight,
+            isMobile: this.isMobile(),
+            isIOS: this.isIOS(),
+            isAndroid: this.isAndroid()
         };
     }
 };
 
-// 앱 초기화
+// 전역 POKA 객체
+window.POKA = {
+    AppState,
+    DarkMode,
+    Toast,
+    Modal,
+    ImageUtils,
+    API,
+    Navigation,
+    DeviceUtils
+};
+
+// 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', () => {
-    // 앱 상태 초기화
-    AppState.init();
+    // AppState 초기화
+    POKA.AppState.init();
     
-    // 현재 페이지 네비게이션 활성화
-    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-    Navigation.setActivePage(currentPage);
+    // 다크모드 초기화
+    POKA.DarkMode.init();
     
-    // 터치 디바이스 최적화
-    if (DeviceInfo.isMobile()) {
-        document.body.classList.add('touch-device');
-    }
-    
-    // 스크롤 성능 최적화
+    // 성능 최적화를 위한 스크롤 이벤트 처리
     let ticking = false;
+    
     function updateScroll() {
         ticking = false;
     }
@@ -435,16 +494,5 @@ document.addEventListener('DOMContentLoaded', () => {
     
     window.addEventListener('scroll', requestTick);
     
-    console.log('POKA V2 App initialized');
-});
-
-// 전역 객체에 유틸리티 추가
-window.POKA = {
-    AppState,
-    Toast,
-    Modal,
-    ImageUtils,
-    API,
-    Navigation,
-    DeviceInfo
-}; 
+    console.log('POKA V2 초기화 완료');
+}); 

@@ -73,27 +73,10 @@ function loadPhotoCards() {
     galleryContainer.style.display = 'none';
     emptyState.style.display = 'none';
     
-    console.log('포토카드 로드 시작');
-    
     // localStorage에서 포토카드 데이터 확인
     const savedPhotoCards = JSON.parse(localStorage.getItem('photoCards') || '[]');
     const savedGallery = JSON.parse(localStorage.getItem('gallery') || '[]');
-    console.log('포토카드 데이터:', savedPhotoCards);
-    console.log('갤러리 데이터:', savedGallery);
 
-    // 첫 번째 포토카드의 상세 정보 확인
-    if (savedPhotoCards.length > 0) {
-        const firstCard = savedPhotoCards[0];
-        console.log('첫 번째 포토카드:', {
-            id: firstCard.id,
-            name: firstCard.name,
-            frontImage: firstCard.frontImage ? firstCard.frontImage.substring(0, 100) + '...' : '없음',
-            backImage: firstCard.backImage ? firstCard.backImage.substring(0, 100) + '...' : '없음',
-            frontImageName: firstCard.frontImageName,
-            backImageName: firstCard.backImageName
-        });
-    }
-    
     // 포토카드 타입인 것들만 필터링
     const photoCardItems = savedGallery.filter(item => item.type === 'photoCard');
     
@@ -103,58 +86,27 @@ function loadPhotoCards() {
         index === self.findIndex(c => c.id === card.id)
     );
     
-    console.log('최종 로드된 포토카드:', {
-        photoCards: uniquePhotoCards.length,
-        photoCardsData: uniquePhotoCards
-    });
-    
-    // 각 포토카드의 이미지 데이터 확인
-    uniquePhotoCards.forEach((card, index) => {
-        console.log(`포토카드 ${index + 1}:`, {
-            id: card.id,
-            name: card.name,
-            frontImageLength: card.frontImage ? card.frontImage.length : 0,
-            backImageLength: card.backImage ? card.backImage.length : 0,
-            frontImageStart: card.frontImage ? card.frontImage.substring(0, 50) : '없음',
-            backImageStart: card.backImage ? card.backImage.substring(0, 50) : '없음',
-            frontImageEnd: card.frontImage ? card.frontImage.substring(card.frontImage.length - 20) : '없음',
-            backImageEnd: card.backImage ? card.backImage.substring(card.backImage.length - 20) : '없음'
-        });
-    });
-    
     // 포토카드 배열 설정
     photoCards = uniquePhotoCards;
     
-    console.log('전체 포토카드 개수:', photoCards.length);
-    console.log('전체 포토카드 데이터:', photoCards);
-    
     // 날짜순으로 정렬 (최신순)
     photoCards.sort((a, b) => {
-        const dateA = new Date(a.createdAt);
-        const dateB = new Date(b.createdAt);
+        const dateA = new Date(a.createdAt || Date.now());
+        const dateB = new Date(b.createdAt || Date.now());
         return dateB - dateA;
     });
     
+    // 로딩 상태 제거하고 갤러리 업데이트
     setTimeout(() => {
         loadingState.style.display = 'none';
         updateGallery();
-    }, 500);
+    }, 300);
 }
 
 // 갤러리 업데이트
 function updateGallery() {
-    console.log('updateGallery 호출됨:', {
-        photoCardsCount: photoCards.length,
-        currentFilter: currentFilter,
-        currentSearch: currentSearch
-    });
-    
     // 필터링 및 검색 적용
     applyFiltersAndSearch();
-    
-    console.log('필터링 후:', {
-        filteredPhotoCardsCount: filteredPhotoCards.length
-    });
     
     // 포토카드 개수 업데이트
     imageCount.textContent = filteredPhotoCards.length;
@@ -163,24 +115,16 @@ function updateGallery() {
     if (filteredPhotoCards.length === 0) {
         galleryContainer.style.display = 'none';
         emptyState.style.display = 'block';
-        console.log('빈 상태 표시');
     } else {
         galleryContainer.style.display = 'grid';
         emptyState.style.display = 'none';
         renderGallery();
-        console.log('갤러리 렌더링 완료');
     }
 }
 
 // 필터 및 검색 적용
 function applyFiltersAndSearch() {
     let filtered = [...photoCards];
-    
-    console.log('필터링 시작:', {
-        originalCount: photoCards.length,
-        currentFilter: currentFilter,
-        currentSearch: currentSearch
-    });
     
     // 필터 적용
     switch (currentFilter) {
@@ -191,15 +135,12 @@ function applyFiltersAndSearch() {
                 const cardDate = new Date(card.createdAt);
                 return cardDate >= oneWeekAgo;
             });
-            console.log('최근 필터 적용 후:', filtered.length);
             break;
         case 'favorite':
             filtered = filtered.filter(card => card.favorite);
-            console.log('즐겨찾기 필터 적용 후:', filtered.length);
             break;
         default:
             // 'all' - 모든 포토카드
-            console.log('전체 필터 적용 후:', filtered.length);
             break;
     }
     
@@ -215,11 +156,9 @@ function applyFiltersAndSearch() {
                    frontImageName.includes(searchTerm) || 
                    backImageName.includes(searchTerm);
         });
-        console.log('검색 필터 적용 후:', filtered.length);
     }
     
     filteredPhotoCards = filtered;
-    console.log('최종 필터링 결과:', filteredPhotoCards.length);
 }
 
 // 갤러리 렌더링
@@ -234,16 +173,6 @@ function renderGallery() {
 
 // 포토카드 아이템 생성
 function createPhotoCardItem(photoCard, index) {
-    console.log('포토카드 생성:', {
-        id: photoCard.id,
-        name: photoCard.name,
-        frontImage: photoCard.frontImage ? photoCard.frontImage.substring(0, 100) + '...' : '없음',
-        backImage: photoCard.backImage ? photoCard.backImage.substring(0, 100) + '...' : '없음',
-        frontImageName: photoCard.frontImageName,
-        backImageName: photoCard.backImageName,
-        frontImageLength: photoCard.frontImage ? photoCard.frontImage.length : 0,
-        backImageLength: photoCard.backImage ? photoCard.backImage.length : 0
-    });
     
     const item = document.createElement('div');
     item.className = 'gallery-item photo-card-item';
@@ -259,25 +188,16 @@ function createPhotoCardItem(photoCard, index) {
         <div class="photo-card-container">
             <div class="photo-card">
                 <div class="photo-card-front">
-                    <img src="${photoCard.frontImage}" alt="${photoCard.name || '앞면'}" loading="eager" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'; console.log('앞면 이미지 로드 실패:', this.src);" onload="this.style.opacity='1'; this.style.display='block'; this.nextElementSibling.style.display='none'; console.log('앞면 이미지 로드 성공:', this.src);">
-                    <div class="image-fallback">??</div>
+                    <img src="${photoCard.frontImage}" alt="${photoCard.name || '앞면'}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="image-fallback">📷</div>
                 </div>
                 <div class="photo-card-back">
-                    <img src="${photoCard.backImage}" alt="${photoCard.name || '뒷면'}" loading="eager" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'; console.log('뒷면 이미지 로드 실패:', this.src);" onload="this.style.opacity='1'; this.style.display='block'; this.nextElementSibling.style.display='none'; console.log('뒷면 이미지 로드 성공:', this.src);">
-                    <div class="image-fallback">??</div>
+                    <img src="${photoCard.backImage}" alt="${photoCard.name || '뒷면'}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="image-fallback">📷</div>
                 </div>
-                <!-- 카드 측면들 (두께감 표현) -->
-                <div class="photo-card-side photo-card-side-top"></div>
-                <div class="photo-card-side photo-card-side-bottom"></div>
-                <div class="photo-card-side photo-card-side-left"></div>
-                <div class="photo-card-side photo-card-side-right"></div>
-                
-                <!-- 카드 내부 측면들 (앞면과 뒷면 사이) -->
-                <div class="photo-card-inner-side photo-card-inner-top"></div>
-                <div class="photo-card-inner-side photo-card-inner-bottom"></div>
-                <div class="photo-card-inner-side photo-card-inner-left"></div>
-                <div class="photo-card-inner-side photo-card-inner-right"></div>
             </div>
+            <!-- 즐겨찾기 표시 -->
+            ${photoCard.favorite ? '<div class="favorite-badge">⭐</div>' : ''}
         </div>
         <!-- 카드 이름 (카드 밑에 표시) -->
         <div class="gallery-item-name">${photoCard.name || '제목 없음'}</div>
@@ -289,35 +209,7 @@ function createPhotoCardItem(photoCard, index) {
         </div>
     `;
     
-    // 이미지 로드 후 추가 처리
-    setTimeout(() => {
-        const frontImg = item.querySelector('.photo-card-front img');
-        const backImg = item.querySelector('.photo-card-back img');
-        
-        if (frontImg) {
-            console.log('앞면 이미지 상태 확인:', {
-                src: frontImg.src.substring(0, 100) + '...',
-                display: frontImg.style.display,
-                opacity: frontImg.style.opacity,
-                naturalWidth: frontImg.naturalWidth,
-                naturalHeight: frontImg.naturalHeight,
-                complete: frontImg.complete
-            });
-        }
-        
-        if (backImg) {
-            console.log('뒷면 이미지 상태 확인:', {
-                src: backImg.src.substring(0, 100) + '...',
-                display: backImg.style.display,
-                opacity: backImg.style.opacity,
-                naturalWidth: backImg.naturalWidth,
-                naturalHeight: backImg.naturalHeight,
-                complete: backImg.complete,
-                transform: backImg.style.transform,
-                computedTransform: window.getComputedStyle(backImg).transform
-            });
-        }
-    }, 200);
+
     
     // 클릭 이벤트
     item.addEventListener('click', (e) => {
@@ -350,75 +242,25 @@ function performSearch() {
     updateGallery();
 }
 
-// 보기 모드 토글
-function toggleViewMode() {
-    isListView = !isListView;
-    
-    if (isListView) {
-        galleryContainer.classList.add('list-view');
-        document.querySelector('.header-btn .btn-icon').textContent = '?';
-    } else {
-        galleryContainer.classList.remove('list-view');
-        document.querySelector('.header-btn .btn-icon').textContent = '??';
+// 갤러리 새로고침
+function refreshGallery() {
+    const refreshIcon = document.getElementById('refreshIcon');
+    if (refreshIcon) {
+        // 새로고침 중임을 표시
+        refreshIcon.textContent = '⏳';
+        refreshIcon.style.animation = 'spin 1s linear infinite';
     }
     
-    // 갤러리 다시 렌더링
-    renderGallery();
-}
-
-// 정렬 옵션 표시
-function showSortOptions() {
-    const options = [
-        { text: '최신순', value: 'newest' },
-        { text: '오래된순', value: 'oldest' },
-        { text: '이름순', value: 'name' },
-        { text: '크기순', value: 'size' }
-    ];
+    // 포토카드 다시 로드
+    loadPhotoCards();
     
-    const content = `
-        <div style="text-align: left;">
-            <p><strong>정렬 기준을 선택하세요:</strong></p>
-            ${options.map(option => `
-                <div style="padding: 8px 0; border-bottom: 1px solid var(--border-color);">
-                    <button onclick="sortPhotoCards('${option.value}')" style="background: none; border: none; color: var(--text-primary); cursor: pointer; width: 100%; text-align: left; padding: 8px;">
-                        ${option.text}
-                    </button>
-                </div>
-            `).join('')}
-        </div>
-    `;
-    
-    POKA.Modal.show(content, {
-        title: '정렬 옵션',
-        buttons: [
-            {
-                text: '닫기',
-                class: 'btn-secondary'
-            }
-        ]
-    });
-}
-
-// 포토카드 정렬
-function sortPhotoCards(sortBy) {
-    switch (sortBy) {
-        case 'newest':
-            photoCards.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-            break;
-        case 'oldest':
-            photoCards.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-            break;
-        case 'name':
-            photoCards.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
-            break;
-        case 'size':
-            // 포토카드는 크기 정렬이 의미없으므로 최신순으로 정렬
-            photoCards.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-            break;
-    }
-    
-    updateGallery();
-    POKA.Toast.success('정렬이 적용되었습니다');
+    // 1초 후 아이콘 원래대로 복원
+    setTimeout(() => {
+        if (refreshIcon) {
+            refreshIcon.textContent = '🔄';
+            refreshIcon.style.animation = '';
+        }
+    }, 1000);
 }
 
 // 포토카드 모달 열기
@@ -473,7 +315,7 @@ function openPhotoCardModal(photoCard, index) {
     modalDate.textContent = `생성일: ${new Date(photoCard.createdAt).toLocaleString('ko-KR')}`;
     
     if (photoCard.favorite) {
-        favoriteIcon.textContent = '?';
+        favoriteIcon.textContent = '⭐';
         favoriteText.textContent = '즐겨찾기 해제';
     } else {
         favoriteIcon.textContent = '☆';
@@ -715,8 +557,36 @@ function sharePhotoCard() {
 // 포토카드 즐겨찾기 토글 (모달에서)
 function togglePhotoCardFavorite() {
     if (currentModalPhotoCard) {
-        togglePhotoCardFavorite(currentModalPhotoCard.index);
-        closePhotoCardModal();
+        const { photoCard } = currentModalPhotoCard;
+        
+        // 즐겨찾기 상태 토글
+        photoCard.favorite = !photoCard.favorite;
+        
+        // 원본 배열에서도 업데이트
+        const originalIndex = photoCards.findIndex(card => card.id === photoCard.id);
+        if (originalIndex !== -1) {
+            photoCards[originalIndex].favorite = photoCard.favorite;
+        }
+        
+        // 모달의 즐겨찾기 아이콘과 텍스트 업데이트
+        const favoriteIcon = document.getElementById('favoriteIcon');
+        const favoriteText = document.getElementById('favoriteText');
+        
+        if (photoCard.favorite) {
+            favoriteIcon.textContent = '⭐';
+            favoriteText.textContent = '즐겨찾기 해제';
+        } else {
+            favoriteIcon.textContent = '☆';
+            favoriteText.textContent = '즐겨찾기';
+        }
+        
+        // 저장
+        savePhotoCards();
+        
+        // 갤러리 업데이트 (모달은 닫지 않음)
+        updateGallery();
+        
+        POKA.Toast.success(photoCard.favorite ? '즐겨찾기에 추가되었습니다' : '즐겨찾기에서 제거되었습니다');
     }
 }
 

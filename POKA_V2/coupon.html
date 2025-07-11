@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>POKA V2 - 쿠폰</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/coupon.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#00d4ff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 헤더 -->
+        <header class="header">
+            <div class="header-content">
+                <button class="back-btn" onclick="goBack()" title="뒤로가기">
+                    <span class="btn-icon">←</span>
+                </button>
+                <h1 class="page-title">쿠폰</h1>
+                <button class="header-btn" onclick="showCouponInfo()" title="쿠폰 정보">
+                    <span class="btn-icon">ℹ️</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- 메인 컨텐츠 -->
+        <main class="main-content">
+            <!-- 쿠폰 등록 섹션 -->
+            <section class="coupon-register-section">
+                <div class="coupon-register-card">
+                    <div class="register-icon">🎫</div>
+                    <h3 class="register-title">쿠폰 등록</h3>
+                    <p class="register-description">쿠폰 코드를 입력하여 할인 혜택을 받으세요</p>
+                    <div class="coupon-input-container">
+                        <input type="text" id="couponCode" class="coupon-input" placeholder="쿠폰 코드를 입력하세요" maxlength="20">
+                        <button class="register-btn" onclick="registerCoupon()">
+                            <span class="btn-icon">➕</span>
+                            등록
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 쿠폰 목록 섹션 -->
+            <section class="coupons-section">
+                <div class="section-header">
+                    <h3 class="section-title">내 쿠폰</h3>
+                    <div class="coupon-count" id="couponCount">0개</div>
+                </div>
+                
+                <div class="coupon-tabs">
+                    <button class="tab-btn active" data-tab="available" onclick="switchTab('available')">
+                        사용 가능
+                    </button>
+                    <button class="tab-btn" data-tab="used" onclick="switchTab('used')">
+                        사용 완료
+                    </button>
+                    <button class="tab-btn" data-tab="expired" onclick="switchTab('expired')">
+                        만료됨
+                    </button>
+                </div>
+                
+                <div class="coupon-list" id="couponList">
+                    <!-- 쿠폰들이 여기에 동적으로 추가됩니다 -->
+                </div>
+                
+                <!-- 빈 상태 -->
+                <div class="empty-state" id="emptyState">
+                    <div class="empty-icon">🎫</div>
+                    <h3>등록된 쿠폰이 없습니다</h3>
+                    <p>쿠폰 코드를 등록하여 할인 혜택을 받아보세요!</p>
+                </div>
+            </section>
+
+            <!-- 쿠폰 사용 가이드 -->
+            <section class="guide-section">
+                <h3 class="section-title">💡 쿠폰 사용법</h3>
+                <div class="guide-steps">
+                    <div class="guide-step">
+                        <div class="step-icon">1️⃣</div>
+                        <div class="step-content">
+                            <h4>쿠폰 등록</h4>
+                            <p>쿠폰 코드를 입력하여 등록하세요</p>
+                        </div>
+                    </div>
+                    
+                    <div class="guide-step">
+                        <div class="step-icon">2️⃣</div>
+                        <div class="step-content">
+                            <h4>포토카드 제작</h4>
+                            <p>포토카드를 제작할 때 쿠폰을 선택하세요</p>
+                        </div>
+                    </div>
+                    
+                    <div class="guide-step">
+                        <div class="step-icon">3️⃣</div>
+                        <div class="step-content">
+                            <h4>할인 적용</h4>
+                            <p>결제 시 자동으로 할인이 적용됩니다</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 하단 네비게이션 -->
+        <nav class="bottom-nav">
+            <a href="index.html" class="nav-item">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-text">홈</span>
+            </a>
+            <a href="gallery.html" class="nav-item">
+                <span class="nav-icon">🖼️</span>
+                <span class="nav-text">포토카드</span>
+            </a>
+            <a href="map.html" class="nav-item">
+                <span class="nav-icon">🗺️</span>
+                <span class="nav-text">지도</span>
+            </a>
+            <a href="profile.html" class="nav-item">
+                <span class="nav-icon">👤</span>
+                <span class="nav-text">프로필</span>
+            </a>
+        </nav>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/coupon.js"></script>
+</body>
+</html> 

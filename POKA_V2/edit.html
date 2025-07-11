@@ -18,17 +18,7 @@
             <div class="header-content">
                 <button class="back-btn" onclick="POKA.Navigation.goBack()">←</button>
                 <h1 class="page-title">포토카드 편집</h1>
-                <div class="header-actions">
-                    <button class="header-btn" onclick="debugInfo()" title="디버그">
-                        <span class="btn-icon">🐛</span>
-                    </button>
-                    <button class="header-btn" onclick="loadFromUrl()" title="URL에서 로드">
-                        <span class="btn-icon">🔗</span>
-                    </button>
-                    <button class="header-btn" onclick="savePhotoCard()" title="저장">
-                        <span class="btn-icon">💾</span>
-                    </button>
-                </div>
+
             </div>
         </header>
 
@@ -61,9 +51,9 @@
                 <div class="photo-card-name-section">
                     <h4 class="selection-title">포토카드 이름</h4>
                     <div class="name-input-container">
-                        <input type="text" id="photoCardNameInput" class="name-input" placeholder="포토카드 이름을 입력하세요" maxlength="50">
+                        <input type="text" id="photoCardNameInput" class="name-input" placeholder="포토카드 이름을 입력하세요" maxlength="10">
                         <div class="name-counter">
-                            <span id="nameCounter">0</span>/50
+                            <span id="nameCounter">0</span>/10
                         </div>
                     </div>
                 </div>
@@ -87,9 +77,9 @@
                     <div class="edit-header">
                         <div class="header-content">
                             <div class="name-input-container">
-                                <input type="text" id="photoCardNameEditInput" class="name-input" placeholder="포토카드 이름을 입력하세요" maxlength="50">
+                                <input type="text" id="photoCardNameEditInput" class="name-input" placeholder="포토카드 이름을 입력하세요" maxlength="10">
                                 <div class="name-counter">
-                                    <span id="nameCounterEdit">0</span>/50
+                                    <span id="nameCounterEdit">0</span>/10
                                 </div>
                             </div>
                             <div class="edit-actions">
@@ -174,21 +164,43 @@
                     
                     <!-- 통합 편집 도구 -->
                     <div class="unified-edit-controls">
-                        <div class="controls-row">
-                            <div class="control-group">
-                                <label>이모지</label>
+                        <!-- 탭 버튼들 -->
+                        <div class="edit-tabs">
+                            <button class="tab-btn active" onclick="switchEditTab('emoji')" data-tab="emoji">
+                                <span class="tab-icon">😊</span>
+                                <span class="tab-text">이모지</span>
+                            </button>
+                            <button class="tab-btn" onclick="switchEditTab('filter')" data-tab="filter">
+                                <span class="tab-icon">🎨</span>
+                                <span class="tab-text">필터</span>
+                            </button>
+                            <button class="tab-btn" onclick="switchEditTab('rotation')" data-tab="rotation">
+                                <span class="tab-icon">🔄</span>
+                                <span class="tab-text">회전</span>
+                            </button>
+                        </div>
+                        
+                        <!-- 탭 내용 -->
+                        <div class="tab-content">
+                            <!-- 이모지 탭 -->
+                            <div class="tab-panel active" id="emoji-tab">
                                 <div class="emoji-controls">
                                     <button class="emoji-btn" onclick="addEmojiEdit(currentSelectedSide, '😊')">😊</button>
                                     <button class="emoji-btn" onclick="addEmojiEdit(currentSelectedSide, '❤️')">❤️</button>
                                     <button class="emoji-btn" onclick="addEmojiEdit(currentSelectedSide, '⭐')">⭐</button>
                                     <button class="emoji-btn" onclick="addEmojiEdit(currentSelectedSide, '🎉')">🎉</button>
+                                    <button class="emoji-btn" onclick="addEmojiEdit(currentSelectedSide, '🌸')">🌸</button>
+                                    <button class="emoji-btn" onclick="addEmojiEdit(currentSelectedSide, '💕')">💕</button>
+                                    <button class="emoji-btn" onclick="addEmojiEdit(currentSelectedSide, '🎉')">🎉</button>
                                     <button class="emoji-btn" onclick="addEmojiEdit(currentSelectedSide, '🌟')">🌟</button>
                                     <button class="emoji-btn" onclick="addEmojiEdit(currentSelectedSide, '💖')">💖</button>
-                                    <button class="emoji-btn" onclick="clearEmojisEdit(currentSelectedSide)">🗑️</button>
+                                    <button class="emoji-btn" onclick="addEmojiEdit(currentSelectedSide, '🎊')">🎊</button>
+                                    <button class="emoji-btn" onclick="addEmojiEdit(currentSelectedSide, '🎈')">🎈</button>
                                 </div>
                             </div>
-                            <div class="control-group">
-                                <label>필터</label>
+                            
+                            <!-- 필터 탭 -->
+                            <div class="tab-panel" id="filter-tab">
                                 <div class="filter-controls">
                                     <button class="filter-btn" onclick="applyFilterEdit(currentSelectedSide, 'none')">원본</button>
                                     <button class="filter-btn" onclick="applyFilterEdit(currentSelectedSide, 'grayscale')">흑백</button>
@@ -196,8 +208,9 @@
                                     <button class="filter-btn" onclick="applyFilterEdit(currentSelectedSide, 'brightness')">밝기</button>
                                 </div>
                             </div>
-                            <div class="control-group">
-                                <label>회전</label>
+                            
+                            <!-- 회전 탭 -->
+                            <div class="tab-panel" id="rotation-tab">
                                 <div class="rotation-controls">
                                     <button class="btn btn-small" onclick="rotateImageEdit(currentSelectedSide, -90)" title="왼쪽 90도">↶</button>
                                     <button class="btn btn-small" onclick="rotateImageEdit(currentSelectedSide, 90)" title="오른쪽 90도">↷</button>
@@ -281,10 +294,14 @@
                                     <button class="emoji-btn" onclick="addEmoji('❤️')">❤️</button>
                                     <button class="emoji-btn" onclick="addEmoji('⭐')">⭐</button>
                                     <button class="emoji-btn" onclick="addEmoji('🎉')">🎉</button>
+                                    <button class="emoji-btn" onclick="addEmoji('🌸')">🌸</button>
+                                    <button class="emoji-btn" onclick="addEmoji('💕')">💕</button>
                                     <button class="emoji-btn" onclick="addEmoji('🌟')">🌟</button>
                                     <button class="emoji-btn" onclick="addEmoji('💖')">💖</button>
                                     <button class="emoji-btn" onclick="addEmoji('🎊')">🎊</button>
                                     <button class="emoji-btn" onclick="addEmoji('✨')">✨</button>
+                                    <button class="emoji-btn" onclick="addEmoji('🎈')">🎈</button>
+                                    <button class="emoji-btn" onclick="addEmoji('🌺')">🌺</button>
                                 </div>
                                 <div class="emoji-instructions">
                                     <p>이미지를 클릭하여 이모지를 추가하고, 드래그하여 위치를 조정하세요.</p>
