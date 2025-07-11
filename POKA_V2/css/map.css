@@ -554,7 +554,16 @@
 .kiosk-address {
     color: var(--text-secondary);
     font-size: 0.9rem;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
+}
+
+.kiosk-detail-address {
+    color: var(--text-light);
+    font-size: 0.8rem;
+    font-style: italic;
+    margin-top: 2px;
+    padding-left: 8px;
+    border-left: 2px solid var(--primary-color);
 }
 
 .kiosk-meta {
@@ -718,6 +727,16 @@
 .kiosk-detail-address {
     color: var(--text-secondary);
     font-size: 1rem;
+    margin-bottom: 4px;
+}
+
+.kiosk-detail-sub-address {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    font-style: italic;
+    margin-top: 4px;
+    padding-left: 8px;
+    border-left: 2px solid var(--primary-color);
 }
 
 .kiosk-detail-info {
@@ -905,11 +924,61 @@
     .popup-content {
         max-width: 95%;
     }
+    
+    /* 모바일 주소 검색 스타일 */
+    .location-section {
+        padding: 16px;
+    }
+    
+    .location-info {
+        margin-bottom: 12px;
+    }
+    
+    .location-search {
+        padding-top: 12px;
+    }
+    
+    .search-container {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .search-input {
+        width: 100%;
+        padding: 10px 12px;
+        font-size: 16px; /* iOS에서 줌 방지 */
+    }
+    
+    .search-btn {
+        width: 100%;
+        padding: 10px 12px;
+        min-width: auto;
+    }
+    
+    .search-results {
+        max-height: 150px;
+        margin-top: 8px;
+    }
+    
+    .search-result-item {
+        padding: 10px 12px;
+        gap: 8px;
+    }
+    
+    .search-result-title {
+        font-size: 0.85rem;
+    }
+    
+    .search-result-address {
+        font-size: 0.75rem;
+        line-height: 1.3;
+    }
 }
 
 @media (max-width: 480px) {
     .location-section {
-        padding: 16px;
+        padding: 12px;
+        margin-bottom: 16px;
     }
     
     .kiosk-list-section {
@@ -958,6 +1027,126 @@
     
     .btn-icon {
         font-size: 1.2rem;
+    }
+    
+    /* 작은 모바일 화면 주소 검색 스타일 */
+    .location-info {
+        margin-bottom: 10px;
+    }
+    
+    .location-icon {
+        font-size: 1.5rem;
+        min-width: 32px;
+    }
+    
+    .location-address {
+        font-size: 0.85rem;
+    }
+    
+    .location-detail {
+        font-size: 0.75rem;
+    }
+    
+    .kiosk-detail-address {
+        font-size: 0.75rem;
+    }
+    
+    .kiosk-detail-sub-address {
+        font-size: 0.8rem;
+    }
+    
+    .location-search {
+        padding-top: 10px;
+    }
+    
+    .search-container {
+        gap: 6px;
+    }
+    
+    .search-input {
+        padding: 8px 10px;
+        font-size: 14px;
+        border-radius: 6px;
+    }
+    
+    .search-btn {
+        padding: 8px 10px;
+        border-radius: 6px;
+    }
+    
+    .search-btn .btn-icon {
+        font-size: 0.9rem;
+    }
+    
+    .search-results {
+        max-height: 120px;
+        margin-top: 6px;
+        border-radius: 6px;
+    }
+    
+    .search-result-item {
+        padding: 8px 10px;
+    }
+    
+    .search-result-icon {
+        font-size: 1rem;
+        min-width: 16px;
+    }
+    
+    .search-result-title {
+        font-size: 0.8rem;
+        margin-bottom: 1px;
+    }
+    
+    .search-result-address {
+        font-size: 0.7rem;
+        line-height: 1.2;
+    }
+    
+    .search-loading,
+    .search-error {
+        padding: 12px;
+        font-size: 0.8rem;
+    }
+}
+
+/* 매우 작은 화면 (320px 이하) */
+@media (max-width: 320px) {
+    .location-section {
+        padding: 10px;
+    }
+    
+    .location-info {
+        margin-bottom: 8px;
+    }
+    
+    .location-search {
+        padding-top: 8px;
+    }
+    
+    .search-input {
+        padding: 6px 8px;
+        font-size: 13px;
+    }
+    
+    .search-btn {
+        padding: 6px 8px;
+    }
+    
+    .search-results {
+        max-height: 100px;
+    }
+    
+    .search-result-item {
+        padding: 6px 8px;
+    }
+    
+    .search-result-title {
+        font-size: 0.75rem;
+    }
+    
+    .search-result-address {
+        font-size: 0.65rem;
     }
 }
 

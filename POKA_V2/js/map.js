@@ -6,56 +6,226 @@ const kioskData = [
         id: 1,
         name: "강남역 포카 키오스크",
         address: "서울시 강남구 강남대로 464",
+        detailAddress: "강남역 지하상가 B1층 12번 출구 근처",
         lat: 37.498095,
         lng: 127.027610,
         status: "online",
         distance: 0.2,
         operatingHours: "07:00 - 23:00",
-        lastUpdate: "2024-01-15 15:30:00"
+        lastUpdate: "2024-01-15 15:30:00",
+        phone: "02-1234-5678",
+        facilities: ["화장실", "휴식공간", "음료자판기"],
+        description: "강남역 지하상가에 위치한 포토카드 키오스크입니다."
     },
     {
         id: 2,
         name: "홍대입구역 포카 키오스크",
         address: "서울시 마포구 양화로 160",
+        detailAddress: "홍대입구역 1번 출구 앞 광장",
         lat: 37.557527,
         lng: 126.925320,
         status: "online",
         distance: 0.5,
         operatingHours: "24시간 운영",
-        lastUpdate: "2024-01-15 15:25:00"
+        lastUpdate: "2024-01-15 15:25:00",
+        phone: "02-2345-6789",
+        facilities: ["24시간 운영", "보안카메라", "응급상황벨"],
+        description: "24시간 운영하는 홍대입구역 키오스크입니다."
     },
     {
         id: 3,
         name: "신촌역 포카 키오스크",
         address: "서울시 서대문구 신촌로 77",
+        detailAddress: "신촌역 2번 출구 옆 상가 1층",
         lat: 37.555946,
         lng: 126.936893,
         status: "maintenance",
         distance: 1.2,
         operatingHours: "점검중",
-        lastUpdate: "2024-01-15 10:00:00"
+        lastUpdate: "2024-01-15 10:00:00",
+        phone: "02-3456-7890",
+        facilities: ["점검중"],
+        description: "현재 시스템 점검 중입니다."
     },
     {
         id: 4,
         name: "건국대입구역 포카 키오스크",
         address: "서울시 광진구 아차산로 272",
+        detailAddress: "건국대입구역 3번 출구 앞",
         lat: 37.540700,
         lng: 127.070200,
         status: "offline",
         distance: 2.1,
         operatingHours: "중단",
-        lastUpdate: "2024-01-15 09:15:00"
+        lastUpdate: "2024-01-15 09:15:00",
+        phone: "02-4567-8901",
+        facilities: ["중단"],
+        description: "일시적으로 운영을 중단했습니다."
     },
     {
         id: 5,
         name: "이태원역 포카 키오스크",
         address: "서울시 용산구 이태원로 177",
+        detailAddress: "이태원역 1번 출구 옆 이태원로",
         lat: 37.534280,
         lng: 126.994750,
         status: "online",
         distance: 3.5,
         operatingHours: "08:00 - 22:00",
-        lastUpdate: "2024-01-15 16:00:00"
+        lastUpdate: "2024-01-15 16:00:00",
+        phone: "02-5678-9012",
+        facilities: ["화장실", "음료자판기", "휴식공간"],
+        description: "이태원역 근처에 위치한 키오스크입니다."
+    },
+    {
+        id: 6,
+        name: "명동역 포카 키오스크",
+        address: "서울시 중구 명동길 14",
+        detailAddress: "명동역 4번 출구 앞 명동거리",
+        lat: 37.560944,
+        lng: 126.985500,
+        status: "online",
+        distance: 4.2,
+        operatingHours: "09:00 - 21:00",
+        lastUpdate: "2024-01-15 14:45:00",
+        phone: "02-6789-0123",
+        facilities: ["화장실", "음료자판기", "휴식공간", "보안카메라"],
+        description: "명동 관광지에 위치한 키오스크입니다."
+    },
+    {
+        id: 7,
+        name: "동대문역사문화공원역 포카 키오스크",
+        address: "서울시 중구 을지로 281",
+        detailAddress: "동대문역사문화공원역 1번 출구 앞",
+        lat: 37.565138,
+        lng: 127.007870,
+        status: "online",
+        distance: 5.1,
+        operatingHours: "06:00 - 24:00",
+        lastUpdate: "2024-01-15 13:20:00",
+        phone: "02-7890-1234",
+        facilities: ["24시간 운영", "화장실", "음료자판기", "보안카메라"],
+        description: "동대문 쇼핑지구에 위치한 24시간 키오스크입니다."
+    },
+    {
+        id: 8,
+        name: "잠실역 포카 키오스크",
+        address: "서울시 송파구 올림픽로 240",
+        detailAddress: "잠실역 2번 출구 옆 롯데월드몰",
+        lat: 37.513950,
+        lng: 127.099630,
+        status: "online",
+        distance: 6.8,
+        operatingHours: "10:00 - 22:00",
+        lastUpdate: "2024-01-15 12:15:00",
+        phone: "02-8901-2345",
+        facilities: ["화장실", "음료자판기", "휴식공간", "보안카메라"],
+        description: "롯데월드몰 근처에 위치한 키오스크입니다."
+    },
+    {
+        id: 9,
+        name: "강변역 포카 키오스크",
+        address: "서울시 광진구 능동로 120",
+        detailAddress: "강변역 1번 출구 앞 테크노마트",
+        lat: 37.535000,
+        lng: 127.094680,
+        status: "maintenance",
+        distance: 7.3,
+        operatingHours: "점검중",
+        lastUpdate: "2024-01-15 11:30:00",
+        phone: "02-9012-3456",
+        facilities: ["점검중"],
+        description: "시스템 업그레이드로 인한 점검 중입니다."
+    },
+    {
+        id: 10,
+        name: "수유역 포카 키오스크",
+        address: "서울시 강북구 도봉로 552",
+        detailAddress: "수유역 3번 출구 앞 수유시장",
+        lat: 37.637110,
+        lng: 127.024830,
+        status: "online",
+        distance: 8.5,
+        operatingHours: "07:00 - 23:00",
+        lastUpdate: "2024-01-15 10:45:00",
+        phone: "02-0123-4567",
+        facilities: ["화장실", "음료자판기", "휴식공간"],
+        description: "수유시장 근처에 위치한 키오스크입니다."
+    },
+    {
+        id: 11,
+        name: "노원역 포카 키오스크",
+        address: "서울시 노원구 동일로 1234",
+        detailAddress: "노원역 2번 출구 옆 노원구청",
+        lat: 37.655180,
+        lng: 127.077120,
+        status: "online",
+        distance: 9.2,
+        operatingHours: "08:00 - 20:00",
+        lastUpdate: "2024-01-15 09:30:00",
+        phone: "02-1234-5678",
+        facilities: ["화장실", "음료자판기", "보안카메라"],
+        description: "노원구청 근처에 위치한 키오스크입니다."
+    },
+    {
+        id: 12,
+        name: "상봉역 포카 키오스크",
+        address: "서울시 중랑구 상봉로 123",
+        detailAddress: "상봉역 1번 출구 앞 상봉시장",
+        lat: 37.596310,
+        lng: 127.085030,
+        status: "offline",
+        distance: 10.1,
+        operatingHours: "중단",
+        lastUpdate: "2024-01-15 08:15:00",
+        phone: "02-2345-6789",
+        facilities: ["중단"],
+        description: "일시적으로 운영을 중단했습니다."
+    },
+    {
+        id: 13,
+        name: "망우역 포카 키오스크",
+        address: "서울시 중랑구 망우로 456",
+        detailAddress: "망우역 2번 출구 옆 망우시장",
+        lat: 37.599550,
+        lng: 127.091830,
+        status: "online",
+        distance: 11.3,
+        operatingHours: "06:00 - 22:00",
+        lastUpdate: "2024-01-15 07:45:00",
+        phone: "02-3456-7890",
+        facilities: ["화장실", "음료자판기", "휴식공간", "보안카메라"],
+        description: "망우시장 근처에 위치한 키오스크입니다."
+    },
+    {
+        id: 14,
+        name: "양원역 포카 키오스크",
+        address: "서울시 중랑구 망우로 789",
+        detailAddress: "양원역 1번 출구 앞",
+        lat: 37.606470,
+        lng: 127.107830,
+        status: "online",
+        distance: 12.7,
+        operatingHours: "07:00 - 21:00",
+        lastUpdate: "2024-01-15 06:30:00",
+        phone: "02-4567-8901",
+        facilities: ["화장실", "음료자판기"],
+        description: "양원역 근처에 위치한 키오스크입니다."
+    },
+    {
+        id: 15,
+        name: "구리역 포카 키오스크",
+        address: "경기도 구리시 경춘로 123",
+        detailAddress: "구리역 2번 출구 옆 구리시청",
+        lat: 37.603780,
+        lng: 127.143830,
+        status: "online",
+        distance: 15.2,
+        operatingHours: "08:00 - 20:00",
+        lastUpdate: "2024-01-15 05:15:00",
+        phone: "031-567-8901",
+        facilities: ["화장실", "음료자판기", "휴식공간", "보안카메라"],
+        description: "구리시청 근처에 위치한 키오스크입니다."
     }
 ];
 
@@ -529,12 +699,16 @@ function addKioskMarkers() {
             popupAnchor: [0, -10]
         });
         
+        // 상세주소 표시 여부 결정
+        const showDetailAddress = kiosk.detailAddress && kiosk.detailAddress !== kiosk.address;
+        
         const marker = L.marker([kiosk.lat, kiosk.lng], { icon: customIcon })
             .addTo(map)
             .bindPopup(`
                 <div style="text-align: center; padding: 5px;">
                     <strong>${kiosk.name}</strong><br>
                     <small>${kiosk.address}</small><br>
+                    ${showDetailAddress ? `<small style="color: #666; font-style: italic;">${kiosk.detailAddress}</small><br>` : ''}
                     ${statusIcon} ${kiosk.status === 'online' ? '운영중' : kiosk.status === 'maintenance' ? '점검중' : '서비스 중단'}<br>
                     <button onclick="showKioskPopupById(${kiosk.id})" style="margin-top: 5px; padding: 5px 10px; background: #00d4ff; color: white; border: none; border-radius: 4px; cursor: pointer;">상세보기</button>
                 </div>
@@ -658,11 +832,15 @@ function createKioskListItem(kiosk) {
         maintenance: '점검중'
     }[kiosk.status];
     
+    // 상세주소 표시 여부 결정
+    const showDetailAddress = kiosk.detailAddress && kiosk.detailAddress !== kiosk.address;
+    
     item.innerHTML = `
         <div class="kiosk-item-header">
             <div class="kiosk-info">
                 <div class="kiosk-name">${kiosk.name}</div>
                 <div class="kiosk-address">${kiosk.address}</div>
+                ${showDetailAddress ? `<div class="kiosk-detail-address">${kiosk.detailAddress}</div>` : ''}
             </div>
         </div>
         <div class="kiosk-meta">
@@ -716,11 +894,16 @@ function showKioskPopup(kiosk) {
     selectedKiosk = kiosk;
     
     const popupBody = document.getElementById('popupBody');
+    
+    // 상세주소 표시 여부 결정
+    const showDetailAddress = kiosk.detailAddress && kiosk.detailAddress !== kiosk.address;
+    
     popupBody.innerHTML = `
         <div class="kiosk-detail">
             <div class="kiosk-detail-header">
                 <div class="kiosk-detail-name">${kiosk.name}</div>
                 <div class="kiosk-detail-address">${kiosk.address}</div>
+                ${showDetailAddress ? `<div class="kiosk-detail-sub-address">${kiosk.detailAddress}</div>` : ''}
             </div>
             <div class="kiosk-detail-info">
                 <div class="info-item">
@@ -747,6 +930,24 @@ function showKioskPopup(kiosk) {
                         </div>
                     </div>
                 </div>
+                ${kiosk.phone ? `
+                <div class="info-item">
+                    <div class="info-icon">📞</div>
+                    <div class="info-content">
+                        <div class="info-label">연락처</div>
+                        <div class="info-value">${kiosk.phone}</div>
+                    </div>
+                </div>
+                ` : ''}
+                ${kiosk.facilities && kiosk.facilities.length > 0 && kiosk.facilities[0] !== '점검중' && kiosk.facilities[0] !== '중단' ? `
+                <div class="info-item">
+                    <div class="info-icon">🏢</div>
+                    <div class="info-content">
+                        <div class="info-label">편의시설</div>
+                        <div class="info-value">${kiosk.facilities.join(', ')}</div>
+                    </div>
+                </div>
+                ` : ''}
                 <div class="info-item">
                     <div class="info-icon">📅</div>
                     <div class="info-content">
@@ -754,6 +955,15 @@ function showKioskPopup(kiosk) {
                         <div class="info-value">${kiosk.lastUpdate}</div>
                     </div>
                 </div>
+                ${kiosk.description ? `
+                <div class="info-item">
+                    <div class="info-icon">ℹ️</div>
+                    <div class="info-content">
+                        <div class="info-label">설명</div>
+                        <div class="info-value">${kiosk.description}</div>
+                    </div>
+                </div>
+                ` : ''}
             </div>
         </div>
     `;
