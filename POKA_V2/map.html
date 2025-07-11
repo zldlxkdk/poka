@@ -23,13 +23,12 @@
         <!-- 헤더 -->
         <header class="header">
             <div class="header-content">
-                <h1 class="page-title">키오스크 찾기</h1>
+                <div class="header-main">
+                    <h1 class="page-title">키오스크 찾기</h1>
+                </div>
                 <div class="header-actions">
                     <button class="header-btn" onclick="refreshLocation()" title="위치 새로고침">
                         <span class="btn-icon">🔄</span>
-                    </button>
-                    <button class="header-btn" onclick="toggleMapType()" title="지도 타입 변경">
-                        <span class="btn-icon">🗺️</span>
                     </button>
                 </div>
             </div>
@@ -44,6 +43,7 @@
                     <div class="location-text">
                         <div class="location-title">현재 위치</div>
                         <div class="location-address" id="currentAddress">위치 정보를 가져오는 중...</div>
+                        <div class="location-detail" id="locationDetail">세부 주소를 불러오는 중...</div>
                     </div>
                 </div>
             </section>
@@ -64,6 +64,12 @@
                         </button>
                     </div>
                 </div>
+                
+                <!-- 로딩 상태 - 지도 바로 아래 -->
+                <div class="loading-state" id="loadingState" style="display: none;">
+                    <div class="loading-spinner"></div>
+                    <p>키오스크 정보를 불러오는 중...</p>
+                </div>
             </section>
 
             <!-- 키오스크 목록 -->
@@ -71,9 +77,13 @@
                 <div class="section-header">
                     <h3 class="section-title">근처 키오스크</h3>
                     <div class="section-actions">
-                        <button class="sort-btn" onclick="showSortOptions()" title="정렬 옵션">
-                            <span class="btn-icon">⚙️</span>
-                        </button>
+                        <div class="sort-dropdown">
+                            <select class="sort-select" id="sortSelect" onchange="handleSortChange()">
+                                <option value="distance">📏 거리순</option>
+                                <option value="name">📝 이름순</option>
+                                <option value="status">🟢 상태순</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
                 
@@ -89,11 +99,7 @@
                 </div>
             </section>
 
-            <!-- 로딩 상태 -->
-            <div class="loading-state" id="loadingState" style="display: none;">
-                <div class="loading-spinner"></div>
-                <p>키오스크 정보를 불러오는 중...</p>
-            </div>
+
         </main>
 
         <!-- 키오스크 상세 정보 팝업 -->

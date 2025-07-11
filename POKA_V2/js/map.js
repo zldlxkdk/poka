@@ -70,6 +70,8 @@ const kioskData = [
 const mapContainer = document.getElementById('map');
 const kioskListContainer = document.getElementById('kioskList');
 const currentAddressElement = document.getElementById('currentAddress');
+const locationDetailElement = document.getElementById('locationDetail');
+const sortSelectElement = document.getElementById('sortSelect');
 const loadingState = document.getElementById('loadingState');
 const emptyState = document.getElementById('emptyState');
 const kioskPopup = document.getElementById('kioskPopup');
@@ -117,7 +119,17 @@ function requestLocation() {
                 // 거리 계산 및 정렬
                 calculateDistances();
                 
+                // 기본 정렬 (거리순)
+                sortSelectElement.value = 'distance';
+                handleSortChange();
+                
                 loadingState.style.display = 'none';
+                
+                // 새로고침 버튼 애니메이션 중지
+                const refreshBtn = document.querySelector('.header-btn');
+                if (refreshBtn) {
+                    refreshBtn.classList.remove('refreshing');
+                }
             },
             (error) => {
                 console.error('위치 정보 오류:', error);
@@ -128,14 +140,24 @@ function requestLocation() {
                     lng: 126.9780
                 };
                 
-                currentAddressElement.textContent = '위치 정보를 가져올 수 없습니다';
+                const errorMessage = '위치 정보를 가져올 수 없습니다';
+                currentAddressElement.textContent = errorMessage;
+                locationDetailElement.textContent = '기본 위치로 설정되었습니다';
                 initMap();
                 loadingState.style.display = 'none';
+                
+                // 새로고침 버튼 애니메이션 중지
+                const refreshBtn = document.querySelector('.header-btn');
+                if (refreshBtn) {
+                    refreshBtn.classList.remove('refreshing');
+                }
             }
         );
     } else {
         console.error('위치 정보 지원 안됨');
-        currentAddressElement.textContent = '위치 정보를 지원하지 않습니다';
+        const notSupportedMessage = '위치 정보를 지원하지 않습니다';
+        currentAddressElement.textContent = notSupportedMessage;
+        locationDetailElement.textContent = '기본 위치로 설정되었습니다';
         
         // 기본 위치로 설정
         currentPosition = {
@@ -144,6 +166,12 @@ function requestLocation() {
         };
         
         initMap();
+        
+        // 새로고침 버튼 애니메이션 중지
+        const refreshBtn = document.querySelector('.header-btn');
+        if (refreshBtn) {
+            refreshBtn.classList.remove('refreshing');
+        }
     }
 }
 
@@ -152,18 +180,29 @@ function getAddressFromCoords(coords) {
     // 실제 환경에서는 역지오코딩 API를 사용
     // 간단한 좌표 기반 추정 (실제 서비스에서는 정확한 API 사용 필요)
     
+    let address = '';
+    let detailAddress = '';
+    
     if (coords.lat >= 37.4 && coords.lat <= 37.7 && coords.lng >= 126.8 && coords.lng <= 127.2) {
         // 서울 지역 대략적 판단
         if (coords.lat >= 37.5 && coords.lng >= 127.0) {
-            currentAddressElement.textContent = '서울시 강남구 일대';
+            address = '서울시 강남구';
+            detailAddress = '강남대로 464, 강남역 인근';
         } else if (coords.lat >= 37.5 && coords.lng < 127.0) {
-            currentAddressElement.textContent = '서울시 마포구 일대';
+            address = '서울시 마포구';
+            detailAddress = '양화로 160, 홍대입구역 인근';
         } else {
-            currentAddressElement.textContent = '서울시 영등포구 일대';
+            address = '서울시 영등포구';
+            detailAddress = '영등포로 150, 영등포역 인근';
         }
     } else {
-        currentAddressElement.textContent = '현재 위치';
+        address = '현재 위치';
+        detailAddress = '정확한 주소를 확인할 수 없습니다';
     }
+    
+    // 주소 업데이트
+    currentAddressElement.textContent = address;
+    locationDetailElement.textContent = detailAddress;
 }
 
 // 지도 초기화
@@ -173,12 +212,26 @@ function initMap() {
         console.log('Leaflet 사용 가능:', typeof L !== 'undefined');
         console.log('카카오맵 사용 가능:', typeof kakao !== 'undefined');
         
+        // 기존 지도가 있으면 제거
+        if (map) {
+            if (typeof L !== 'undefined') {
+                map.remove();
+            }
+            map = null;
+        }
+        
+        // 마커 배열 초기화
+        kioskMarkers = [];
+        userMarker = null;
+        
+        // 지도 컨테이너 초기화
+        if (mapContainer) {
+            mapContainer.innerHTML = '';
+        }
+        
         // Leaflet 지도 초기화 (무료 오픈소스)
         if (typeof L !== 'undefined') {
             console.log('Leaflet 지도 생성 중...');
-            
-            // 지도 컨테이너 초기화
-            mapContainer.innerHTML = '';
             
             // Leaflet 지도 생성
             map = L.map('map').setView([currentPosition.lat, currentPosition.lng], 13);
@@ -455,6 +508,7 @@ window.zoomIn = zoomIn;
 window.zoomOut = zoomOut;
 window.centerOnUser = centerOnUser;
 window.moveToKiosk = moveToKiosk;
+window.handleSortChange = handleSortChange;
 
 // 키오스크 상세 정보 팝업 표시
 function showKioskPopup(kiosk) {
@@ -587,6 +641,39 @@ function moveToKiosk(kiosk) {
 
 // 위치 새로고침
 function refreshLocation() {
+    console.log('위치 새로고침 시작...');
+    
+    // 새로고침 버튼 애니메이션 시작
+    const refreshBtn = document.querySelector('.header-btn');
+    if (refreshBtn) {
+        refreshBtn.classList.add('refreshing');
+    }
+    
+    // 기존 지도와 마커들 정리
+    if (map) {
+        if (typeof L !== 'undefined') {
+            // Leaflet 지도 정리
+            map.remove();
+            map = null;
+        } else if (typeof kakao !== 'undefined') {
+            // 카카오맵 정리
+            map = null;
+        }
+    }
+    
+    // 마커 배열 초기화
+    kioskMarkers = [];
+    userMarker = null;
+    
+    // 지도 컨테이너 초기화
+    if (mapContainer) {
+        mapContainer.innerHTML = '';
+    }
+    
+    // 로딩 상태 표시
+    loadingState.style.display = 'block';
+    
+    // 위치 정보 다시 요청
     requestLocation();
 }
 
@@ -611,28 +698,26 @@ function toggleMapType() {
     }
 }
 
-// 정렬 옵션 표시
-function showSortOptions() {
-    const options = ['거리순', '이름순', '상태순'];
-    const selectedOption = prompt('정렬 방식을 선택하세요:\n' + options.join('\n'));
+// 정렬 변경 처리
+function handleSortChange() {
+    const selectedValue = sortSelectElement.value;
     
-    if (selectedOption) {
-        switch (selectedOption) {
-            case '거리순':
-                kioskData.sort((a, b) => a.distance - b.distance);
-                break;
-            case '이름순':
-                kioskData.sort((a, b) => a.name.localeCompare(b.name));
-                break;
-            case '상태순':
-                kioskData.sort((a, b) => {
-                    const statusOrder = { online: 0, maintenance: 1, offline: 2 };
-                    return statusOrder[a.status] - statusOrder[b.status];
-                });
-                break;
-        }
-        renderKioskList();
+    switch (selectedValue) {
+        case 'distance':
+            kioskData.sort((a, b) => a.distance - b.distance);
+            break;
+        case 'name':
+            kioskData.sort((a, b) => a.name.localeCompare(b.name));
+            break;
+        case 'status':
+            kioskData.sort((a, b) => {
+                const statusOrder = { online: 0, maintenance: 1, offline: 2 };
+                return statusOrder[a.status] - statusOrder[b.status];
+            });
+            break;
     }
+    
+    renderKioskList();
 }
 
 // 이벤트 리스너 설정
