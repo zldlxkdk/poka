@@ -75,16 +75,24 @@ function loadPhotoCards() {
     
     console.log('포토카드 로드 시작');
     
-    // localStorage에서 직접 포토카드 로드 (POKA.AppState 대신 직접 접근)
+    // localStorage에서 포토카드 데이터 확인
     const savedPhotoCards = JSON.parse(localStorage.getItem('photoCards') || '[]');
     const savedGallery = JSON.parse(localStorage.getItem('gallery') || '[]');
-    
-    console.log('localStorage에서 읽은 데이터:', {
-        photoCards: savedPhotoCards.length,
-        gallery: savedGallery.length,
-        photoCardsData: savedPhotoCards,
-        galleryData: savedGallery
-    });
+    console.log('포토카드 데이터:', savedPhotoCards);
+    console.log('갤러리 데이터:', savedGallery);
+
+    // 첫 번째 포토카드의 상세 정보 확인
+    if (savedPhotoCards.length > 0) {
+        const firstCard = savedPhotoCards[0];
+        console.log('첫 번째 포토카드:', {
+            id: firstCard.id,
+            name: firstCard.name,
+            frontImage: firstCard.frontImage ? firstCard.frontImage.substring(0, 100) + '...' : '없음',
+            backImage: firstCard.backImage ? firstCard.backImage.substring(0, 100) + '...' : '없음',
+            frontImageName: firstCard.frontImageName,
+            backImageName: firstCard.backImageName
+        });
+    }
     
     // 포토카드 타입인 것들만 필터링
     const photoCardItems = savedGallery.filter(item => item.type === 'photoCard');
@@ -206,10 +214,12 @@ function createPhotoCardItem(photoCard, index) {
     console.log('포토카드 생성:', {
         id: photoCard.id,
         name: photoCard.name,
-        frontImage: photoCard.frontImage,
-        backImage: photoCard.backImage,
+        frontImage: photoCard.frontImage ? photoCard.frontImage.substring(0, 100) + '...' : '없음',
+        backImage: photoCard.backImage ? photoCard.backImage.substring(0, 100) + '...' : '없음',
         frontImageName: photoCard.frontImageName,
-        backImageName: photoCard.backImageName
+        backImageName: photoCard.backImageName,
+        frontImageLength: photoCard.frontImage ? photoCard.frontImage.length : 0,
+        backImageLength: photoCard.backImage ? photoCard.backImage.length : 0
     });
     
     const item = document.createElement('div');
@@ -226,12 +236,12 @@ function createPhotoCardItem(photoCard, index) {
         <div class="photo-card-container">
             <div class="photo-card">
                 <div class="photo-card-front">
-                    <img src="${photoCard.frontImage}" alt="${photoCard.name || '앞면'}" loading="eager" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" onload="this.style.opacity='1'; this.style.display='block'; this.nextElementSibling.style.display='none';">
-                    <div class="image-fallback">🖼️</div>
+                    <img src="${photoCard.frontImage}" alt="${photoCard.name || '앞면'}" loading="eager" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'; console.log('앞면 이미지 로드 실패:', this.src);" onload="this.style.opacity='1'; this.style.display='block'; this.nextElementSibling.style.display='none'; console.log('앞면 이미지 로드 성공:', this.src);">
+                    <div class="image-fallback">??</div>
                 </div>
                 <div class="photo-card-back">
-                    <img src="${photoCard.backImage}" alt="${photoCard.name || '뒷면'}" loading="eager" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" onload="this.style.opacity='1'; this.style.display='block'; this.nextElementSibling.style.display='none';">
-                    <div class="image-fallback">🖼️</div>
+                    <img src="${photoCard.backImage}" alt="${photoCard.name || '뒷면'}" loading="eager" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'; console.log('뒷면 이미지 로드 실패:', this.src);" onload="this.style.opacity='1'; this.style.display='block'; this.nextElementSibling.style.display='none'; console.log('뒷면 이미지 로드 성공:', this.src);">
+                    <div class="image-fallback">??</div>
                 </div>
                 <!-- 카드 측면들 (두께감 표현) -->
                 <div class="photo-card-side photo-card-side-top"></div>
@@ -255,6 +265,28 @@ function createPhotoCardItem(photoCard, index) {
             </div>
         </div>
     `;
+    
+    // 이미지 로드 후 추가 처리
+    setTimeout(() => {
+        const frontImg = item.querySelector('.photo-card-front img');
+        const backImg = item.querySelector('.photo-card-back img');
+        
+        if (frontImg) {
+            console.log('앞면 이미지 상태 확인:', {
+                src: frontImg.src.substring(0, 100) + '...',
+                display: frontImg.style.display,
+                opacity: frontImg.style.opacity
+            });
+        }
+        
+        if (backImg) {
+            console.log('뒷면 이미지 상태 확인:', {
+                src: backImg.src.substring(0, 100) + '...',
+                display: backImg.style.display,
+                opacity: backImg.style.opacity
+            });
+        }
+    }, 100);
     
     // 클릭 이벤트
     item.addEventListener('click', (e) => {
