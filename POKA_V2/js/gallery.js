@@ -143,8 +143,18 @@ function loadPhotoCards() {
 
 // 갤러리 업데이트
 function updateGallery() {
+    console.log('updateGallery 호출됨:', {
+        photoCardsCount: photoCards.length,
+        currentFilter: currentFilter,
+        currentSearch: currentSearch
+    });
+    
     // 필터링 및 검색 적용
     applyFiltersAndSearch();
+    
+    console.log('필터링 후:', {
+        filteredPhotoCardsCount: filteredPhotoCards.length
+    });
     
     // 포토카드 개수 업데이트
     imageCount.textContent = filteredPhotoCards.length;
@@ -153,16 +163,24 @@ function updateGallery() {
     if (filteredPhotoCards.length === 0) {
         galleryContainer.style.display = 'none';
         emptyState.style.display = 'block';
+        console.log('빈 상태 표시');
     } else {
         galleryContainer.style.display = 'grid';
         emptyState.style.display = 'none';
         renderGallery();
+        console.log('갤러리 렌더링 완료');
     }
 }
 
 // 필터 및 검색 적용
 function applyFiltersAndSearch() {
     let filtered = [...photoCards];
+    
+    console.log('필터링 시작:', {
+        originalCount: photoCards.length,
+        currentFilter: currentFilter,
+        currentSearch: currentSearch
+    });
     
     // 필터 적용
     switch (currentFilter) {
@@ -173,12 +191,15 @@ function applyFiltersAndSearch() {
                 const cardDate = new Date(card.createdAt);
                 return cardDate >= oneWeekAgo;
             });
+            console.log('최근 필터 적용 후:', filtered.length);
             break;
         case 'favorite':
             filtered = filtered.filter(card => card.favorite);
+            console.log('즐겨찾기 필터 적용 후:', filtered.length);
             break;
         default:
             // 'all' - 모든 포토카드
+            console.log('전체 필터 적용 후:', filtered.length);
             break;
     }
     
@@ -194,9 +215,11 @@ function applyFiltersAndSearch() {
                    frontImageName.includes(searchTerm) || 
                    backImageName.includes(searchTerm);
         });
+        console.log('검색 필터 적용 후:', filtered.length);
     }
     
     filteredPhotoCards = filtered;
+    console.log('최종 필터링 결과:', filteredPhotoCards.length);
 }
 
 // 갤러리 렌더링
@@ -608,7 +631,31 @@ function togglePhotoCardFavorite(index) {
 
 // 포토카드 저장
 function savePhotoCards() {
-    POKA.AppState.saveToStorage('photoCards', photoCards);
+    try {
+        console.log('포토카드 저장 시작:', photoCards.length, '개');
+        
+        // POKA.AppState를 통한 저장
+        if (typeof POKA !== 'undefined' && POKA.AppState) {
+            POKA.AppState.saveToStorage('photoCards', photoCards);
+            console.log('POKA.AppState 저장 완료');
+        }
+        
+        // localStorage를 통한 직접 저장 (백업)
+        localStorage.setItem('photoCards', JSON.stringify(photoCards));
+        console.log('localStorage 저장 완료');
+        
+        // gallery 데이터도 업데이트 (기존 gallery 데이터에서 photoCard 타입만 필터링하고 새로운 포토카드 추가)
+        const existingGallery = JSON.parse(localStorage.getItem('gallery') || '[]');
+        const nonPhotoCardItems = existingGallery.filter(item => item.type !== 'photoCard');
+        const updatedGallery = [...nonPhotoCardItems, ...photoCards.map(card => ({ ...card, type: 'photoCard' }))];
+        localStorage.setItem('gallery', JSON.stringify(updatedGallery));
+        console.log('gallery 데이터 업데이트 완료');
+        
+        console.log('포토카드 저장 완료:', photoCards.length, '개');
+    } catch (error) {
+        console.error('포토카드 저장 중 오류:', error);
+        POKA.Toast.error('포토카드 저장 중 오류가 발생했습니다');
+    }
 } 
 
 // 포토카드 다운로드
@@ -634,7 +681,7 @@ function downloadPhotoCard() {
             document.body.removeChild(backLink);
         }, 500);
         
-        showToast('포토카드 다운로드가 시작되었습니다', 'success');
+        POKA.Toast.success('포토카드 다운로드가 시작되었습니다');
     }
 }
 
@@ -648,18 +695,18 @@ function sharePhotoCard() {
             text: 'POKA V2로 만든 포토카드입니다',
             url: window.location.href
         }).then(() => {
-            showToast('공유되었습니다', 'success');
+            POKA.Toast.success('공유되었습니다');
         }).catch(() => {
-            showToast('공유에 실패했습니다', 'error');
+            POKA.Toast.error('공유에 실패했습니다');
         });
     } else {
         // 공유 API가 지원되지 않는 경우 클립보드에 복사
         if (currentModalPhotoCard) {
             const { photoCard } = currentModalPhotoCard;
             navigator.clipboard.writeText(photoCard.frontImage).then(() => {
-                showToast('포토카드 링크가 클립보드에 복사되었습니다', 'success');
+                POKA.Toast.success('포토카드 링크가 클립보드에 복사되었습니다');
             }).catch(() => {
-                showToast('클립보드 복사에 실패했습니다', 'error');
+                POKA.Toast.error('클립보드 복사에 실패했습니다');
             });
         }
     }
@@ -678,63 +725,50 @@ function deleteCurrentPhotoCard() {
     if (currentModalPhotoCard) {
         const { photoCard, index } = currentModalPhotoCard;
         
+        console.log('삭제 시도:', {
+            photoCardId: photoCard.id,
+            photoCardName: photoCard.name,
+            currentPhotoCardsCount: photoCards.length,
+            currentFilteredPhotoCardsCount: filteredPhotoCards.length
+        });
+        
         // 확인 다이얼로그 표시
-        if (confirm('정말로 이 포토카드를 삭제하시겠습니까?')) {
+        if (confirm(`정말로 "${photoCard.name || '포토카드'}"을 삭제하시겠습니까?`)) {
             // 원본 배열에서 제거
             const originalIndex = photoCards.findIndex(card => card.id === photoCard.id);
+            console.log('원본 배열에서 찾은 인덱스:', originalIndex);
+            
             if (originalIndex !== -1) {
+                // 배열에서 제거
                 photoCards.splice(originalIndex, 1);
+                console.log('삭제 후 포토카드 개수:', photoCards.length);
+                
+                // 저장
+                savePhotoCards();
+                
+                // 모달 닫기
+                closePhotoCardModal();
+                
+                // 갤러리 업데이트 (약간의 지연 후)
+                setTimeout(() => {
+                    updateGallery();
+                    console.log('갤러리 업데이트 완료');
+                }, 100);
+                
+                // 성공 메시지 표시
+                POKA.Toast.success('포토카드가 삭제되었습니다');
+            } else {
+                console.error('포토카드를 찾을 수 없음:', photoCard.id);
+                POKA.Toast.error('포토카드를 찾을 수 없습니다');
             }
-            
-            // 저장
-            savePhotoCards();
-            
-            // 모달 닫기
-            closePhotoCardModal();
-            
-            // 갤러리 업데이트
-            updateGallery();
-            
-            // 성공 메시지 표시
-            showToast('포토카드가 삭제되었습니다', 'success');
         }
+    } else {
+        console.error('currentModalPhotoCard가 없음');
+        POKA.Toast.error('삭제할 포토카드가 없습니다');
     }
 } 
 
-// 토스트 메시지 표시 함수
-function showToast(message, type = 'info') {
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.textContent = message;
-    toast.style.cssText = `
-        position: fixed;
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#007bff'};
-        color: white;
-        padding: 12px 24px;
-        border-radius: 8px;
-        z-index: 10000;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    `;
-    
-    document.body.appendChild(toast);
-    
-    // 애니메이션
-    setTimeout(() => {
-        toast.style.opacity = '1';
-    }, 100);
-    
-    // 자동 제거
-    setTimeout(() => {
-        toast.style.opacity = '0';
-        setTimeout(() => {
-            document.body.removeChild(toast);
-        }, 300);
-    }, 3000);
-}
+
 
 // 디바운스 함수
 function debounce(func, wait) {
