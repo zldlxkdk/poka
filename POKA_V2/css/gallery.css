@@ -651,61 +651,6 @@
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
-/* 포토카드 정보 오버레이 (이미지 위에 표시) */
-.photo-card-info-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(
-        135deg,
-        rgba(0, 0, 0, 0.7) 0%,
-        rgba(0, 0, 0, 0.4) 50%,
-        rgba(0, 0, 0, 0.1) 100%
-    );
-    display: flex;
-    align-items: flex-start;
-    justify-content: flex-start;
-    padding: 12px;
-    z-index: 25;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
-}
-
-.photo-card-info-content {
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 8px 12px;
-    border-radius: 8px;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    max-width: calc(100% - 24px);
-}
-
-.photo-card-info-title {
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 4px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-}
-
-.photo-card-info-date {
-    font-size: 12px;
-    opacity: 0.9;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-}
-
-/* 포토카드 호버 시 정보 오버레이 표시 */
-.photo-card-item:hover .photo-card-info-overlay {
-    opacity: 1;
-}
-
 /* 빈 상태 */
 .empty-state {
     text-align: center;
@@ -851,7 +796,7 @@
 }
 
 .modal-body {
-    padding: 20px;
+    padding: 16px 20px;
     text-align: center;
     flex: 1;
     overflow-y: auto;
@@ -940,12 +885,17 @@
     }
 
 .image-info {
-    margin-top: 12px;
-    margin-bottom: 20px;
+    margin: 0;
     text-align: center;
     width: 100%;
-    padding: 0 8px;
+    padding: 12px 8px;
     padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 60px;
 }
 
 .image-info h3 {
@@ -1190,16 +1140,21 @@
 
     
     .modal-body {
-        padding: 8px 12px;
+        padding: 4px 12px;
         padding-bottom: 0;
     }
     
     .image-info {
-        margin-top: 8px;
-        margin-bottom: 20px;
-        padding: 0 4px;
-        padding-bottom: 16px;
+        margin: 0;
+        padding: 8px 4px;
+        padding-bottom: 12px;
         text-align: center;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 50px;
     }
     
     .image-info h3 {
@@ -1703,22 +1658,6 @@
     .photo-card-back {
         pointer-events: none;
         -webkit-pointer-events: none;
-    }
-    
-    /* 터치 디바이스에서 정보 오버레이 항상 표시 */
-    .photo-card-info-overlay {
-        opacity: 1;
-        background: linear-gradient(
-            135deg,
-            rgba(0, 0, 0, 0.8) 0%,
-            rgba(0, 0, 0, 0.5) 50%,
-            rgba(0, 0, 0, 0.2) 100%
-        );
-    }
-    
-    .photo-card-info-content {
-        background: rgba(0, 0, 0, 0.9);
-        border: 1px solid rgba(255, 255, 255, 0.3);
     }
 } 
 

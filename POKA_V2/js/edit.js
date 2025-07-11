@@ -2153,44 +2153,28 @@ function captureImageWithEmojis(side) {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
         
-        // 캔버스 크기 설정
-        canvas.width = container.offsetWidth;
-        canvas.height = container.offsetHeight;
-        
-        // 배경을 흰색으로 설정
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        // 이미지가 없는 경우 빈 캔버스 반환
-        if (!imageElement.src || imageElement.style.display === 'none') {
-            resolve(canvas);
-            return;
-        }
-        
-        // 이미지 그리기
+        // 원본 이미지 크기로 캔버스 설정
         const img = new Image();
         img.onload = function() {
-            // 이미지 크기 계산
-            const containerRatio = canvas.width / canvas.height;
-            const imageRatio = img.width / img.height;
+            canvas.width = img.naturalWidth;
+            canvas.height = img.naturalHeight;
             
-            let drawWidth, drawHeight, offsetX, offsetY;
+            // 배경을 흰색으로 설정
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            if (imageRatio > containerRatio) {
-                drawWidth = canvas.width;
-                drawHeight = canvas.width / imageRatio;
-                offsetX = 0;
-                offsetY = (canvas.height - drawHeight) / 2;
-            } else {
-                drawHeight = canvas.height;
-                drawWidth = canvas.height * imageRatio;
-                offsetX = (canvas.width - drawWidth) / 2;
-                offsetY = 0;
+            // 이미지가 없는 경우 빈 캔버스 반환
+            if (!imageElement.src || imageElement.style.display === 'none') {
+                resolve(canvas);
+                return;
             }
+            
+            // 원본 이미지 그리기
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
             
             // 변환 적용
             ctx.save();
-            ctx.translate(offsetX + drawWidth / 2, offsetY + drawHeight / 2);
+            ctx.translate(canvas.width / 2, canvas.height / 2);
             
             // 회전 적용
             const rotation = photoCardEditState[side].rotation * Math.PI / 180;
@@ -2210,17 +2194,23 @@ function captureImageWithEmojis(side) {
                 ctx.filter = 'brightness(150%)';
             }
             
-            ctx.drawImage(img, -drawWidth / 2, -drawHeight / 2, drawWidth, drawHeight);
+            ctx.drawImage(img, -canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
             ctx.restore();
             
-            // 이모지 그리기
+            // 이모지 그리기 - 원본 이미지 비율에 맞게 위치 조정
             const emojis = emojiLayer.querySelectorAll('.emoji');
             emojis.forEach(emoji => {
                 const rect = emoji.getBoundingClientRect();
                 const containerRect = container.getBoundingClientRect();
                 
-                const x = rect.left - containerRect.left;
-                const y = rect.top - containerRect.top;
+                // 컨테이너 대비 원본 이미지 비율 계산
+                const containerWidth = container.offsetWidth;
+                const containerHeight = container.offsetHeight;
+                const scaleX = canvas.width / containerWidth;
+                const scaleY = canvas.height / containerHeight;
+                
+                const x = (rect.left - containerRect.left) * scaleX;
+                const y = (rect.top - containerRect.top) * scaleY;
                 
                 ctx.font = '24px Arial';
                 ctx.textAlign = 'center';
