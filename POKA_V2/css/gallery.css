@@ -1113,9 +1113,11 @@
     }
     
     .modal-image-side img {
-        max-height: 180px;
+        max-height: 60vh !important;
+        min-height: 220px !important;
+        height: 100%;
         width: 100%;
-        object-fit: cover;
+        object-fit: contain !important;
         display: block !important;
     }
     
