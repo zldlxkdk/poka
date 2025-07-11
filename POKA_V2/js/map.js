@@ -237,6 +237,7 @@ let kioskMarkers = [];
 let selectedKiosk = null;
 let userMarker = null;
 let filteredKioskData = [...kioskData]; // 필터링된 키오스크 데이터
+let isSearching = false; // 검색 중인지 여부
 
 // DOM 요소들
 const mapContainer = document.getElementById('map');
@@ -366,8 +367,10 @@ function requestLocation() {
                     lng: position.coords.longitude
                 };
                 
-                // 지도 중심도 실제 현재 위치로 설정
-                mapCenter = { ...currentPosition };
+                // 지도 중심은 검색 중이 아닐 때만 현재 위치로 설정
+                if (!isSearching) {
+                    mapCenter = { ...currentPosition };
+                }
                 
                 // 주소 변환
                 getAddressFromCoords(currentPosition);
@@ -412,8 +415,10 @@ function requestLocation() {
                     lng: 126.9780
                 };
                 
-                // 지도 중심도 동일하게 설정
-                mapCenter = { ...currentPosition };
+                // 지도 중심은 검색 중이 아닐 때만 현재 위치로 설정
+                if (!isSearching) {
+                    mapCenter = { ...currentPosition };
+                }
                 
                 // 기본 주소 설정
                 currentAddressElement.textContent = '서울시 강남구';
@@ -439,6 +444,7 @@ function searchAddress() {
     }
     
     console.log('주소 검색 시작:', query);
+    isSearching = true;
     showSearchLoading();
     
     // OpenStreetMap Nominatim API를 사용한 주소 검색
@@ -491,6 +497,9 @@ function displaySearchResults(results) {
 // 검색 결과 선택
 function selectSearchResult(result) {
     console.log('선택된 위치:', result);
+    
+    // 검색 상태 해제
+    isSearching = false;
     
     // 지도 중심 위치만 변경 (실제 현재 위치는 유지)
     mapCenter = {
@@ -558,6 +567,7 @@ function showSearchLoading() {
 function showSearchError(message) {
     searchResults.innerHTML = `<div class="search-error">⚠️ ${message}</div>`;
     searchResults.style.display = 'block';
+    isSearching = false;
 }
 
 // 좌표를 주소로 변환 (실제 API 사용)
@@ -1108,9 +1118,9 @@ function refreshLocation() {
     // 위치 정보 다시 요청
     requestLocation();
     
-    // 지도 중심을 실제 현재 위치로 되돌리기
+    // 지도 중심을 실제 현재 위치로 되돌리기 (검색 중이 아닐 때만)
     setTimeout(() => {
-        if (currentPosition) {
+        if (currentPosition && !isSearching) {
             mapCenter = { ...currentPosition };
             if (map && typeof L !== 'undefined') {
                 map.setView([mapCenter.lat, mapCenter.lng], 13);
@@ -1248,6 +1258,7 @@ function setupEventListeners() {
         addressSearchInput.addEventListener('focus', () => {
             if (searchResults.style.display === 'block') {
                 searchResults.style.display = 'none';
+                isSearching = false;
             }
         });
     }
@@ -1256,6 +1267,7 @@ function setupEventListeners() {
     document.addEventListener('click', (e) => {
         if (!e.target.closest('.location-search') && searchResults.style.display === 'block') {
             searchResults.style.display = 'none';
+            isSearching = false;
         }
     });
 } 
