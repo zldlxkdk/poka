@@ -45,6 +45,17 @@
                         <div class="location-detail" id="locationDetail">세부 주소를 불러오는 중...</div>
                     </div>
                 </div>
+                <div class="location-search">
+                    <div class="search-container">
+                        <input type="text" id="addressSearch" class="search-input" placeholder="주소를 검색하세요 (예: 강남역, 홍대입구역)">
+                        <button class="search-btn" onclick="searchAddress()" title="주소 검색">
+                            <span class="btn-icon">🔍</span>
+                        </button>
+                    </div>
+                    <div class="search-results" id="searchResults" style="display: none;">
+                        <!-- 검색 결과가 여기에 표시됩니다 -->
+                    </div>
+                </div>
             </section>
 
             <!-- 지도 영역 -->

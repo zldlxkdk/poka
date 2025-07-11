@@ -79,6 +79,8 @@ const loadingState = document.getElementById('loadingState');
 const kioskInfoLoading = document.getElementById('kioskInfoLoading');
 const emptyState = document.getElementById('emptyState');
 const kioskPopup = document.getElementById('kioskPopup');
+const addressSearchInput = document.getElementById('addressSearch');
+const searchResults = document.getElementById('searchResults');
 
 // 키오스크 목록 로딩 상태 관리
 function showKioskListLoading() {
@@ -248,67 +250,148 @@ function requestLocation() {
     }
 }
 
-// 좌표를 주소로 변환
+// 주소 검색 기능
+function searchAddress() {
+    const query = addressSearchInput.value.trim();
+    if (!query) {
+        showSearchError('검색어를 입력해주세요.');
+        return;
+    }
+    
+    console.log('주소 검색 시작:', query);
+    showSearchLoading();
+    
+    // OpenStreetMap Nominatim API를 사용한 주소 검색
+    const searchUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=kr&limit=5`;
+    
+    fetch(searchUrl)
+        .then(response => response.json())
+        .then(data => {
+            console.log('검색 결과:', data);
+            displaySearchResults(data);
+        })
+        .catch(error => {
+            console.error('주소 검색 오류:', error);
+            showSearchError('주소 검색 중 오류가 발생했습니다.');
+        });
+}
+
+// 검색 결과 표시
+function displaySearchResults(results) {
+    if (results.length === 0) {
+        showSearchError('검색 결과가 없습니다.');
+        return;
+    }
+    
+    searchResults.innerHTML = '';
+    searchResults.style.display = 'block';
+    
+    results.forEach(result => {
+        const resultItem = document.createElement('div');
+        resultItem.className = 'search-result-item';
+        resultItem.onclick = () => selectSearchResult(result);
+        
+        resultItem.innerHTML = `
+            <div class="search-result-icon">📍</div>
+            <div class="search-result-content">
+                <div class="search-result-title">${result.display_name.split(',')[0]}</div>
+                <div class="search-result-address">${result.display_name}</div>
+            </div>
+        `;
+        
+        searchResults.appendChild(resultItem);
+    });
+}
+
+// 검색 결과 선택
+function selectSearchResult(result) {
+    console.log('선택된 위치:', result);
+    
+    // 새로운 위치로 설정
+    currentPosition = {
+        lat: parseFloat(result.lat),
+        lng: parseFloat(result.lon)
+    };
+    
+    // 주소 업데이트
+    currentAddressElement.textContent = result.display_name.split(',')[0];
+    locationDetailElement.textContent = result.display_name;
+    
+    // 검색 결과 숨기기
+    searchResults.style.display = 'none';
+    addressSearchInput.value = '';
+    
+    // 지도 중심 이동
+    if (map && typeof L !== 'undefined') {
+        map.setView([currentPosition.lat, currentPosition.lng], 15);
+        
+        // 기존 마커 제거
+        if (userMarker && map.hasLayer(userMarker)) {
+            map.removeLayer(userMarker);
+        }
+        kioskMarkers.forEach(marker => {
+            if (marker && map.hasLayer(marker)) {
+                map.removeLayer(marker);
+            }
+        });
+        kioskMarkers = [];
+        
+        // 새로운 마커 추가
+        addUserMarker();
+        addKioskMarkers();
+        
+        // 거리 재계산
+        calculateDistances();
+        filteredKioskData.sort((a, b) => a.distance - b.distance);
+        renderKioskList();
+    }
+}
+
+// 검색 로딩 표시
+function showSearchLoading() {
+    searchResults.innerHTML = '<div class="search-loading">검색 중...</div>';
+    searchResults.style.display = 'block';
+}
+
+// 검색 오류 표시
+function showSearchError(message) {
+    searchResults.innerHTML = `<div class="search-error">${message}</div>`;
+    searchResults.style.display = 'block';
+}
+
+// 좌표를 주소로 변환 (실제 API 사용)
 function getAddressFromCoords(coords) {
     console.log('주소 변환 시작:', coords);
     
-    // 실제 환경에서는 역지오코딩 API를 사용
-    // 간단한 좌표 기반 추정 (실제 서비스에서는 정확한 API 사용 필요)
+    // OpenStreetMap Nominatim API를 사용한 역지오코딩
+    const reverseUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${coords.lat}&lon=${coords.lng}&zoom=18&addressdetails=1`;
     
-    let address = '';
-    let detailAddress = '';
-    
-    if (coords.lat >= 37.4 && coords.lat <= 37.7 && coords.lng >= 126.8 && coords.lng <= 127.2) {
-        // 서울 지역 대략적 판단
-        if (coords.lat >= 37.5 && coords.lng >= 127.0) {
-            address = '서울시 강남구';
-            detailAddress = '강남대로 464, 강남역 인근';
-        } else if (coords.lat >= 37.5 && coords.lng < 127.0) {
-            address = '서울시 마포구';
-            detailAddress = '양화로 160, 홍대입구역 인근';
-        } else if (coords.lat >= 37.4 && coords.lat < 37.5) {
-            address = '서울시 영등포구';
-            detailAddress = '영등포로 150, 영등포역 인근';
-        } else {
-            address = '서울시 서대문구';
-            detailAddress = '신촌로 77, 신촌역 인근';
-        }
-    } else if (coords.lat >= 37.4 && coords.lat <= 37.6 && coords.lng >= 127.0 && coords.lng <= 127.2) {
-        // 서울 동부 지역
-        if (coords.lat >= 37.5) {
-            address = '서울시 광진구';
-            detailAddress = '아차산로 272, 건국대입구역 인근';
-        } else {
-            address = '서울시 성동구';
-            detailAddress = '왕십리로, 왕십리역 인근';
-        }
-    } else if (coords.lat >= 37.5 && coords.lat <= 37.6 && coords.lng >= 126.9 && coords.lng <= 127.0) {
-        // 서울 중부 지역
-        address = '서울시 용산구';
-        detailAddress = '이태원로 177, 이태원역 인근';
-    } else if (coords.lat >= 35.0 && coords.lat <= 38.0 && coords.lng >= 126.0 && coords.lng <= 130.0) {
-        // 한국 내 다른 지역들
-        if (coords.lat >= 37.0 && coords.lat < 37.4) {
-            address = '경기도';
-            detailAddress = '수원시, 성남시, 고양시 등';
-        } else if (coords.lat >= 35.0 && coords.lat < 37.0) {
-            address = '부산시';
-            detailAddress = '해운대구, 동래구, 부산진구 등';
-        } else {
-            address = '대한민국';
-            detailAddress = '기타 지역';
-        }
-    } else {
-        // 해외 또는 알 수 없는 지역
-        address = '현재 위치';
-        detailAddress = '위치 정보를 확인할 수 없습니다';
-    }
-    
-    // 주소 업데이트
-    currentAddressElement.textContent = address;
-    locationDetailElement.textContent = detailAddress;
-    
-    console.log('주소 변환 완료:', { address, detailAddress });
+    fetch(reverseUrl)
+        .then(response => response.json())
+        .then(data => {
+            console.log('역지오코딩 결과:', data);
+            
+            if (data.display_name) {
+                const addressParts = data.display_name.split(', ');
+                const mainAddress = addressParts[0] || '현재 위치';
+                const fullAddress = data.display_name;
+                
+                currentAddressElement.textContent = mainAddress;
+                locationDetailElement.textContent = fullAddress;
+                
+                console.log('주소 변환 완료:', { mainAddress, fullAddress });
+            } else {
+                // API 실패 시 기본 주소 표시
+                currentAddressElement.textContent = '현재 위치';
+                locationDetailElement.textContent = `위도: ${coords.lat.toFixed(4)}, 경도: ${coords.lng.toFixed(4)}`;
+            }
+        })
+        .catch(error => {
+            console.error('주소 변환 오류:', error);
+            // 오류 시 기본 주소 표시
+            currentAddressElement.textContent = '현재 위치';
+            locationDetailElement.textContent = `위도: ${coords.lat.toFixed(4)}, 경도: ${coords.lng.toFixed(4)}`;
+        });
 }
 
 // 지도 초기화
@@ -616,6 +699,7 @@ window.centerOnUser = centerOnUser;
 window.moveToKiosk = moveToKiosk;
 window.handleSortChange = handleSortChange;
 window.handleFilterChange = handleFilterChange;
+window.searchAddress = searchAddress;
 
 // 키오스크 상세 정보 팝업 표시
 function showKioskPopup(kiosk) {
@@ -891,6 +975,30 @@ function setupEventListeners() {
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && kioskPopup.style.display === 'flex') {
             closeKioskPopup();
+        }
+    });
+    
+    // 주소 검색 입력 필드 이벤트
+    if (addressSearchInput) {
+        // Enter 키로 검색
+        addressSearchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                searchAddress();
+            }
+        });
+        
+        // 입력 필드 포커스 시 검색 결과 숨기기
+        addressSearchInput.addEventListener('focus', () => {
+            if (searchResults.style.display === 'block') {
+                searchResults.style.display = 'none';
+            }
+        });
+    }
+    
+    // 검색 결과 외부 클릭 시 숨기기
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.location-search') && searchResults.style.display === 'block') {
+            searchResults.style.display = 'none';
         }
     });
 } 
