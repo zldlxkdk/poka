@@ -238,6 +238,8 @@ let selectedKiosk = null;
 let userMarker = null;
 let filteredKioskData = [...kioskData]; // 필터링된 키오스크 데이터
 let isSearching = false; // 검색 중인지 여부
+let isSearchLocationSelected = false; // 검색 위치가 선택되었는지 여부
+let searchLocationData = null; // 검색 위치 데이터 저장
 
 // DOM 요소들
 const mapContainer = document.getElementById('map');
@@ -289,8 +291,24 @@ document.addEventListener('DOMContentLoaded', () => {
         lng: 126.9780
     };
     
-    // 지도 중심도 동일하게 설정
+    // 지도 처음 로드 시에는 항상 현재 위치로 설정
     mapCenter = { ...currentPosition };
+    
+    // 검색 위치 선택 상태 복원 (주소 표시용으로만 사용)
+    const savedSearchState = localStorage.getItem('isSearchLocationSelected');
+    const savedSearchData = localStorage.getItem('searchLocationData');
+    
+    if (savedSearchState === 'true' && savedSearchData) {
+        try {
+            isSearchLocationSelected = true;
+            searchLocationData = JSON.parse(savedSearchData);
+            console.log('검색 위치 상태 복원됨 (주소 표시용):', searchLocationData);
+        } catch (error) {
+            console.error('검색 위치 상태 복원 실패:', error);
+            isSearchLocationSelected = false;
+            searchLocationData = null;
+        }
+    }
     
     // 기본 주소 설정
     currentAddressElement.textContent = '위치 정보를 가져오는 중...';
@@ -349,6 +367,13 @@ function checkMapLibrary() {
 function requestLocation() {
     console.log('위치 정보 요청 시작');
     console.log('navigator.geolocation 지원 여부:', !!navigator.geolocation);
+    console.log('검색 위치 선택 상태:', isSearchLocationSelected);
+    console.log('검색 위치 데이터:', searchLocationData);
+    
+    // 검색 위치 선택 상태 로그
+    if (isSearchLocationSelected) {
+        console.log('검색 위치 선택 상태에서 GPS 위치 업데이트 실행');
+    }
     
     if (navigator.geolocation) {
         console.log('위치 권한 요청 시작...');
@@ -359,6 +384,7 @@ function requestLocation() {
             maximumAge: 60000
         };
         
+        // getCurrentPosition만 사용 (watchPosition 사용 안함)
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 console.log('위치 정보 성공:', position);
@@ -367,18 +393,26 @@ function requestLocation() {
                     lng: position.coords.longitude
                 };
                 
-                // 지도 중심은 검색 중이 아닐 때만 현재 위치로 설정
-                if (!isSearching) {
-                    mapCenter = { ...currentPosition };
+                // 지도 중심을 현재 위치로 업데이트 (검색 위치 선택 상태와 관계없이)
+                mapCenter = { ...currentPosition };
+                
+                // 주소 표시 업데이트
+                if (isSearchLocationSelected && searchLocationData) {
+                    // 검색 위치 선택 상태에서는 검색 위치 주소 표시
+                    currentAddressElement.textContent = `🔍 ${searchLocationData.address}`;
+                    locationDetailElement.textContent = `검색 위치: ${searchLocationData.subAddress} (내 위치로 돌아가려면 "내 위치" 버튼을 클릭하세요)`;
+                } else {
+                    // 일반 상태에서는 현재 위치 주소 표시
+                    getAddressFromCoords(currentPosition);
                 }
                 
-                // 주소 변환
-                getAddressFromCoords(currentPosition);
-                
-                // 지도가 로드된 후 중심 이동
+                // 지도가 로드된 후 중심 이동 (검색 위치 선택 상태와 관계없이)
                 if (map && typeof L !== 'undefined') {
                     map.setView([mapCenter.lat, mapCenter.lng], 13);
-                    
+                }
+                
+                // 마커 업데이트
+                if (map && typeof L !== 'undefined') {
                     // 기존 마커 제거
                     if (userMarker && map.hasLayer(userMarker)) {
                         map.removeLayer(userMarker);
@@ -415,8 +449,8 @@ function requestLocation() {
                     lng: 126.9780
                 };
                 
-                // 지도 중심은 검색 중이 아닐 때만 현재 위치로 설정
-                if (!isSearching) {
+                // 지도 중심은 검색 위치가 선택되지 않았을 때만 현재 위치로 설정
+                if (!isSearchLocationSelected) {
                     mapCenter = { ...currentPosition };
                 }
                 
@@ -464,6 +498,8 @@ function searchAddress() {
 
 // 검색 결과 표시
 function displaySearchResults(results) {
+    console.log('검색 결과 표시:', results);
+    
     if (results.length === 0) {
         showSearchError('검색 결과가 없습니다. 다른 키워드로 다시 검색해보세요.');
         return;
@@ -472,10 +508,15 @@ function displaySearchResults(results) {
     searchResults.innerHTML = '';
     searchResults.style.display = 'block';
     
-    results.forEach(result => {
+    results.forEach((result, index) => {
+        console.log(`검색 결과 ${index + 1}:`, result);
+        
         const resultItem = document.createElement('div');
         resultItem.className = 'search-result-item';
-        resultItem.onclick = () => selectSearchResult(result);
+        resultItem.onclick = () => {
+            console.log('검색 결과 클릭됨:', result);
+            selectSearchResult(result);
+        };
         
         // 주소 정보 파싱
         const addressParts = result.display_name.split(', ');
@@ -498,8 +539,12 @@ function displaySearchResults(results) {
 function selectSearchResult(result) {
     console.log('선택된 위치:', result);
     
-    // 검색 상태 해제
+    // 검색 상태 해제 및 검색 위치 선택 상태 설정
     isSearching = false;
+    isSearchLocationSelected = true;
+    
+    // 검색 위치 선택 상태 설정 완료
+    console.log('검색 위치 선택 상태가 설정되었습니다.');
     
     // 지도 중심 위치만 변경 (실제 현재 위치는 유지)
     mapCenter = {
@@ -513,9 +558,22 @@ function selectSearchResult(result) {
     const searchSubAddress = addressParts.slice(1, 3).join(', ');
     const searchFullAddress = result.display_name;
     
+    // 검색 위치 데이터 저장
+    searchLocationData = {
+        lat: parseFloat(result.lat),
+        lng: parseFloat(result.lon),
+        address: searchAddress,
+        subAddress: searchSubAddress,
+        fullAddress: searchFullAddress
+    };
+    
+    // localStorage에 검색 위치 상태 저장
+    localStorage.setItem('isSearchLocationSelected', 'true');
+    localStorage.setItem('searchLocationData', JSON.stringify(searchLocationData));
+    
     // 주소 표시 업데이트 (검색 위치임을 명시)
     currentAddressElement.textContent = `🔍 ${searchAddress}`;
-    locationDetailElement.textContent = `검색 위치: ${searchSubAddress}`;
+    locationDetailElement.textContent = `검색 위치: ${searchSubAddress} (내 위치로 돌아가려면 "내 위치" 버튼을 클릭하세요)`;
     
     // 사용자에게 피드백 제공
     console.log(`지도가 ${searchAddress}로 이동합니다...`);
@@ -524,36 +582,52 @@ function selectSearchResult(result) {
     searchResults.style.display = 'none';
     addressSearchInput.value = '';
     
-    // 지도 중심 이동 (검색 위치로) - 부드러운 애니메이션
+    // 지도 중심 이동 (검색 위치로) - 강제 이동
+    console.log('지도 이동 시도:', { map: !!map, L: typeof L, mapCenter });
+    
     if (map && typeof L !== 'undefined') {
-        // 부드러운 이동 애니메이션으로 지도 중심 이동
-        map.flyTo([mapCenter.lat, mapCenter.lng], 15, {
-            animate: true,
-            duration: 1.0 // 1초 애니메이션
-        });
+        console.log('지도 이동 실행:', mapCenter);
         
-        // 기존 마커 제거
-        if (userMarker && map.hasLayer(userMarker)) {
-            map.removeLayer(userMarker);
-        }
-        kioskMarkers.forEach(marker => {
-            if (marker && map.hasLayer(marker)) {
-                map.removeLayer(marker);
-            }
-        });
-        kioskMarkers = [];
-        
-        // 애니메이션 완료 후 마커 추가
-        setTimeout(() => {
-            // 새로운 마커 추가 (실제 현재 위치 기준)
-            addUserMarker();
-            addKioskMarkers();
+        try {
+            // 여러 방법으로 지도 이동 시도
+            map.setView([mapCenter.lat, mapCenter.lng], 15);
             
-            // 거리 재계산 (실제 현재 위치 기준)
-            calculateDistances();
-            filteredKioskData.sort((a, b) => a.distance - b.distance);
-            renderKioskList();
-        }, 1000); // 애니메이션 완료 후 실행
+            // 추가로 panTo도 시도
+            setTimeout(() => {
+                map.panTo([mapCenter.lat, mapCenter.lng]);
+                console.log('panTo 실행 완료');
+            }, 50);
+            
+            // 기존 마커 제거
+            if (userMarker && map.hasLayer(userMarker)) {
+                map.removeLayer(userMarker);
+            }
+            kioskMarkers.forEach(marker => {
+                if (marker && map.hasLayer(marker)) {
+                    map.removeLayer(marker);
+                }
+            });
+            kioskMarkers = [];
+            
+            // 즉시 마커 추가 (검색 위치 선택 상태에서는 마커만 업데이트, 지도 중심은 유지)
+            setTimeout(() => {
+                console.log('마커 추가 시작');
+                // 새로운 마커 추가 (실제 현재 위치 기준)
+                addUserMarker();
+                addKioskMarkers();
+                
+                // 거리 재계산 (실제 현재 위치 기준)
+                calculateDistances();
+                filteredKioskData.sort((a, b) => a.distance - b.distance);
+                renderKioskList();
+                console.log('지도 이동 및 마커 추가 완료');
+            }, 200);
+            
+        } catch (error) {
+            console.error('지도 이동 중 오류:', error);
+        }
+    } else {
+        console.error('지도 이동 실패:', { map: !!map, L: typeof L });
     }
 }
 
@@ -631,9 +705,10 @@ function initMap() {
         // Leaflet 지도 초기화
         if (typeof L !== 'undefined') {
             console.log('Leaflet 지도 생성 중...');
+            console.log('초기 지도 중심:', mapCenter);
             
-                    // Leaflet 지도 생성
-        map = L.map('map').setView([mapCenter.lat, mapCenter.lng], 13);
+            // Leaflet 지도 생성
+            map = L.map('map').setView([mapCenter.lat, mapCenter.lng], 13);
             console.log('Leaflet 지도 객체 생성됨:', map);
             
             // OpenStreetMap 타일 레이어 추가
@@ -642,6 +717,22 @@ function initMap() {
                 attribution: '© OpenStreetMap contributors'
             }).addTo(map);
             console.log('타일 레이어 추가됨');
+            
+            // 지도 이벤트 리스너 추가 (자동 이동 방지)
+            map.on('moveend', () => {
+                if (isSearchLocationSelected) {
+                    console.log('검색 위치 선택 상태에서 지도 이동 감지, 중심 복원');
+                    // 검색 위치 선택 상태에서는 지도 중심을 검색 위치로 고정
+                    const currentCenter = map.getCenter();
+                    const searchCenter = [mapCenter.lat, mapCenter.lng];
+                    
+                    // 현재 중심이 검색 중심과 다르면 복원
+                    if (Math.abs(currentCenter.lat - searchCenter[0]) > 0.001 || 
+                        Math.abs(currentCenter.lng - searchCenter[1]) > 0.001) {
+                        map.setView(searchCenter, map.getZoom());
+                    }
+                }
+            });
             
             // 사용자 위치 마커 추가
             addUserMarker();
@@ -1054,6 +1145,14 @@ function zoomOut() {
 // 내 위치로 이동
 function centerOnUser() {
     if (map && currentPosition) {
+        // 검색 위치 선택 상태 해제
+        isSearchLocationSelected = false;
+        searchLocationData = null;
+        
+        // localStorage에서 검색 위치 상태 제거
+        localStorage.removeItem('isSearchLocationSelected');
+        localStorage.removeItem('searchLocationData');
+        
         // 지도 중심을 실제 현재 위치로 이동
         mapCenter = { ...currentPosition };
         
@@ -1066,6 +1165,9 @@ function centerOnUser() {
         
         // 주소 표시를 실제 현재 위치로 되돌리기
         getAddressFromCoords(currentPosition);
+        
+        // 위치 추적 재시작
+        requestLocation();
     }
 }
 
@@ -1115,18 +1217,16 @@ function refreshLocation() {
         }
     }
     
-    // 위치 정보 다시 요청
-    requestLocation();
+    // 검색 위치 선택 상태 해제
+    isSearchLocationSelected = false;
+    searchLocationData = null;
     
-    // 지도 중심을 실제 현재 위치로 되돌리기 (검색 중이 아닐 때만)
-    setTimeout(() => {
-        if (currentPosition && !isSearching) {
-            mapCenter = { ...currentPosition };
-            if (map && typeof L !== 'undefined') {
-                map.setView([mapCenter.lat, mapCenter.lng], 13);
-            }
-        }
-    }, 500);
+    // localStorage에서 검색 위치 상태 제거
+    localStorage.removeItem('isSearchLocationSelected');
+    localStorage.removeItem('searchLocationData');
+    
+    // 위치 추적 재시작
+    requestLocation();
     
     // 키오스크 목록 업데이트
     setTimeout(() => {
@@ -1259,6 +1359,7 @@ function setupEventListeners() {
             if (searchResults.style.display === 'block') {
                 searchResults.style.display = 'none';
                 isSearching = false;
+                // 검색 위치 선택 상태는 유지 (선택된 위치가 있으면)
             }
         });
     }
@@ -1268,6 +1369,7 @@ function setupEventListeners() {
         if (!e.target.closest('.location-search') && searchResults.style.display === 'block') {
             searchResults.style.display = 'none';
             isSearching = false;
+            // 검색 위치 선택 상태는 유지 (선택된 위치가 있으면)
         }
     });
 } 
