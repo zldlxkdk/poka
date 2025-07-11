@@ -226,11 +226,11 @@ function createPhotoCardItem(photoCard, index) {
         <div class="photo-card-container">
             <div class="photo-card">
                 <div class="photo-card-front">
-                    <img src="${photoCard.frontImage}" alt="${photoCard.name || '앞면'}" loading="eager" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" onload="this.style.opacity='1';">
+                    <img src="${photoCard.frontImage}" alt="${photoCard.name || '앞면'}" loading="eager" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" onload="this.style.opacity='1'; this.style.display='block'; this.nextElementSibling.style.display='none';">
                     <div class="image-fallback">🖼️</div>
                 </div>
                 <div class="photo-card-back">
-                    <img src="${photoCard.backImage}" alt="${photoCard.name || '뒷면'}" loading="eager" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" onload="this.style.opacity='1';">
+                    <img src="${photoCard.backImage}" alt="${photoCard.name || '뒷면'}" loading="eager" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" onload="this.style.opacity='1'; this.style.display='block'; this.nextElementSibling.style.display='none';">
                     <div class="image-fallback">🖼️</div>
                 </div>
                 <!-- 카드 측면들 (두께감 표현) -->
@@ -238,10 +238,16 @@ function createPhotoCardItem(photoCard, index) {
                 <div class="photo-card-side photo-card-side-bottom"></div>
                 <div class="photo-card-side photo-card-side-left"></div>
                 <div class="photo-card-side photo-card-side-right"></div>
+                
+                <!-- 카드 내부 측면들 (앞면과 뒷면 사이) -->
+                <div class="photo-card-inner-side photo-card-inner-top"></div>
+                <div class="photo-card-inner-side photo-card-inner-bottom"></div>
+                <div class="photo-card-inner-side photo-card-inner-left"></div>
+                <div class="photo-card-inner-side photo-card-inner-right"></div>
             </div>
-            <!-- 카드 이름 표시 -->
-            <div class="photo-card-name">${photoCard.name || '제목 없음'}</div>
         </div>
+        <!-- 카드 이름 (카드 밑에 표시) -->
+        <div class="gallery-item-name">${photoCard.name || '제목 없음'}</div>
         <div class="gallery-item-overlay">
             <div class="gallery-item-info">
                 <div class="gallery-item-title">${photoCard.name || '제목 없음'}</div>
