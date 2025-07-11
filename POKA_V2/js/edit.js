@@ -332,6 +332,12 @@ function loadPhotoCardForEdit(photoCard) {
                 photoCardEditState.front.emojis = photoCard.frontEmojis;
             }
             
+            // 기존 이모지 제거 후 새로 렌더링
+            const frontEmojiLayer = document.getElementById('frontEmojiLayer');
+            if (frontEmojiLayer) {
+                frontEmojiLayer.innerHTML = '';
+            }
+            
             applyImageEditState('front');
             
             // 이모지 렌더링
@@ -367,6 +373,12 @@ function loadPhotoCardForEdit(photoCard) {
             }
             if (photoCard.backEmojis) {
                 photoCardEditState.back.emojis = photoCard.backEmojis;
+            }
+            
+            // 기존 이모지 제거 후 새로 렌더링
+            const backEmojiLayer = document.getElementById('backEmojiLayer');
+            if (backEmojiLayer) {
+                backEmojiLayer.innerHTML = '';
             }
             
             applyImageEditState('back');
@@ -2169,7 +2181,9 @@ function captureImageWithEmojis(side) {
                 return;
             }
             
-            // 원본 이미지 그리기
+            // 원본 이미지 그리기 (화질 유지)
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
             
             // 변환 적용
@@ -2197,7 +2211,7 @@ function captureImageWithEmojis(side) {
             ctx.drawImage(img, -canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
             ctx.restore();
             
-            // 이모지 그리기 - 원본 이미지 비율에 맞게 위치 조정
+            // 이모지 그리기 - 원본 이미지 비율에 맞게 위치 조정 (화질 개선)
             const emojis = emojiLayer.querySelectorAll('.emoji');
             emojis.forEach(emoji => {
                 const rect = emoji.getBoundingClientRect();
@@ -2212,7 +2226,10 @@ function captureImageWithEmojis(side) {
                 const x = (rect.left - containerRect.left) * scaleX;
                 const y = (rect.top - containerRect.top) * scaleY;
                 
-                ctx.font = '24px Arial';
+                // 이모지 크기를 원본 이미지 비율에 맞게 조정
+                const emojiSize = Math.max(24, Math.min(48, Math.min(scaleX, scaleY) * 24));
+                
+                ctx.font = `${emojiSize}px Arial`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText(emoji.textContent, x, y);
@@ -2763,8 +2780,15 @@ function renderEmojisForSide(side) {
         // 드래그 가능하게 만들기
         makeDraggable(emojiElement);
         
-        // 삭제 이벤트 추가
-        emojiElement.addEventListener('dblclick', function() {
+        // 삭제 이벤트 추가 (클릭과 더블클릭 모두 지원)
+        emojiElement.addEventListener('click', function(e) {
+            e.stopPropagation(); // 이벤트 버블링 방지
+            showDeleteConfirmModal(this, side);
+        });
+        
+        // 더블클릭도 지원 (기존 호환성 유지)
+        emojiElement.addEventListener('dblclick', function(e) {
+            e.stopPropagation(); // 이벤트 버블링 방지
             showDeleteConfirmModal(this, side);
         });
         
