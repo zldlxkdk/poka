@@ -41,7 +41,6 @@
                 <div class="location-info">
                     <div class="location-icon">📍</div>
                     <div class="location-text">
-                        <div class="location-title">현재 위치</div>
                         <div class="location-address" id="currentAddress">위치 정보를 가져오는 중...</div>
                         <div class="location-detail" id="locationDetail">세부 주소를 불러오는 중...</div>
                     </div>
@@ -53,20 +52,20 @@
                 <div class="map-container">
                     <div id="map" class="map-display"></div>
                     <div class="map-controls">
-                        <button class="map-control-btn" onclick="zoomIn()" title="확대">
-                            <span class="btn-icon">🔍</span>
-                        </button>
-                        <button class="map-control-btn" onclick="zoomOut()" title="축소">
-                            <span class="btn-icon">🔍</span>
-                        </button>
                         <button class="map-control-btn" onclick="centerOnUser()" title="내 위치">
                             <span class="btn-icon">📍</span>
                         </button>
                     </div>
                 </div>
                 
-                <!-- 로딩 상태 - 지도 바로 아래 -->
+                <!-- 지도 로딩 상태 -->
                 <div class="loading-state" id="loadingState" style="display: none;">
+                    <div class="loading-spinner"></div>
+                    <p>지도를 불러오는 중...</p>
+                </div>
+                
+                <!-- 키오스크 정보 로딩 상태 -->
+                <div class="loading-state" id="kioskInfoLoading" style="display: none;">
                     <div class="loading-spinner"></div>
                     <p>키오스크 정보를 불러오는 중...</p>
                 </div>
@@ -81,8 +80,49 @@
                             <select class="sort-select" id="sortSelect" onchange="handleSortChange()">
                                 <option value="distance">📏 거리순</option>
                                 <option value="name">📝 이름순</option>
-                                <option value="status">🟢 상태순</option>
                             </select>
+                        </div>
+                        <div class="filter-dropdown">
+                            <select class="filter-select" id="filterSelect" onchange="handleFilterChange()">
+                                <option value="all">🟢 전체</option>
+                                <option value="online">🟢 운영중</option>
+                                <option value="maintenance">🟡 점검중</option>
+                                <option value="offline">🔴 중단</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 키오스크 목록 로딩 스켈레톤 -->
+                <div class="kiosk-list-loading" id="kioskListLoading" style="display: none;">
+                    <div class="kiosk-skeleton">
+                        <div class="skeleton-header">
+                            <div class="skeleton-name"></div>
+                            <div class="skeleton-address"></div>
+                        </div>
+                        <div class="skeleton-meta">
+                            <div class="skeleton-distance"></div>
+                            <div class="skeleton-status"></div>
+                        </div>
+                    </div>
+                    <div class="kiosk-skeleton">
+                        <div class="skeleton-header">
+                            <div class="skeleton-name"></div>
+                            <div class="skeleton-address"></div>
+                        </div>
+                        <div class="skeleton-meta">
+                            <div class="skeleton-distance"></div>
+                            <div class="skeleton-status"></div>
+                        </div>
+                    </div>
+                    <div class="kiosk-skeleton">
+                        <div class="skeleton-header">
+                            <div class="skeleton-name"></div>
+                            <div class="skeleton-address"></div>
+                        </div>
+                        <div class="skeleton-meta">
+                            <div class="skeleton-distance"></div>
+                            <div class="skeleton-status"></div>
                         </div>
                     </div>
                 </div>
