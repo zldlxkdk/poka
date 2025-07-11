@@ -275,7 +275,10 @@ function createPhotoCardItem(photoCard, index) {
             console.log('앞면 이미지 상태 확인:', {
                 src: frontImg.src.substring(0, 100) + '...',
                 display: frontImg.style.display,
-                opacity: frontImg.style.opacity
+                opacity: frontImg.style.opacity,
+                naturalWidth: frontImg.naturalWidth,
+                naturalHeight: frontImg.naturalHeight,
+                complete: frontImg.complete
             });
         }
         
@@ -283,10 +286,15 @@ function createPhotoCardItem(photoCard, index) {
             console.log('뒷면 이미지 상태 확인:', {
                 src: backImg.src.substring(0, 100) + '...',
                 display: backImg.style.display,
-                opacity: backImg.style.opacity
+                opacity: backImg.style.opacity,
+                naturalWidth: backImg.naturalWidth,
+                naturalHeight: backImg.naturalHeight,
+                complete: backImg.complete,
+                transform: backImg.style.transform,
+                computedTransform: window.getComputedStyle(backImg).transform
             });
         }
-    }, 100);
+    }, 200);
     
     // 클릭 이벤트
     item.addEventListener('click', (e) => {
@@ -394,37 +402,52 @@ function sortPhotoCards(sortBy) {
 function openPhotoCardModal(photoCard, index) {
     currentModalPhotoCard = { photoCard, index };
     
-    const modalImage = document.getElementById('modalImage');
-    const modalImageFallback = document.getElementById('modalImageFallback');
+    const modalFrontImage = document.getElementById('modalFrontImage');
+    const modalFrontImageFallback = document.getElementById('modalFrontImageFallback');
+    const modalBackImage = document.getElementById('modalBackImage');
+    const modalBackImageFallback = document.getElementById('modalBackImageFallback');
     const modalTitle = document.getElementById('modalTitle');
     const modalDate = document.getElementById('modalDate');
-    const modalSize = document.getElementById('modalSize');
     const favoriteIcon = document.getElementById('favoriteIcon');
     const favoriteText = document.getElementById('favoriteText');
     
     // 모달 표시
     imageModal.style.display = 'flex';
     
-    // 초기 상태 설정 - 앞면 이미지 표시
-    modalImage.src = '';
-    modalImage.style.display = 'none';
-    modalImageFallback.style.display = 'flex';
+    // 초기 상태 설정
+    modalFrontImage.src = '';
+    modalFrontImage.style.display = 'none';
+    modalFrontImageFallback.style.display = 'flex';
     
-    // 이벤트 리스너 설정
-    modalImage.onload = function() {
-        modalImage.style.display = 'block';
-        modalImageFallback.style.display = 'none';
+    modalBackImage.src = '';
+    modalBackImage.style.display = 'none';
+    modalBackImageFallback.style.display = 'flex';
+    
+    // 앞면 이미지 이벤트 리스너 설정
+    modalFrontImage.onload = function() {
+        modalFrontImage.style.display = 'block';
+        modalFrontImageFallback.style.display = 'none';
     };
     
-    modalImage.onerror = function() {
-        modalImage.style.display = 'none';
-        modalImageFallback.style.display = 'flex';
+    modalFrontImage.onerror = function() {
+        modalFrontImage.style.display = 'none';
+        modalFrontImageFallback.style.display = 'flex';
+    };
+    
+    // 뒷면 이미지 이벤트 리스너 설정
+    modalBackImage.onload = function() {
+        modalBackImage.style.display = 'block';
+        modalBackImageFallback.style.display = 'none';
+    };
+    
+    modalBackImage.onerror = function() {
+        modalBackImage.style.display = 'none';
+        modalBackImageFallback.style.display = 'flex';
     };
     
     // 정보 업데이트
     modalTitle.textContent = photoCard.name || '제목 없음';
     modalDate.textContent = `생성일: ${new Date(photoCard.createdAt).toLocaleString('ko-KR')}`;
-    modalSize.textContent = `앞면: ${photoCard.frontImageName || '앞면'}, 뒷면: ${photoCard.backImageName || '뒷면'}`;
     
     if (photoCard.favorite) {
         favoriteIcon.textContent = '?';
@@ -434,9 +457,10 @@ function openPhotoCardModal(photoCard, index) {
         favoriteText.textContent = '즐겨찾기';
     }
     
-    // 앞면 이미지 소스 설정 (이벤트 리스너 설정 후)
+    // 앞면과 뒷면 이미지 소스 설정
     setTimeout(() => {
-        modalImage.src = photoCard.frontImage;
+        modalFrontImage.src = photoCard.frontImage;
+        modalBackImage.src = photoCard.backImage;
     }, 100);
     
     // 모달 오버레이 클릭 시 모달 닫기
@@ -458,21 +482,32 @@ function openPhotoCardModal(photoCard, index) {
     }
 }
 
+
+
 // 포토카드 모달 닫기
 function closePhotoCardModal() {
     imageModal.style.display = 'none';
     currentModalPhotoCard = null;
     
     // 모달 이미지와 폴백 초기화
-    const modalImage = document.getElementById('modalImage');
-    const modalImageFallback = document.getElementById('modalImageFallback');
+    const modalFrontImage = document.getElementById('modalFrontImage');
+    const modalFrontImageFallback = document.getElementById('modalFrontImageFallback');
+    const modalBackImage = document.getElementById('modalBackImage');
+    const modalBackImageFallback = document.getElementById('modalBackImageFallback');
     
-    // 이미지 소스와 이벤트 리스너 제거
-    modalImage.onload = null;
-    modalImage.onerror = null;
-    modalImage.src = '';
-    modalImage.style.display = 'none';
-    modalImageFallback.style.display = 'none';
+    // 앞면 이미지 소스와 이벤트 리스너 제거
+    modalFrontImage.onload = null;
+    modalFrontImage.onerror = null;
+    modalFrontImage.src = '';
+    modalFrontImage.style.display = 'none';
+    modalFrontImageFallback.style.display = 'none';
+    
+    // 뒷면 이미지 소스와 이벤트 리스너 제거
+    modalBackImage.onload = null;
+    modalBackImage.onerror = null;
+    modalBackImage.src = '';
+    modalBackImage.style.display = 'none';
+    modalBackImageFallback.style.display = 'none';
 }
 
 // 현재 포토카드 편집

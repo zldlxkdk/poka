@@ -109,23 +109,36 @@
 
     <!-- 이미지 상세 모달 -->
     <div class="image-modal" id="imageModal" style="display: none;">
-        <div class="modal-overlay" onclick="closeImageModal()"></div>
+        <div class="modal-overlay" onclick="closePhotoCardModal()"></div>
         <div class="modal-content">
             <div class="modal-header">
                 <button class="modal-delete" onclick="deleteCurrentPhotoCard()" title="삭제">
                     <span class="btn-icon">🗑️</span>
                 </button>
-                <button class="modal-close" onclick="closeImageModal()" title="닫기">×</button>
+                <button class="modal-close" onclick="closePhotoCardModal()" title="닫기">×</button>
             </div>
             <div class="modal-body">
-                <img id="modalImage" src="" alt="">
-                <div class="image-fallback modal-fallback" id="modalImageFallback">
-                    📷
+                <div class="modal-image-container">
+                    <div class="modal-dual-images">
+                        <div class="modal-image-side">
+                            <h4 class="image-side-label">앞면</h4>
+                            <img id="modalFrontImage" src="" alt="앞면">
+                            <div class="image-fallback modal-fallback" id="modalFrontImageFallback">
+                                📷
+                            </div>
+                        </div>
+                        <div class="modal-image-side">
+                            <h4 class="image-side-label">뒷면</h4>
+                            <img id="modalBackImage" src="" alt="뒷면">
+                            <div class="image-fallback modal-fallback" id="modalBackImageFallback">
+                                📷
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="image-info">
                     <h3 id="modalTitle"></h3>
                     <p id="modalDate"></p>
-                    <p id="modalSize"></p>
                 </div>
             </div>
             <div class="modal-actions">
