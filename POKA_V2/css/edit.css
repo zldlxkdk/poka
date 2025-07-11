@@ -1491,15 +1491,13 @@
 
 .controls-row {
     display: flex;
-    gap: 30px;
-    align-items: flex-start;
-    justify-content: space-between;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 20px;
+    align-items: stretch;
 }
 
 .unified-edit-controls .control-group {
-    flex: 1;
-    min-width: 200px;
+    width: 100%;
     padding: 15px;
     background: rgba(255, 255, 255, 0.8);
     border-radius: 12px;
@@ -1617,8 +1615,8 @@
 /* 반응형 디자인 */
 @media (max-width: 768px) {
     .dual-image-edit-container {
-        grid-template-columns: 1fr;
-        gap: 20px;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
     }
     
     .edit-header {
@@ -1656,17 +1654,14 @@
     }
     
     .unified-edit-controls .controls-row {
-        flex-direction: row;
-        gap: 8px;
-        justify-content: space-between;
+        flex-direction: column;
+        gap: 15px;
         align-items: stretch;
-        flex-wrap: wrap;
     }
     
     .unified-edit-controls .control-group {
-        min-width: 0;
-        width: 32%;
-        padding: 8px;
+        width: 100%;
+        padding: 12px;
         box-sizing: border-box;
     }
     

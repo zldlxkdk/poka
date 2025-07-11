@@ -30,7 +30,7 @@
         height: 100% !important;
         max-height: 100% !important;
         min-height: 0 !important;
-        object-fit: contain !important;
+        object-fit: cover !important;
         width: 100% !important;
     }
 }
@@ -887,7 +887,7 @@
 .image-info {
     margin-top: 12px;
     margin-bottom: 20px;
-    text-align: left;
+    text-align: center;
     width: 100%;
     padding: 0 8px;
     padding-bottom: 16px;
@@ -1144,16 +1144,19 @@
         margin-bottom: 20px;
         padding: 0 4px;
         padding-bottom: 16px;
+        text-align: center;
     }
     
     .image-info h3 {
         font-size: 1rem;
         margin-bottom: 4px;
+        text-align: center;
     }
     
     .image-info p {
         font-size: 0.8rem;
         margin-bottom: 2px;
+        text-align: center;
     }
     
     .modal-actions {
@@ -1329,7 +1332,7 @@
         max-height: 100% !important;
         min-height: 0 !important;
         width: 100%;
-        object-fit: contain !important;
+        object-fit: cover !important;
         display: block !important;
     }
 } 
