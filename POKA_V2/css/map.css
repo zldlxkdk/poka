@@ -1,0 +1,561 @@
+/* POKA V2 - 지도 페이지 스타일 */
+
+/* 위치 정보 섹션 */
+.location-section {
+    padding: 20px;
+    background: var(--surface-color);
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.location-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.location-icon {
+    font-size: 2rem;
+    color: var(--primary-color);
+    min-width: 40px;
+    text-align: center;
+}
+
+.location-text {
+    flex: 1;
+}
+
+.location-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.location-address {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+/* 지도 섹션 */
+.map-section {
+    margin-bottom: 20px;
+}
+
+.map-container {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.map-display {
+    width: 100%;
+    height: 300px;
+    background: var(--background-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+/* Leaflet 지도 스타일 */
+.leaflet-container {
+    height: 100% !important;
+    width: 100% !important;
+    border-radius: 12px;
+}
+
+/* 헤더가 지도보다 위에 오도록 설정 */
+.header {
+    position: relative;
+    z-index: 100;
+    background: var(--surface-color);
+}
+
+/* 네비게이션 바가 지도보다 위에 오도록 설정 */
+.bottom-nav {
+    position: relative;
+    z-index: 50;
+}
+
+/* Leaflet 팝업 스타일 개선 */
+.leaflet-popup-content-wrapper {
+    background: var(--surface-color) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3) !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    z-index: 1000 !important;
+    backdrop-filter: blur(2px) !important;
+}
+
+.leaflet-popup-content {
+    margin: 12px !important;
+    font-family: inherit !important;
+    color: var(--text-primary) !important;
+    background: var(--surface-color) !important;
+    border-radius: 8px !important;
+}
+
+.leaflet-popup-tip {
+    background: var(--surface-color) !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    border-top: none !important;
+    border-right: none !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+.leaflet-popup-close-button {
+    color: var(--text-secondary) !important;
+    font-size: 18px !important;
+    font-weight: bold !important;
+    padding: 4px 8px !important;
+}
+
+.leaflet-popup-close-button:hover {
+    color: var(--text-primary) !important;
+    background: rgba(0, 0, 0, 0.05) !important;
+    border-radius: 4px !important;
+}
+
+.map-controls {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 1000;
+}
+
+.map-control-btn {
+    width: 40px;
+    height: 40px;
+    background: var(--surface-color);
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.map-control-btn:hover {
+    background: var(--background-color);
+    transform: scale(1.05);
+}
+
+.map-control-btn .btn-icon {
+    font-size: 1.2rem;
+}
+
+/* 키오스크 목록 섹션 */
+.kiosk-list-section {
+    background: var(--surface-color);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.section-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.section-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.sort-btn {
+    background: var(--background-color);
+    border: none;
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.sort-btn:hover {
+    background: var(--primary-color);
+    color: var(--surface-color);
+}
+
+/* 키오스크 목록 */
+.kiosk-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.kiosk-item {
+    background: var(--background-color);
+    border-radius: 12px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+}
+
+.kiosk-item:hover {
+    background: rgba(0, 212, 255, 0.1);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 212, 255, 0.15);
+}
+
+.kiosk-item:active {
+    transform: translateY(0px);
+    box-shadow: 0 2px 8px rgba(0, 212, 255, 0.2);
+}
+
+.kiosk-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+
+.kiosk-info {
+    flex: 1;
+}
+
+.kiosk-name {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.kiosk-address {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+}
+
+.kiosk-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.kiosk-distance {
+    color: var(--primary-color);
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.kiosk-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border-radius: 16px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.kiosk-status.online {
+    background: rgba(34, 197, 94, 0.1);
+    color: #22c55e;
+}
+
+.kiosk-status.offline {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.kiosk-status.maintenance {
+    background: rgba(251, 146, 60, 0.1);
+    color: #fb923c;
+}
+
+.status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+/* 팝업 스타일 */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+}
+
+.popup-content {
+    background: var(--surface-color);
+    border-radius: 16px;
+    max-width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    animation: popupSlideIn 0.3s ease-out;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+@keyframes popupSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--surface-color);
+    border-radius: 16px 16px 0 0;
+}
+
+.popup-title {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.popup-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.popup-close:hover {
+    background: var(--background-color);
+    color: var(--text-primary);
+}
+
+.popup-body {
+    padding: 20px;
+    background: var(--surface-color);
+}
+
+.popup-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 20px;
+    border-top: 1px solid var(--border-color);
+    background: var(--surface-color);
+    border-radius: 0 0 16px 16px;
+}
+
+/* 키오스크 상세 정보 */
+.kiosk-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background: var(--surface-color);
+}
+
+.kiosk-detail-header {
+    text-align: center;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--surface-color);
+}
+
+.kiosk-detail-name {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.kiosk-detail-address {
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+.kiosk-detail-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: var(--surface-color);
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--surface-color);
+    padding: 8px 0;
+}
+
+.info-icon {
+    font-size: 1.2rem;
+    min-width: 24px;
+    text-align: center;
+}
+
+.info-content {
+    flex: 1;
+    background: var(--surface-color);
+}
+
+.info-label {
+    font-weight: bold;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.info-value {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+/* 빈 상태 */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-secondary);
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: 16px;
+}
+
+.empty-state h3 {
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+}
+
+.empty-state p {
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* 로딩 상태 */
+.loading-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-secondary);
+}
+
+.loading-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--background-color);
+    border-top: 3px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 16px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .map-display {
+        height: 250px;
+    }
+    
+    .kiosk-item-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .kiosk-meta {
+        width: 100%;
+    }
+    
+    .popup-content {
+        max-width: 95%;
+    }
+}
+
+@media (max-width: 480px) {
+    .location-section {
+        padding: 16px;
+    }
+    
+    .kiosk-list-section {
+        padding: 16px;
+    }
+    
+    .map-display {
+        height: 200px;
+    }
+    
+    .map-controls {
+        top: 8px;
+        right: 8px;
+    }
+    
+    .map-control-btn {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .kiosk-item {
+        padding: 12px;
+    }
+    
+    .popup-header,
+    .popup-body,
+    .popup-footer {
+        padding: 16px;
+    }
+}
+
+/* 지도 컨테이너 강제 스타일 */
+#map {
+    width: 100% !important;
+    height: 300px !important;
+    background: #f0f0f0 !important;
+}
+
+/* Leaflet 컨테이너 강제 스타일 */
+.leaflet-container {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 300px !important;
+} 

@@ -63,25 +63,25 @@
   ],
   "shortcuts": [
     {
-      "name": "사진 업로드",
-      "short_name": "업로드",
-      "description": "갤러리에서 사진을 선택하거나 카메라로 촬영",
-      "url": "/upload.html",
-      "icons": [
-        {
-          "src": "icons/upload-96x96.png",
-          "sizes": "96x96"
-        }
-      ]
-    },
-    {
-      "name": "갤러리",
-      "short_name": "갤러리",
+      "name": "포토카드",
+      "short_name": "포토카드",
       "description": "제작한 포토카드들을 확인",
       "url": "/gallery.html",
       "icons": [
         {
           "src": "icons/gallery-96x96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "지도",
+      "short_name": "지도",
+      "description": "근처 포카 키오스크 위치 확인",
+      "url": "/map.html",
+      "icons": [
+        {
+          "src": "icons/map-96x96.png",
           "sizes": "96x96"
         }
       ]
@@ -119,7 +119,7 @@
       "sizes": "390x844",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "갤러리 화면"
+      "label": "포토카드 화면"
     }
   ],
   "related_applications": [],

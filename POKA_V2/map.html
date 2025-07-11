@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>POKA V2 - 지도</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/map.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#00d4ff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- Leaflet 지도 라이브러리 (무료) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- 카카오맵 API (선택사항) -->
+    <!-- <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=YOUR_KAKAO_MAP_API_KEY&libraries=services"></script> -->
+</head>
+<body>
+    <div class="app-container">
+        <!-- 헤더 -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="page-title">키오스크 찾기</h1>
+                <div class="header-actions">
+                    <button class="header-btn" onclick="refreshLocation()" title="위치 새로고침">
+                        <span class="btn-icon">🔄</span>
+                    </button>
+                    <button class="header-btn" onclick="toggleMapType()" title="지도 타입 변경">
+                        <span class="btn-icon">🗺️</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- 메인 컨텐츠 -->
+        <main class="main-content">
+            <!-- 위치 정보 -->
+            <section class="location-section">
+                <div class="location-info">
+                    <div class="location-icon">📍</div>
+                    <div class="location-text">
+                        <div class="location-title">현재 위치</div>
+                        <div class="location-address" id="currentAddress">위치 정보를 가져오는 중...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 지도 영역 -->
+            <section class="map-section">
+                <div class="map-container">
+                    <div id="map" class="map-display"></div>
+                    <div class="map-controls">
+                        <button class="map-control-btn" onclick="zoomIn()" title="확대">
+                            <span class="btn-icon">🔍</span>
+                        </button>
+                        <button class="map-control-btn" onclick="zoomOut()" title="축소">
+                            <span class="btn-icon">🔍</span>
+                        </button>
+                        <button class="map-control-btn" onclick="centerOnUser()" title="내 위치">
+                            <span class="btn-icon">📍</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 키오스크 목록 -->
+            <section class="kiosk-list-section">
+                <div class="section-header">
+                    <h3 class="section-title">근처 키오스크</h3>
+                    <div class="section-actions">
+                        <button class="sort-btn" onclick="showSortOptions()" title="정렬 옵션">
+                            <span class="btn-icon">⚙️</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="kiosk-list" id="kioskList">
+                    <!-- 키오스크 목록이 여기에 동적으로 추가됩니다 -->
+                </div>
+                
+                <!-- 빈 상태 -->
+                <div class="empty-state" id="emptyState" style="display: none;">
+                    <div class="empty-icon">🔍</div>
+                    <h3>주변에 키오스크가 없습니다</h3>
+                    <p>다른 지역을 확인해보세요</p>
+                </div>
+            </section>
+
+            <!-- 로딩 상태 -->
+            <div class="loading-state" id="loadingState" style="display: none;">
+                <div class="loading-spinner"></div>
+                <p>키오스크 정보를 불러오는 중...</p>
+            </div>
+        </main>
+
+        <!-- 키오스크 상세 정보 팝업 -->
+        <div class="popup-overlay" id="kioskPopup" style="display: none;">
+            <div class="popup-content">
+                <div class="popup-header">
+                    <h3 class="popup-title" id="popupTitle">키오스크 상세 정보</h3>
+                    <button class="popup-close" onclick="closeKioskPopup()">
+                        <span class="btn-icon">✕</span>
+                    </button>
+                </div>
+                <div class="popup-body" id="popupBody">
+                    <!-- 키오스크 상세 정보가 여기에 표시됩니다 -->
+                </div>
+                <div class="popup-footer">
+                    <button class="btn btn-secondary" onclick="closeKioskPopup()">닫기</button>
+                    <button class="btn btn-primary" onclick="getDirections()">길찾기</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 네비게이션 바 -->
+        <nav class="bottom-nav">
+            <a href="index.html" class="nav-item">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-text">홈</span>
+            </a>
+            <a href="gallery.html" class="nav-item">
+                <span class="nav-icon">🎴</span>
+                <span class="nav-text">포토카드</span>
+            </a>
+            <a href="map.html" class="nav-item active">
+                <span class="nav-icon">🗺️</span>
+                <span class="nav-text">지도</span>
+            </a>
+            <a href="profile.html" class="nav-item">
+                <span class="nav-icon">👤</span>
+                <span class="nav-text">프로필</span>
+            </a>
+        </nav>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/map.js"></script>
+</body>
+</html> 
