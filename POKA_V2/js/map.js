@@ -231,7 +231,8 @@ const kioskData = [
 
 // 전역 변수
 let map = null;
-let currentPosition = null;
+let currentPosition = null; // 실제 현재 위치 (GPS)
+let mapCenter = null; // 지도 중심 위치 (검색 위치 포함)
 let kioskMarkers = [];
 let selectedKiosk = null;
 let userMarker = null;
@@ -286,6 +287,9 @@ document.addEventListener('DOMContentLoaded', () => {
         lat: 37.5665,
         lng: 126.9780
     };
+    
+    // 지도 중심도 동일하게 설정
+    mapCenter = { ...currentPosition };
     
     // 기본 주소 설정
     currentAddressElement.textContent = '위치 정보를 가져오는 중...';
@@ -362,12 +366,15 @@ function requestLocation() {
                     lng: position.coords.longitude
                 };
                 
+                // 지도 중심도 실제 현재 위치로 설정
+                mapCenter = { ...currentPosition };
+                
                 // 주소 변환
                 getAddressFromCoords(currentPosition);
                 
                 // 지도가 로드된 후 중심 이동
                 if (map && typeof L !== 'undefined') {
-                    map.setView([currentPosition.lat, currentPosition.lng], 13);
+                    map.setView([mapCenter.lat, mapCenter.lng], 13);
                     
                     // 기존 마커 제거
                     if (userMarker && map.hasLayer(userMarker)) {
@@ -404,6 +411,9 @@ function requestLocation() {
                     lat: 37.5665,
                     lng: 126.9780
                 };
+                
+                // 지도 중심도 동일하게 설정
+                mapCenter = { ...currentPosition };
                 
                 // 기본 주소 설정
                 currentAddressElement.textContent = '서울시 강남구';
@@ -477,23 +487,27 @@ function displaySearchResults(results) {
 function selectSearchResult(result) {
     console.log('선택된 위치:', result);
     
-    // 새로운 위치로 설정
-    currentPosition = {
+    // 지도 중심 위치만 변경 (실제 현재 위치는 유지)
+    mapCenter = {
         lat: parseFloat(result.lat),
         lng: parseFloat(result.lon)
     };
     
-    // 주소 업데이트
-    currentAddressElement.textContent = result.display_name.split(',')[0];
-    locationDetailElement.textContent = result.display_name;
+    // 검색한 위치의 주소 표시 (임시)
+    const searchAddress = result.display_name.split(',')[0];
+    const searchFullAddress = result.display_name;
+    
+    // 주소 표시 업데이트 (검색 위치임을 명시)
+    currentAddressElement.textContent = `🔍 ${searchAddress}`;
+    locationDetailElement.textContent = `검색 위치: ${searchFullAddress}`;
     
     // 검색 결과 숨기기
     searchResults.style.display = 'none';
     addressSearchInput.value = '';
     
-    // 지도 중심 이동
+    // 지도 중심 이동 (검색 위치로)
     if (map && typeof L !== 'undefined') {
-        map.setView([currentPosition.lat, currentPosition.lng], 15);
+        map.setView([mapCenter.lat, mapCenter.lng], 15);
         
         // 기존 마커 제거
         if (userMarker && map.hasLayer(userMarker)) {
@@ -506,11 +520,11 @@ function selectSearchResult(result) {
         });
         kioskMarkers = [];
         
-        // 새로운 마커 추가
+        // 새로운 마커 추가 (실제 현재 위치 기준)
         addUserMarker();
         addKioskMarkers();
         
-        // 거리 재계산
+        // 거리 재계산 (실제 현재 위치 기준)
         calculateDistances();
         filteredKioskData.sort((a, b) => a.distance - b.distance);
         renderKioskList();
@@ -591,8 +605,8 @@ function initMap() {
         if (typeof L !== 'undefined') {
             console.log('Leaflet 지도 생성 중...');
             
-            // Leaflet 지도 생성
-            map = L.map('map').setView([currentPosition.lat, currentPosition.lng], 13);
+                    // Leaflet 지도 생성
+        map = L.map('map').setView([mapCenter.lat, mapCenter.lng], 13);
             console.log('Leaflet 지도 객체 생성됨:', map);
             
             // OpenStreetMap 타일 레이어 추가
@@ -1013,12 +1027,18 @@ function zoomOut() {
 // 내 위치로 이동
 function centerOnUser() {
     if (map && currentPosition) {
+        // 지도 중심을 실제 현재 위치로 이동
+        mapCenter = { ...currentPosition };
+        
         if (typeof L !== 'undefined') {
-            map.setView([currentPosition.lat, currentPosition.lng], 13);
+            map.setView([mapCenter.lat, mapCenter.lng], 13);
         } else if (typeof kakao !== 'undefined') {
-            const userPosition = new kakao.maps.LatLng(currentPosition.lat, currentPosition.lng);
+            const userPosition = new kakao.maps.LatLng(mapCenter.lat, mapCenter.lng);
             map.setCenter(userPosition);
         }
+        
+        // 주소 표시를 실제 현재 위치로 되돌리기
+        getAddressFromCoords(currentPosition);
     }
 }
 
@@ -1070,6 +1090,16 @@ function refreshLocation() {
     
     // 위치 정보 다시 요청
     requestLocation();
+    
+    // 지도 중심을 실제 현재 위치로 되돌리기
+    setTimeout(() => {
+        if (currentPosition) {
+            mapCenter = { ...currentPosition };
+            if (map && typeof L !== 'undefined') {
+                map.setView([mapCenter.lat, mapCenter.lng], 13);
+            }
+        }
+    }, 500);
     
     // 키오스크 목록 업데이트
     setTimeout(() => {
