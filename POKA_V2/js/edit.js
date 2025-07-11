@@ -183,12 +183,15 @@ function updateImageSelector(side, imageData) {
 }
 
 // 선택된 이미지 편집
-function editSelectedImage(side) {
+function selectImageForEdit(side) {
     console.log('이미지 편집 시작:', side);
+    
+    currentSelectedSide = side; // 항상 동기화
     
     const imageData = side === 'front' ? selectedFrontImage : selectedBackImage;
     
-    if (!imageData) {
+    // 포토카드 편집 모드일 때는 imageData가 없어도 편집 가능해야 함
+    if (!currentPhotoCard && !imageData) {
         POKA.Toast.warning('편집할 이미지가 없습니다');
         return;
     }
@@ -216,6 +219,9 @@ function editSelectedImage(side) {
     
     // 이미지 편집 상태 로드
     loadImageEditState(side);
+    
+    // UI 상태 동기화
+    updateImageSelectionState();
     
     POKA.Toast.success(`${side === 'front' ? '앞면' : '뒷면'} 이미지 편집 모드로 전환되었습니다`);
 }
@@ -391,6 +397,13 @@ function loadPhotoCardForEdit(photoCard) {
     
     // 이미지 클릭 이벤트 설정
     setupImageClickEvents();
+    
+    // 이미지 로딩 완료 후 상태 업데이트
+    setTimeout(() => {
+        updateImageSelectionState();
+        // 초기 상태 설정 (앞면 선택)
+        switchImageSide('front');
+    }, 100);
     
     // 초기 선택 상태 설정
     updateImageSelectionState();
@@ -1642,14 +1655,7 @@ function enterPhotoCardEditMode() {
     // 포토카드 데이터 로드
     loadPhotoCardData();
     
-    // 이미지 선택 이벤트 설정
-    document.getElementById('frontImageEditContainer')?.addEventListener('click', function() {
-        selectImageForEdit('front');
-    });
-    
-    document.getElementById('backImageEditContainer')?.addEventListener('click', function() {
-        selectImageForEdit('back');
-    });
+    // 이미지 선택 이벤트 제거 - 이미지 클릭 시 아무 동작하지 않음
     
     // 키보드 단축키
     document.addEventListener('keydown', function(e) {
@@ -1736,31 +1742,19 @@ function loadPhotoCardData() {
         console.log('뒷면 이미지 없음');
     }
     
-    // 이미지 클릭 이벤트 추가
-    setupImageClickEvents();
+    // 이미지 클릭 이벤트 제거
     
-    // 초기 선택 상태 설정
+    // 초기 선택 상태를 앞면으로 설정
+    currentSelectedSide = 'front';
     updateImageSelectionState();
     
     console.log('포토카드 데이터 로드 완료');
 }
 
-// 이미지 클릭 이벤트 설정
+// 이미지 클릭 이벤트 설정 (비활성화)
 function setupImageClickEvents() {
-    const frontContainer = document.getElementById('frontImageEditContainer');
-    const backContainer = document.getElementById('backImageEditContainer');
-    
-    frontContainer.onclick = function(e) {
-        if (e.target === frontContainer || e.target.id === 'frontImageFallback') {
-            selectImageForUpload('front');
-        }
-    };
-    
-    backContainer.onclick = function(e) {
-        if (e.target === backContainer || e.target.id === 'backImageFallback') {
-            selectImageForUpload('back');
-        }
-    };
+    // 이미지 클릭 이벤트 완전 제거
+    console.log('이미지 클릭 이벤트가 비활성화되었습니다');
 }
 
 // 이미지 업로드 선택
@@ -1794,22 +1788,60 @@ function selectImageForUpload(side) {
 
 // 이미지 편집 초기화
 function resetImageEdit(side) {
-    photoCardEditState[side] = {
-        image: photoCardEditState[side].image,
-        rotation: 0,
-        flip: { horizontal: false, vertical: false },
-        filter: 'none',
-        emojis: []
-    };
+    // 이미지가 있는지 확인
+    const imageElement = document.getElementById(side === 'front' ? 'frontEditImage' : 'backEditImage');
+    const fallbackElement = document.getElementById(side === 'front' ? 'frontImageFallback' : 'backImageFallback');
     
-    applyImageEditState(side);
-    clearEmojisEdit(side);
+    if (imageElement && imageElement.src && imageElement.src !== window.location.href) {
+        // 이미지가 있는 경우에만 편집 상태 초기화
+        photoCardEditState[side] = {
+            image: imageElement.src,
+            rotation: 0,
+            flip: { horizontal: false, vertical: false },
+            filter: 'none',
+            emojis: []
+        };
+        
+        applyImageEditState(side);
+        clearEmojisEdit(side);
+        
+        console.log(`${side} 면 이미지 편집 상태 초기화 완료`);
+    } else {
+        // 이미지가 없는 경우
+        photoCardEditState[side] = {
+            image: null,
+            rotation: 0,
+            flip: { horizontal: false, vertical: false },
+            filter: 'none',
+            emojis: []
+        };
+        
+        if (fallbackElement) {
+            fallbackElement.style.display = 'flex';
+        }
+        if (imageElement) {
+            imageElement.style.display = 'none';
+        }
+        
+        console.log(`${side} 면에 이미지가 없어 초기화를 건너뜁니다`);
+    }
 }
 
 // 이미지 편집 상태 적용
 function applyImageEditState(side) {
     const imageElement = document.getElementById(side === 'front' ? 'frontEditImage' : 'backEditImage');
     const state = photoCardEditState[side];
+    
+    if (!imageElement || !state) {
+        console.error(`${side} 면 이미지 엘리먼트 또는 상태를 찾을 수 없습니다`);
+        return;
+    }
+    
+    // 이미지가 로드되어 있는지 확인
+    if (!imageElement.src || imageElement.src === window.location.href) {
+        console.log(`${side} 면 이미지가 로드되지 않았습니다`);
+        return;
+    }
     
     // 회전 적용
     let transform = `rotate(${state.rotation}deg)`;
@@ -1840,6 +1872,8 @@ function applyImageEditState(side) {
             filter = 'none';
     }
     imageElement.style.filter = filter;
+    
+    console.log(`${side} 면 편집 상태 적용 완료:`, { rotation: state.rotation, flip: state.flip, filter: state.filter });
 }
 
 // 이미지 회전
@@ -2027,15 +2061,9 @@ function clearEmojisEdit(side) {
     const emojiLayer = document.getElementById(side === 'front' ? 'frontEmojiLayer' : 'backEmojiLayer');
     if (!emojiLayer) return;
     
-    if (emojiLayer.children.length === 0) {
-        alert('삭제할 이모지가 없습니다.');
-        return;
-    }
-    
-    if (confirm('모든 이모지를 삭제하시겠습니까?')) {
-        emojiLayer.innerHTML = '';
-        photoCardEditState[side].emojis = [];
-    }
+    // 이모지가 없으면 조용히 초기화만 수행 (알림 없음)
+    emojiLayer.innerHTML = '';
+    photoCardEditState[side].emojis = [];
 }
 
 // 포토카드 저장
@@ -2247,38 +2275,59 @@ function captureImageWithEmojis(side) {
     });
 }
 
-// 이미지 선택 함수
+// 이미지 선택 함수 (비활성화)
 function selectImageForEdit(side) {
-    console.log('이미지 선택:', side);
-    currentSelectedSide = side;
-    
-    // 선택 상태 업데이트
-    updateImageSelectionState();
+    console.log('이미지 선택 기능이 비활성화되었습니다');
+    // 이미지 선택 기능 완전 제거
 }
 
 // 이미지 선택 상태 업데이트
 function updateImageSelectionState() {
-    const frontPanel = document.getElementById('frontPanel');
-    const backPanel = document.getElementById('backPanel');
-    const frontContainer = document.getElementById('frontImageEditContainer');
-    const backContainer = document.getElementById('backImageEditContainer');
+    // 이미지가 있는지 확인하고 상태 업데이트
+    const frontImage = document.getElementById('frontEditImage');
+    const backImage = document.getElementById('backEditImage');
+    const frontFallback = document.getElementById('frontImageFallback');
+    const backFallback = document.getElementById('backImageFallback');
     
-    // 모든 패널에서 선택 상태 제거
-    frontPanel.classList.remove('selected');
-    backPanel.classList.remove('selected');
-    frontContainer.classList.remove('selected');
-    backContainer.classList.remove('selected');
-    
-    // 현재 선택된 면에 선택 상태 추가
-    if (currentSelectedSide === 'front') {
-        frontPanel.classList.add('selected');
-        frontContainer.classList.add('selected');
+    // 앞면 이미지 상태 확인 - 더 정확한 검증 로직
+    if (frontImage && frontImage.src && 
+        frontImage.src !== window.location.href && 
+        frontImage.src !== 'data:' && 
+        frontImage.src.length > 10 &&
+        frontImage.complete && 
+        frontImage.naturalWidth > 0) {
+        frontImage.style.display = 'block';
+        frontFallback.style.display = 'none';
+        photoCardEditState.front.image = frontImage.src;
+        console.log('앞면 이미지 유효함:', frontImage.src.substring(0, 50) + '...');
     } else {
-        backPanel.classList.add('selected');
-        backContainer.classList.add('selected');
+        frontImage.style.display = 'none';
+        frontFallback.style.display = 'flex';
+        photoCardEditState.front.image = null;
+        console.log('앞면 이미지 없음 또는 유효하지 않음');
+    }
+    
+    // 뒷면 이미지 상태 확인 - 더 정확한 검증 로직
+    if (backImage && backImage.src && 
+        backImage.src !== window.location.href && 
+        backImage.src !== 'data:' && 
+        backImage.src.length > 10 &&
+        backImage.complete && 
+        backImage.naturalWidth > 0) {
+        backImage.style.display = 'block';
+        backFallback.style.display = 'none';
+        photoCardEditState.back.image = backImage.src;
+        console.log('뒷면 이미지 유효함:', backImage.src.substring(0, 50) + '...');
+    } else {
+        backImage.style.display = 'none';
+        backFallback.style.display = 'flex';
+        photoCardEditState.back.image = null;
+        console.log('뒷면 이미지 없음 또는 유효하지 않음');
     }
     
     console.log('현재 선택된 면:', currentSelectedSide);
+    console.log('앞면 이미지 상태:', photoCardEditState.front.image ? '있음' : '없음');
+    console.log('뒷면 이미지 상태:', photoCardEditState.back.image ? '있음' : '없음');
 }
 
 // 갤러리에서 업로드
@@ -2303,7 +2352,6 @@ function uploadFromGallery(side) {
                         .then(() => {
                             photoCardEditState[side].image = imageData;
                             resetImageEdit(side);
-                            selectImageForEdit(side);
                             POKA.Toast.success(`${side === 'front' ? '앞면' : '뒷면'} 이미지가 업로드되었습니다`);
                         })
                         .catch((error) => {
@@ -2353,7 +2401,6 @@ function takePhoto(side) {
                         .then(() => {
                             photoCardEditState[side].image = imageData;
                             resetImageEdit(side);
-                            selectImageForEdit(side);
                             POKA.Toast.success(`${side === 'front' ? '앞면' : '뒷면'} 사진이 촬영되었습니다`);
                         })
                         .catch((error) => {
@@ -2587,35 +2634,38 @@ function setupEventListeners() {
         });
     }
     
-    // 이미지 컨테이너 클릭 이벤트 (이모지 추가)
+    // 이미지 컨테이너 클릭 이벤트 완전 제거
     const imageContainer = document.getElementById('imageContainer');
-    if (imageContainer) {
-        imageContainer.addEventListener('click', function(e) {
-            if (e.target === this || e.target === editImage) {
-                // 이미지 클릭 시 이모지 추가 (중앙에)
-                const rect = this.getBoundingClientRect();
-                const x = (rect.width / 2) - 20;
-                const y = (rect.height / 2) - 20;
+    const frontImageContainer = document.getElementById('frontImageEditContainer');
+    const backImageContainer = document.getElementById('backImageEditContainer');
+    
+    // 모든 이미지 컨테이너에서 클릭 이벤트 완전 제거
+    [imageContainer, frontImageContainer, backImageContainer].forEach(container => {
+        if (container) {
+            // 기존 클릭 이벤트 리스너 제거
+            container.replaceWith(container.cloneNode(true));
+            
+            // 새로운 컨테이너 참조 가져오기
+            const newContainer = document.getElementById(container.id);
+            if (newContainer) {
+                // 모든 클릭 이벤트 무시 (이모지 레이어 포함)
+                newContainer.addEventListener('click', function(e) {
+                    // 모든 클릭을 무시
+                    e.preventDefault();
+                    e.stopPropagation();
+                });
                 
-                const emojiData = {
-                    id: Date.now() + Math.random(),
-                    emoji: '😊',
-                    x: x,
-                    y: y
-                };
-                
-                emojis.push(emojiData);
-                renderEmojis();
-                
-                // 포토카드 편집 모드에서 편집 상태 저장
-                if (currentPhotoCard) {
-                    saveCurrentEditState();
+                // 이미지 요소에도 클릭 이벤트 무시
+                const imgElement = newContainer.querySelector('img');
+                if (imgElement) {
+                    imgElement.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    });
                 }
-                
-                POKA.Toast.success('이모지가 추가되었습니다. 드래그하여 위치를 조정하세요.');
             }
-        });
-    }
+        }
+    });
 }
 
 // 현재 이미지 또는 포토카드 로드
@@ -2797,3 +2847,130 @@ function renderEmojisForSide(side) {
     
     console.log(`${side} 면 이모지 렌더링 완료:`, emojis.length);
 } 
+
+// 3D 카드 회전 효과를 위한 이미지 사이드 전환
+function switchImageSide(side) {
+    console.log('이미지 사이드 전환:', side);
+    
+    const cardWrapper = document.querySelector('.card-3d-wrapper');
+    const frontSideBtn = document.getElementById('frontSideBtn');
+    const backSideBtn = document.getElementById('backSideBtn');
+    
+    // 버튼 상태 업데이트
+    frontSideBtn.classList.remove('active');
+    backSideBtn.classList.remove('active');
+    
+    if (side === 'front') {
+        frontSideBtn.classList.add('active');
+        cardWrapper.classList.remove('flipped');
+    } else {
+        backSideBtn.classList.add('active');
+        cardWrapper.classList.add('flipped');
+    }
+    
+    // 현재 선택된 면 업데이트
+    currentSelectedSide = side;
+    
+    // 이미지 편집 상태 로드
+    loadImageEditState(side);
+    
+    // UI 상태 동기화
+    updateImageSelectionState();
+    
+    console.log('이미지 사이드 전환 완료:', side);
+}
+
+// 이미지 선택 상태 업데이트 (새로운 구조에 맞게 수정)
+function updateImageSelectionState() {
+    // 이미지가 있는지 확인하고 상태 업데이트
+    const frontImage = document.getElementById('frontEditImage');
+    const backImage = document.getElementById('backEditImage');
+    const frontFallback = document.getElementById('frontImageFallback');
+    const backFallback = document.getElementById('backImageFallback');
+    
+    // 앞면 이미지 상태 확인 - 더 정확한 검증 로직
+    if (frontImage && frontImage.src && 
+        frontImage.src !== window.location.href && 
+        frontImage.src !== 'data:' && 
+        frontImage.src.length > 10 &&
+        frontImage.complete && 
+        frontImage.naturalWidth > 0) {
+        frontImage.style.display = 'block';
+        frontFallback.style.display = 'none';
+        photoCardEditState.front.image = frontImage.src;
+        console.log('앞면 이미지 유효함:', frontImage.src.substring(0, 50) + '...');
+    } else {
+        frontImage.style.display = 'none';
+        frontFallback.style.display = 'flex';
+        photoCardEditState.front.image = null;
+        console.log('앞면 이미지 없음 또는 유효하지 않음');
+    }
+    
+    // 뒷면 이미지 상태 확인 - 더 정확한 검증 로직
+    if (backImage && backImage.src && 
+        backImage.src !== window.location.href && 
+        backImage.src !== 'data:' && 
+        backImage.src.length > 10 &&
+        backImage.complete && 
+        backImage.naturalWidth > 0) {
+        backImage.style.display = 'block';
+        backFallback.style.display = 'none';
+        photoCardEditState.back.image = backImage.src;
+        console.log('뒷면 이미지 유효함:', backImage.src.substring(0, 50) + '...');
+    } else {
+        backImage.style.display = 'none';
+        backFallback.style.display = 'flex';
+        photoCardEditState.back.image = null;
+        console.log('뒷면 이미지 없음 또는 유효하지 않음');
+    }
+    
+    console.log('현재 선택된 면:', currentSelectedSide);
+    console.log('앞면 이미지 상태:', photoCardEditState.front.image ? '있음' : '없음');
+    console.log('뒷면 이미지 상태:', photoCardEditState.back.image ? '있음' : '없음');
+}
+
+// 이미지 삭제 기능
+function deleteImageEdit(side) {
+    console.log('이미지 삭제 시작:', side);
+    
+    // 확인 메시지
+    if (!confirm(`${side === 'front' ? '앞면' : '뒷면'} 이미지를 삭제하시겠습니까?`)) {
+        return;
+    }
+    
+    const imageElement = document.getElementById(side === 'front' ? 'frontEditImage' : 'backEditImage');
+    const fallbackElement = document.getElementById(side === 'front' ? 'frontImageFallback' : 'backImageFallback');
+    
+    // 이미지 요소 초기화
+    if (imageElement) {
+        imageElement.src = '';
+        imageElement.style.display = 'none';
+    }
+    
+    // Fallback 표시
+    if (fallbackElement) {
+        fallbackElement.style.display = 'flex';
+    }
+    
+    // 편집 상태 초기화
+    photoCardEditState[side] = {
+        image: null,
+        rotation: 0,
+        flip: { horizontal: false, vertical: false },
+        filter: 'none',
+        emojis: []
+    };
+    
+    // 이모지 레이어 초기화
+    const emojiLayer = document.getElementById(side === 'front' ? 'frontEmojiLayer' : 'backEmojiLayer');
+    if (emojiLayer) {
+        emojiLayer.innerHTML = '';
+    }
+    
+    // 상태 업데이트
+    updateImageSelectionState();
+    
+    POKA.Toast.success(`${side === 'front' ? '앞면' : '뒷면'} 이미지가 삭제되었습니다`);
+    
+    console.log(`${side} 면 이미지 삭제 완료`);
+}

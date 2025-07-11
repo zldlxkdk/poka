@@ -101,63 +101,74 @@
                         </div>
                     </div>
                     
-                    <div class="dual-image-edit-container">
-                        <!-- 앞면 편집 -->
-                        <div class="image-edit-panel" id="frontPanel">
-                            <div class="panel-header">
-                                <h4 class="panel-title">앞면</h4>
-                                <div class="panel-actions">
-                                    <button class="btn btn-small" onclick="resetImageEdit('front')">
-                                        <span class="btn-icon">🔄</span>
-                                        <span class="btn-text">초기화</span>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="image-edit-container" id="frontImageEditContainer" onclick="selectImageForEdit('front')">
-                                <img id="frontEditImage" src="" alt="앞면">
-                                <div class="image-fallback" id="frontImageFallback">
-                                    <div class="upload-options">
-                                        <button class="upload-btn" onclick="event.stopPropagation(); uploadFromGallery('front')">
-                                            <span class="btn-icon">🖼️</span>
-                                            <span class="btn-text">갤러리에서 선택</span>
-                                        </button>
-                                        <button class="upload-btn" onclick="event.stopPropagation(); takePhoto('front')">
-                                            <span class="btn-icon">📷</span>
-                                            <span class="btn-text">카메라로 촬영</span>
-                                        </button>
+                    <div class="single-image-edit-container">
+                        <!-- 이미지 선택 버튼 -->
+                        <div class="image-side-selector">
+                            <button class="side-btn active" id="frontSideBtn" onclick="switchImageSide('front')">
+                                <span class="btn-icon">🖼️</span>
+                                <span class="btn-text">앞면</span>
+                            </button>
+                            <button class="side-btn" id="backSideBtn" onclick="switchImageSide('back')">
+                                <span class="btn-icon">🖼️</span>
+                                <span class="btn-text">뒷면</span>
+                            </button>
+                        </div>
+                        
+                        <!-- 3D 카드 컨테이너 -->
+                        <div class="card-3d-container" id="card3DContainer">
+                            <div class="card-3d-wrapper">
+                                <!-- 앞면 카드 -->
+                                <div class="card-3d-front" id="card3DFront">
+                                    <div class="image-edit-container" id="frontImageEditContainer">
+                                        <img id="frontEditImage" src="" alt="앞면">
+                                        <div class="image-fallback" id="frontImageFallback">
+                                            <div class="upload-options">
+                                                <button class="upload-btn" onclick="event.stopPropagation(); uploadFromGallery('front')">
+                                                    <span class="btn-icon">🖼️</span>
+                                                    <span class="btn-text">갤러리에서 선택</span>
+                                                </button>
+                                                <button class="upload-btn" onclick="event.stopPropagation(); takePhoto('front')">
+                                                    <span class="btn-icon">📷</span>
+                                                    <span class="btn-text">카메라로 촬영</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="emoji-layer" id="frontEmojiLayer"></div>
                                     </div>
                                 </div>
-                                <div class="emoji-layer" id="frontEmojiLayer"></div>
+                                
+                                <!-- 뒷면 카드 -->
+                                <div class="card-3d-back" id="card3DBack">
+                                    <div class="image-edit-container" id="backImageEditContainer">
+                                        <img id="backEditImage" src="" alt="뒷면">
+                                        <div class="image-fallback" id="backImageFallback">
+                                            <div class="upload-options">
+                                                <button class="upload-btn" onclick="event.stopPropagation(); uploadFromGallery('back')">
+                                                    <span class="btn-icon">🖼️</span>
+                                                    <span class="btn-text">갤러리에서 선택</span>
+                                                </button>
+                                                <button class="upload-btn" onclick="event.stopPropagation(); takePhoto('back')">
+                                                    <span class="btn-icon">📷</span>
+                                                    <span class="btn-text">카메라로 촬영</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="emoji-layer" id="backEmojiLayer"></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         
-                        <!-- 뒷면 편집 -->
-                        <div class="image-edit-panel" id="backPanel">
-                            <div class="panel-header">
-                                <h4 class="panel-title">뒷면</h4>
-                                <div class="panel-actions">
-                                    <button class="btn btn-small" onclick="resetImageEdit('back')">
-                                        <span class="btn-icon">🔄</span>
-                                        <span class="btn-text">초기화</span>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="image-edit-container" id="backImageEditContainer" onclick="selectImageForEdit('back')">
-                                <img id="backEditImage" src="" alt="뒷면">
-                                <div class="image-fallback" id="backImageFallback">
-                                    <div class="upload-options">
-                                        <button class="upload-btn" onclick="event.stopPropagation(); uploadFromGallery('back')">
-                                            <span class="btn-icon">🖼️</span>
-                                            <span class="btn-text">갤러리에서 선택</span>
-                                        </button>
-                                        <button class="upload-btn" onclick="event.stopPropagation(); takePhoto('back')">
-                                            <span class="btn-icon">📷</span>
-                                            <span class="btn-text">카메라로 촬영</span>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="emoji-layer" id="backEmojiLayer"></div>
-                            </div>
+                        <!-- 편집 액션 버튼 -->
+                        <div class="edit-actions-panel">
+                            <button class="btn btn-reset" onclick="resetImageEdit(currentSelectedSide)">
+                                <span class="btn-icon">🔄</span>
+                                <span class="btn-text">초기화</span>
+                            </button>
+                            <button class="btn btn-delete" onclick="deleteImageEdit(currentSelectedSide)">
+                                <span class="btn-icon">🗑️</span>
+                                <span class="btn-text">삭제</span>
+                            </button>
                         </div>
                     </div>
                     
@@ -165,12 +176,15 @@
                     <div class="unified-edit-controls">
                         <div class="controls-row">
                             <div class="control-group">
-                                <label>회전</label>
-                                <div class="rotation-controls">
-                                    <button class="btn btn-small" onclick="rotateImageEdit(currentSelectedSide, -90)" title="왼쪽 90도">↶</button>
-                                    <button class="btn btn-small" onclick="rotateImageEdit(currentSelectedSide, 90)" title="오른쪽 90도">↷</button>
-                                    <button class="btn btn-small" onclick="flipImageEdit(currentSelectedSide, 'horizontal')" title="좌우 반전">↔️</button>
-                                    <button class="btn btn-small" onclick="flipImageEdit(currentSelectedSide, 'vertical')" title="상하 반전">↕️</button>
+                                <label>이모지</label>
+                                <div class="emoji-controls">
+                                    <button class="emoji-btn" onclick="addEmojiEdit(currentSelectedSide, '😊')">😊</button>
+                                    <button class="emoji-btn" onclick="addEmojiEdit(currentSelectedSide, '❤️')">❤️</button>
+                                    <button class="emoji-btn" onclick="addEmojiEdit(currentSelectedSide, '⭐')">⭐</button>
+                                    <button class="emoji-btn" onclick="addEmojiEdit(currentSelectedSide, '🎉')">🎉</button>
+                                    <button class="emoji-btn" onclick="addEmojiEdit(currentSelectedSide, '🌟')">🌟</button>
+                                    <button class="emoji-btn" onclick="addEmojiEdit(currentSelectedSide, '💖')">💖</button>
+                                    <button class="emoji-btn" onclick="clearEmojisEdit(currentSelectedSide)">🗑️</button>
                                 </div>
                             </div>
                             <div class="control-group">
@@ -183,15 +197,12 @@
                                 </div>
                             </div>
                             <div class="control-group">
-                                <label>이모지</label>
-                                <div class="emoji-controls">
-                                    <button class="emoji-btn" onclick="addEmojiEdit(currentSelectedSide, '😊')">😊</button>
-                                    <button class="emoji-btn" onclick="addEmojiEdit(currentSelectedSide, '❤️')">❤️</button>
-                                    <button class="emoji-btn" onclick="addEmojiEdit(currentSelectedSide, '⭐')">⭐</button>
-                                    <button class="emoji-btn" onclick="addEmojiEdit(currentSelectedSide, '🎉')">🎉</button>
-                                    <button class="emoji-btn" onclick="addEmojiEdit(currentSelectedSide, '🌟')">🌟</button>
-                                    <button class="emoji-btn" onclick="addEmojiEdit(currentSelectedSide, '💖')">💖</button>
-                                    <button class="emoji-btn" onclick="clearEmojisEdit(currentSelectedSide)">🗑️</button>
+                                <label>회전</label>
+                                <div class="rotation-controls">
+                                    <button class="btn btn-small" onclick="rotateImageEdit(currentSelectedSide, -90)" title="왼쪽 90도">↶</button>
+                                    <button class="btn btn-small" onclick="rotateImageEdit(currentSelectedSide, 90)" title="오른쪽 90도">↷</button>
+                                    <button class="btn btn-small" onclick="flipImageEdit(currentSelectedSide, 'horizontal')" title="좌우 반전">↔️</button>
+                                    <button class="btn btn-small" onclick="flipImageEdit(currentSelectedSide, 'vertical')" title="상하 반전">↕️</button>
                                 </div>
                             </div>
                         </div>
