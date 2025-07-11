@@ -24,6 +24,9 @@
     
     .modal-image-side img {
         display: block !important;
+        max-height: 250px !important;
+        min-height: 200px !important;
+        object-fit: cover !important;
     }
 }
 
@@ -1314,7 +1317,8 @@
     }
     
     .modal-image-side img {
-        max-height: 180px;
+        max-height: 250px !important;
+        min-height: 200px !important;
         width: 100%;
         object-fit: cover;
         display: block !important;
