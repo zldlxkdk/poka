@@ -430,12 +430,14 @@
     }
     
     .coupon-tabs {
-        flex-direction: column;
+        flex-direction: row;
         gap: 2px;
     }
     
     .tab-btn {
         text-align: center;
+        font-size: 0.8rem;
+        padding: 10px 8px;
     }
     
     .coupon-header {
@@ -454,9 +456,17 @@
     }
     
     .guide-step {
-        flex-direction: column;
-        text-align: center;
+        flex-direction: row;
+        text-align: left;
         gap: 12px;
+    }
+    
+    .guide-step .step-icon {
+        flex-shrink: 0;
+    }
+    
+    .guide-step .step-content {
+        flex: 1;
     }
 }
 
