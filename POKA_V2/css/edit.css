@@ -1642,32 +1642,31 @@
 
 @media (max-width: 768px) {
     .name-input-container {
-        flex-direction: row;
-        gap: 12px;
-        align-items: center;
+        flex-direction: column;
+        gap: 8px;
+        align-items: stretch;
         min-width: auto;
     }
     
     .name-input {
-        flex: 1;
+        width: 100%;
         max-width: none;
         padding: 10px 12px;
         font-size: 14px;
     }
     
     .name-counter {
-        flex-shrink: 0;
-        margin-top: 0;
+        align-self: flex-end;
+        margin-top: 4px;
         padding: 4px 8px;
         font-size: 11px;
         min-width: 35px;
-        white-space: nowrap;
     }
 }
 
 @media (max-width: 480px) {
     .name-input-container {
-        gap: 8px;
+        gap: 6px;
     }
     
     .name-input {
@@ -1679,7 +1678,6 @@
         padding: 3px 6px;
         font-size: 10px;
         min-width: 30px;
-        white-space: nowrap;
     }
 }
 
@@ -2744,7 +2742,23 @@
     }
 }
 
- 
+/* 터치 디바이스 최적화 */
+@media (hover: none) and (pointer: coarse) {
+    .btn-small:hover,
+    .filter-btn:hover,
+    .emoji-btn:hover,
+    .upload-btn:hover {
+        transform: none;
+    }
+    
+    .btn-small:active,
+    .filter-btn:active,
+    .emoji-btn:active,
+    .upload-btn:active {
+        transform: scale(0.95);
+        background: var(--primary-color-dark);
+    }
+} 
 
 /* 단일 이미지 편집 컨테이너 */
 .single-image-edit-container {
@@ -3037,11 +3051,11 @@
     }
     
     .image-side-selector {
-        gap: 8px;
+        gap: 6px;
         margin-bottom: 20px;
         padding: 10px;
-        flex-wrap: wrap;
-        justify-content: center;
+        flex-wrap: nowrap;
+        justify-content: space-between;
         align-items: center;
     }
     
@@ -3054,14 +3068,14 @@
     }
     
     .side-btn .btn-text {
-        display: block;
+        display: none;
     }
     
     .btn-compact {
-        padding: 6px !important;
-        font-size: 12px !important;
-        min-width: 32px !important;
-        height: 32px !important;
+        padding: 8px !important;
+        font-size: 14px !important;
+        min-width: 40px !important;
+        height: 40px !important;
         flex-shrink: 0;
     }
     
@@ -3101,10 +3115,8 @@
     }
     
     .image-side-selector {
-        gap: 6px;
+        gap: 4px;
         padding: 8px;
-        flex-wrap: wrap;
-        justify-content: center;
     }
     
     .side-btn {
@@ -3114,15 +3126,11 @@
         max-width: 60px;
     }
     
-    .side-btn .btn-text {
-        display: block;
-    }
-    
     .btn-compact {
-        padding: 4px !important;
-        font-size: 10px !important;
-        min-width: 28px !important;
-        height: 28px !important;
+        padding: 6px !important;
+        font-size: 12px !important;
+        min-width: 36px !important;
+        height: 36px !important;
     }
     
     .btn-reset,
@@ -3752,45 +3760,6 @@
     
     .emoji.selected .emoji-resize-handle {
         opacity: 1;
-    }
-    
-    /* 이모지 버튼 터치 최적화 */
-    .emoji-btn {
-        min-height: 44px !important;
-        min-width: 44px !important;
-        touch-action: manipulation !important;
-        -webkit-tap-highlight-color: transparent !important;
-    }
-    
-    .emoji-controls {
-        touch-action: pan-x !important;
-        -webkit-overflow-scrolling: touch !important;
-    }
-    
-    /* 터치 디바이스에서 버튼 간격 확대 */
-    .emoji-controls .emoji-btn {
-        margin: 4px !important;
-    }
-    
-    /* 터치 디바이스에서 버튼 호버 효과 제거 */
-    .btn-small:hover,
-    .emoji-btn:hover,
-    .filter-btn:hover,
-    .side-btn:hover,
-    .btn-compact:hover {
-        transform: none !important;
-        box-shadow: none !important;
-    }
-    
-    /* 터치 디바이스에서 액티브 상태 강화 */
-    .btn-small:active,
-    .emoji-btn:active,
-    .filter-btn:active,
-    .side-btn:active,
-    .btn-compact:active {
-        transform: scale(0.95) !important;
-        background: var(--primary-color) !important;
-        color: white !important;
     }
 }
 
