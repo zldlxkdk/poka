@@ -1397,6 +1397,14 @@
     pointer-events: auto;
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    position: relative;
+    z-index: 10;
 }
 
 .emoji-btn:hover {
@@ -1581,7 +1589,7 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
-    padding: 15px;
+    padding: 16px 20px;
     background: var(--surface-color);
     border-radius: 15px;
     border: 1px solid var(--border-color);
@@ -1591,9 +1599,9 @@
 .header-content {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 16px;
     width: 100%;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
 }
 
 /* 포토카드 이름 편집 */
@@ -1602,7 +1610,8 @@
     align-items: center;
     gap: 10px;
     flex: 1;
-    min-width: 200px;
+    min-width: 150px;
+    max-width: 250px;
 }
 
 .name-input {
@@ -1615,7 +1624,7 @@
     background: rgba(255, 255, 255, 0.9);
     transition: all 0.3s ease;
     font-weight: 500;
-    max-width: 300px;
+    max-width: 200px;
 }
 
 .name-input:focus {
@@ -2605,11 +2614,19 @@
     .btn-small,
     .filter-btn,
     .emoji-btn {
-        padding: 10px 6px;
-        font-size: 14px;
-        min-width: 44px;
-        height: 44px;
-        margin: 2px;
+        padding: 12px 8px;
+        font-size: 16px;
+        min-width: 48px;
+        height: 48px;
+        margin: 3px;
+    }
+    
+    .emoji-btn {
+        min-width: 52px !important;
+        min-height: 52px !important;
+        width: 52px !important;
+        height: 52px !important;
+        font-size: 20px !important;
     }
 } 
 
@@ -2772,8 +2789,17 @@
         -moz-user-select: none;
         -ms-user-select: none;
         user-select: none;
-        min-height: 44px;
-        min-width: 44px;
+        min-height: 52px;
+        min-width: 52px;
+        position: relative;
+        z-index: 10;
+        cursor: pointer;
+    }
+    
+    .emoji-btn:active {
+        transform: scale(0.95);
+        background: #667eea !important;
+        border-color: #667eea !important;
     }
 } 
 
@@ -2847,8 +2873,8 @@
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    min-width: 40px !important;
-    height: 40px !important;
+    min-width: 36px !important;
+    height: 36px !important;
     box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1) !important;
 }
 
@@ -3091,8 +3117,8 @@
     .btn-compact {
         padding: 8px !important;
         font-size: 14px !important;
-        min-width: 36px !important;
-        height: 36px !important;
+        min-width: 32px !important;
+        height: 32px !important;
         flex-shrink: 0;
     }
     
@@ -3146,8 +3172,8 @@
     .btn-compact {
         padding: 6px !important;
         font-size: 12px !important;
-        min-width: 32px !important;
-        height: 32px !important;
+        min-width: 28px !important;
+        height: 28px !important;
     }
     
     .btn-reset,
