@@ -3816,65 +3816,61 @@
     background: #ffc107;
 }
 
-@media (max-width: 768px) {
-  /* 편집화면 상단부(포토카드 편집) 한 줄로, 다른 화면과 유사하게 */
-  .edit-header {
+@media (max-width: 600px) {
+  /* 1. 편집화면 상단부(포토카드 편집) 한줄 배치, 다른 화면과 유사하게 */
+  .edit-header .header-content {
     flex-direction: row !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    gap: 8px !important;
-    padding: 10px 8px !important;
-  }
-  .header-content {
-    flex-direction: row !important;
-    align-items: center !important;
-    gap: 8px !important;
     flex-wrap: nowrap !important;
-    width: 100% !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 0 !important;
   }
-  /* 이름 입력 부분 가로 사이즈 축소, 저장버튼까지 한 줄로 */
+  .edit-header {
+    padding: 10px 8px !important;
+    margin-bottom: 12px !important;
+  }
+
+  /* 2. 이름 입력 가로폭 줄이기 */
   .name-input-container {
+    max-width: 140px !important;
     min-width: 0 !important;
-    max-width: 120px !important;
     flex: 1 1 0 !important;
     gap: 6px !important;
   }
   .name-input {
     max-width: 80px !important;
     min-width: 0 !important;
+    width: 100% !important;
     font-size: 13px !important;
-    padding: 6px 8px !important;
+    padding: 7px 6px !important;
   }
   .name-counter {
     font-size: 11px !important;
     padding: 2px 4px !important;
-    min-width: 28px !important;
+    min-width: 24px !important;
   }
-  .btn-compact {
-    min-width: 28px !important;
-    height: 28px !important;
-    padding: 4px 4px !important;
-    font-size: 13px !important;
+
+  /* 3. 초기화/삭제 버튼 더 작게 */
+  .image-side-selector .btn-compact {
+    min-width: 24px !important;
+    width: 24px !important;
+    height: 24px !important;
+    padding: 0 !important;
+    font-size: 15px !important;
   }
-  /* 이미지 사이드 셀렉터 버튼부 한 줄로, 버튼 크기 축소 */
   .image-side-selector {
     gap: 4px !important;
-    padding: 6px 2px !important;
-    flex-wrap: nowrap !important;
+    padding: 6px 0 !important;
   }
   .side-btn {
     min-width: 48px !important;
-    max-width: 60px !important;
-    font-size: 12px !important;
+    font-size: 13px !important;
     padding: 6px 4px !important;
   }
-  /* 이모지 버튼 터치 문제 해결 및 크기 확대 */
+
+  /* 4. 이모지 클릭 문제 해결 및 터치 영역 강화 */
   .emoji-btn {
-    min-width: 44px !important;
-    min-height: 44px !important;
-    width: 44px !important;
-    height: 44px !important;
-    font-size: 20px !important;
+    pointer-events: auto !important;
     touch-action: manipulation !important;
     -webkit-tap-highlight-color: transparent !important;
     -webkit-touch-callout: none !important;
@@ -3883,8 +3879,12 @@
     -moz-user-select: none !important;
     -ms-user-select: none !important;
     user-select: none !important;
-    pointer-events: auto !important;
-    z-index: 10 !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
+    width: 44px !important;
+    height: 44px !important;
+    font-size: 20px !important;
+    z-index: 20 !important;
     position: relative !important;
   }
   .emoji-btn:active {
