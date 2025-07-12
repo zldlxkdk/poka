@@ -306,6 +306,8 @@
     user-select: none;
     touch-action: pan-x;
     min-height: 80px !important;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .emoji-controls:active {
@@ -352,6 +354,9 @@
     -ms-user-select: none;
     user-select: none;
     pointer-events: auto;
+    touch-action: manipulation;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .emoji-btn:hover {
@@ -385,6 +390,12 @@
     bottom: 0;
     pointer-events: none;
     z-index: 10;
+    touch-action: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .emoji-item {
@@ -395,6 +406,13 @@
     pointer-events: auto;
     transition: transform 0.1s ease;
     z-index: 20;
+    touch-action: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .emoji-item:hover {
@@ -410,6 +428,7 @@
 .emoji-item.dragging {
     opacity: 0.8;
     transform: scale(1.1);
+    transition: none;
 }
 
 /* 액션 섹션 */
@@ -606,6 +625,28 @@
         background: var(--primary-color);
         border-color: var(--primary-color);
         color: white;
+    }
+    
+    /* 모바일에서 이모지 드래그 최적화 */
+    .emoji {
+        touch-action: none;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    .emoji-btn {
+        touch-action: manipulation;
+        -webkit-touch-callout: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    .emoji-controls {
+        touch-action: pan-x;
+        -webkit-overflow-scrolling: touch;
     }
 } 
 
@@ -3121,6 +3162,13 @@
     border-radius: 4px;
     transition: border-color 0.2s ease;
     background: transparent;
+    touch-action: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .emoji:hover {
@@ -3130,6 +3178,13 @@
 .emoji.selected {
     border-color: #007bff;
     box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.3);
+}
+
+.emoji.dragging {
+    border-color: #28a745;
+    box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.3);
+    transform: scale(1.05);
+    transition: transform 0.1s ease;
 }
 
 /* 이모지 삭제 버튼 */
