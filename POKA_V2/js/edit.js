@@ -1849,6 +1849,10 @@ function loadPhotoCardData() {
     currentSelectedSide = 'front';
     updateImageSelectionState();
     
+    // 이모지 렌더링
+    renderEmojisForSide('front');
+    renderEmojisForSide('back');
+    
     console.log('포토카드 데이터 로드 완료');
 }
 
@@ -2017,16 +2021,38 @@ let emojiToDeleteSide = null;
 function addEmojiEdit(side, emoji) {
     console.log('이모지 추가:', side, emoji);
     
+    // 현재 선택된 면 확인
+    if (side !== currentSelectedSide) {
+        console.log('현재 선택된 면과 다름, 면 변경:', side);
+        currentSelectedSide = side;
+        switchImageSide(side);
+    }
+    
     if (!photoCardEditState[side].emojis) {
         photoCardEditState[side].emojis = [];
+    }
+    
+    // 이미지 컨테이너의 크기를 기준으로 중앙 위치 계산
+    const imageContainer = document.getElementById(side === 'front' ? 'frontImageEditContainer' : 'backImageEditContainer');
+    let centerX = 50;
+    let centerY = 50;
+    
+    if (imageContainer) {
+        const rect = imageContainer.getBoundingClientRect();
+        // 컨테이너 크기의 50% 위치에 배치 (안전한 여백 포함)
+        centerX = Math.max(30, Math.min(rect.width - 30, rect.width * 0.5));
+        centerY = Math.max(30, Math.min(rect.height - 30, rect.height * 0.5));
+        
+        console.log(`${side} 면 컨테이너 크기:`, rect.width, 'x', rect.height);
+        console.log(`${side} 면 이모지 위치:`, centerX, centerY);
     }
     
     // 이모지 데이터 생성
     const emojiData = {
         id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
         emoji: emoji,
-        x: 50, // 기본 위치
-        y: 50,
+        x: centerX,
+        y: centerY,
         size: 24, // 기본 크기
         rotation: 0 // 기본 회전 각도
     };
@@ -2037,6 +2063,9 @@ function addEmojiEdit(side, emoji) {
     renderEmojisForSide(side);
     
     console.log(`${side} 면에 이모지 추가 완료:`, emojiData);
+    
+    // 성공 메시지 표시
+    POKA.Toast.success('이모지가 추가되었습니다');
 }
 
 // 이모지 삭제 함수 (X 버튼용)
@@ -2185,15 +2214,18 @@ function renderEmojisForSide(side) {
         });
         
         // 드래그 가능하게 만들기
-    makeDraggable(emojiElement);
+        makeDraggable(emojiElement);
         
-        // 클릭 이벤트 제거 (삭제 팝업 대신 X 버튼 사용)
+        // 클릭 이벤트 (드래그가 아닌 클릭일 때만)
         emojiElement.addEventListener('click', function(e) {
-            e.stopPropagation();
-            // 클릭 시 선택 상태 토글
-            const allEmojis = emojiLayer.querySelectorAll('.emoji');
-            allEmojis.forEach(emoji => emoji.classList.remove('selected'));
-            this.classList.add('selected');
+            // 드래그 중이 아닐 때만 클릭 이벤트 처리
+            if (!this.classList.contains('dragging')) {
+                e.stopPropagation();
+                // 클릭 시 선택 상태 토글
+                const allEmojis = emojiLayer.querySelectorAll('.emoji');
+                allEmojis.forEach(emoji => emoji.classList.remove('selected'));
+                this.classList.add('selected');
+            }
         });
     
     emojiLayer.appendChild(emojiElement);
@@ -2729,12 +2761,22 @@ function makeDraggable(element) {
     let initialY;
     let xOffset = 0;
     let yOffset = 0;
+    let startTime = 0;
 
+    // 마우스 이벤트
     element.addEventListener('mousedown', dragStart);
-    element.addEventListener('touchstart', dragStart);
+    element.addEventListener('mouseup', dragEnd);
+    
+    // 터치 이벤트 (모바일 최적화)
+    element.addEventListener('touchstart', dragStart, { passive: false });
+    element.addEventListener('touchend', dragEnd, { passive: false });
+    element.addEventListener('touchcancel', dragEnd, { passive: false });
 
     function dragStart(e) {
         e.preventDefault();
+        e.stopPropagation();
+        
+        startTime = Date.now();
         
         if (e.type === 'touchstart') {
             initialX = e.touches[0].clientX - xOffset;
@@ -2744,20 +2786,41 @@ function makeDraggable(element) {
             initialY = e.clientY - yOffset;
         }
 
-        if (e.target === element) {
+        // 이모지 자체나 이모지의 자식 요소를 클릭했을 때만 드래그 시작
+        if (e.target === element || element.contains(e.target)) {
             isDragging = true;
+            element.classList.add('dragging');
+            
+            // 선택 상태로 만들기
+            const emojiLayer = element.closest('.emoji-layer');
+            if (emojiLayer) {
+                const allEmojis = emojiLayer.querySelectorAll('.emoji');
+                allEmojis.forEach(emoji => emoji.classList.remove('selected'));
+                element.classList.add('selected');
+            }
         }
     }
 
     function dragEnd(e) {
-        initialX = currentX;
-        initialY = currentY;
-        isDragging = false;
+        if (isDragging) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            isDragging = false;
+            element.classList.remove('dragging');
+            
+            // 드래그 시간이 짧으면 클릭으로 처리하지 않음
+            const dragDuration = Date.now() - startTime;
+            if (dragDuration > 100) {
+                e.preventDefault();
+            }
+        }
     }
 
     function drag(e) {
         if (isDragging) {
             e.preventDefault();
+            e.stopPropagation();
 
             if (e.type === 'touchmove') {
                 currentX = e.touches[0].clientX - initialX;
@@ -2798,10 +2861,9 @@ function makeDraggable(element) {
         el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
     }
 
-    document.addEventListener('mousemove', drag);
-    document.addEventListener('touchmove', drag);
-    document.addEventListener('mouseup', dragEnd);
-    document.addEventListener('touchend', dragEnd);
+    // 전역 이벤트 리스너
+    document.addEventListener('mousemove', drag, { passive: false });
+    document.addEventListener('touchmove', drag, { passive: false });
 } 
 
 // 포토카드 이름 입력 이벤트 처리
