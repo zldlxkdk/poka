@@ -18,6 +18,7 @@
             <div class="header-content">
                 <button class="back-btn" onclick="POKA.Navigation.goBack()">←</button>
                 <h1 class="page-title">포토카드 편집</h1>
+
             </div>
         </header>
 
@@ -350,6 +351,9 @@
         // 페이지 로드 완료 후 초기화
         document.addEventListener('DOMContentLoaded', function() {
             console.log('편집 페이지 DOM 로드 완료');
+            
+            // 이모지 버튼 터치 이벤트 강화
+            setupEmojiButtonTouchEvents();
             
             // POKA 객체가 로드될 때까지 대기
             const checkPOKA = () => {

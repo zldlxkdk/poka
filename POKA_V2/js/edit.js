@@ -819,6 +819,9 @@ function addEmoji(emoji) {
     emojis.push(emojiData);
     renderEmojis();
     
+    // 반짝거리는 이펙트 추가 (이모지 위치와 정확히 일치)
+    addSparkleEffectForSingleImage(emojiData.x, emojiData.y);
+    
     // 포토카드 편집 모드에서 편집 상태 저장
     if (currentPhotoCard) {
         saveCurrentEditState();
@@ -2160,6 +2163,181 @@ function applyFilterEdit(side, filter) {
     });
 }
 
+// 반짝거리는 이펙트 함수들
+function addSparkleEffect(side, x, y) {
+    const emojiLayer = document.getElementById(side === 'front' ? 'frontEmojiLayer' : 'backEmojiLayer');
+    if (!emojiLayer) return;
+    
+    // 반짝거리는 요소 생성
+    const sparkle = document.createElement('div');
+    sparkle.className = 'sparkle-effect';
+    sparkle.style.cssText = `
+        position: absolute;
+        left: ${x}px;
+        top: ${y}px;
+        width: 60px;
+        height: 60px;
+        pointer-events: none;
+        z-index: 200;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 215, 0, 0.6) 30%, transparent 70%);
+        border-radius: 50%;
+        animation: sparkle-animation 1s ease-out forwards;
+        transform: translate(-50%, -50%);
+    `;
+    
+    emojiLayer.appendChild(sparkle);
+    
+    // 애니메이션 완료 후 요소 제거
+    setTimeout(() => {
+        if (sparkle.parentNode) {
+            sparkle.parentNode.removeChild(sparkle);
+        }
+    }, 1000);
+}
+
+function addSparkleEffectForSingleImage(x, y) {
+    const emojiLayer = document.getElementById('emojiLayer');
+    if (!emojiLayer) return;
+    
+    // 반짝거리는 요소 생성
+    const sparkle = document.createElement('div');
+    sparkle.className = 'sparkle-effect';
+    sparkle.style.cssText = `
+        position: absolute;
+        left: ${x}px;
+        top: ${y}px;
+        width: 60px;
+        height: 60px;
+        pointer-events: none;
+        z-index: 200;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 215, 0, 0.6) 30%, transparent 70%);
+        border-radius: 50%;
+        animation: sparkle-animation 1s ease-out forwards;
+        transform: translate(-50%, -50%);
+    `;
+    
+    emojiLayer.appendChild(sparkle);
+    
+    // 애니메이션 완료 후 요소 제거
+    setTimeout(() => {
+        if (sparkle.parentNode) {
+            sparkle.parentNode.removeChild(sparkle);
+        }
+    }, 1000);
+}
+
+// 이모지 버튼 터치 이벤트 설정
+function setupEmojiButtonTouchEvents() {
+    // 모든 이모지 버튼에 터치 이벤트 추가
+    const emojiButtons = document.querySelectorAll('.emoji-btn');
+    
+    emojiButtons.forEach(button => {
+        addTouchEventsToEmojiButton(button);
+    });
+    
+    // 동적으로 추가되는 이모지 버튼들을 위한 MutationObserver 설정
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.type === 'childList') {
+                mutation.addedNodes.forEach(function(node) {
+                    if (node.nodeType === 1) { // Element node
+                        // 새로 추가된 이모지 버튼들 찾기
+                        const newEmojiButtons = node.querySelectorAll ? node.querySelectorAll('.emoji-btn') : [];
+                        if (node.classList && node.classList.contains('emoji-btn')) {
+                            newEmojiButtons.push(node);
+                        }
+                        
+                        newEmojiButtons.forEach(button => {
+                            addTouchEventsToEmojiButton(button);
+                        });
+                    }
+                });
+            }
+        });
+    });
+    
+    // 모든 이모지 컨트롤 컨테이너 관찰
+    const emojiContainers = document.querySelectorAll('.emoji-controls, .emoji-picker');
+    emojiContainers.forEach(container => {
+        observer.observe(container, {
+            childList: true,
+            subtree: true
+        });
+    });
+    
+    console.log('이모지 버튼 터치 이벤트 설정 완료 (MutationObserver 포함)');
+}
+
+// 개별 이모지 버튼에 터치 이벤트 추가
+function addTouchEventsToEmojiButton(button) {
+    // 이미 이벤트가 추가되었는지 확인
+    if (button.hasAttribute('data-touch-events-added')) {
+        return;
+    }
+    
+    // 터치 시작 이벤트
+    button.addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // 이미 처리된 이벤트인지 확인
+        if (this.dataset.lastTouchTime && 
+            (Date.now() - parseInt(this.dataset.lastTouchTime)) < 300) {
+            return;
+        }
+        
+        // 이벤트 시간 기록
+        this.dataset.lastTouchTime = Date.now().toString();
+        
+        // 버튼 시각적 피드백
+        this.style.transform = 'scale(0.95)';
+        this.style.background = '#667eea';
+        this.style.borderColor = '#667eea';
+        
+        // 클릭 이벤트도 함께 실행
+        const onclick = this.getAttribute('onclick');
+        
+        if (onclick) {
+            // onclick 속성에서 함수 호출 추출
+            const match = onclick.match(/addEmoji(?:Edit)?\([^)]*\)/);
+            if (match) {
+                try {
+                    eval(match[0]);
+                } catch (error) {
+                    console.error('이모지 추가 함수 실행 오류:', error);
+                }
+            }
+        }
+    }, { passive: false });
+    
+    // 터치 종료 이벤트
+    button.addEventListener('touchend', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // 버튼 시각적 피드백 복원
+        setTimeout(() => {
+            this.style.transform = '';
+            this.style.background = '';
+            this.style.borderColor = '';
+        }, 150);
+    }, { passive: false });
+    
+    // 터치 취소 이벤트
+    button.addEventListener('touchcancel', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // 버튼 시각적 피드백 복원
+        this.style.transform = '';
+        this.style.background = '';
+        this.style.borderColor = '';
+    }, { passive: false });
+    
+    // 이벤트 추가 표시
+    button.setAttribute('data-touch-events-added', 'true');
+}
+
 // 이모지 삭제 확인 모달 관련 변수
 let emojiToDelete = null;
 let emojiToDeleteSide = null;
@@ -2242,6 +2420,9 @@ function addEmojiEdit(side, emoji) {
         console.log(`${side} 면 이모지 레이어 자식 요소 수:`, emojiLayer.children.length);
         console.log(`${side} 면 이모지 레이어 HTML:`, emojiLayer.innerHTML);
     }
+    
+    // 반짝거리는 이펙트 추가 (이모지 위치와 정확히 일치)
+    addSparkleEffect(side, emojiData.x, emojiData.y);
     
     // 성공 메시지 표시
     if (typeof POKA !== 'undefined' && POKA.Toast) {
@@ -2391,34 +2572,66 @@ function renderEmojisForSide(side) {
         
         console.log(`이모지 렌더링: ${emojiData.emoji}, 위치: (${emojiData.x}, ${emojiData.y}), 크기: ${emojiData.size || 24}, 회전: ${emojiData.rotation || 0}`);
         
-        // 삭제 버튼 추가
+        // 삭제 버튼 추가 (기본적으로 숨김)
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'emoji-delete-btn';
         deleteBtn.innerHTML = '×';
-        deleteBtn.onclick = function(e) {
-        e.stopPropagation();
-            deleteEmojiEdit(side, emojiData.id);
+        deleteBtn.style.display = 'none';
+        
+        const handleDelete = function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            
+            // 이미 처리된 이벤트인지 확인
+            if (deleteBtn.dataset.lastEventTime && 
+                (Date.now() - parseInt(deleteBtn.dataset.lastEventTime)) < 200) {
+                return;
+            }
+            
+            // 이벤트 시간 기록
+            deleteBtn.dataset.lastEventTime = Date.now().toString();
+            
+            console.log('이모지 삭제 버튼 클릭:', emojiData.id);
+            
+            if (confirm('이 이모지를 삭제하시겠습니까?')) {
+                deleteEmojiEdit(side, emojiData.id);
+            }
         };
+        
+        // 포인터 이벤트만 사용 (모든 디바이스에서 작동)
+        deleteBtn.addEventListener('pointerdown', handleDelete, { passive: false });
+        
         emojiElement.appendChild(deleteBtn);
         
-        // 회전 핸들 추가
+        // 회전 핸들 추가 (기본적으로 숨김)
         const rotateHandle = document.createElement('div');
         rotateHandle.className = 'emoji-rotate-handle';
-        rotateHandle.onmousedown = function(e) {
+        rotateHandle.style.display = 'none';
+        
+        const handleRotateStart = function(e) {
             e.preventDefault();
             e.stopPropagation();
             e.stopImmediatePropagation();
+            
+            // 이미 처리된 이벤트인지 확인
+            if (rotateHandle.dataset.lastEventTime && 
+                (Date.now() - parseInt(rotateHandle.dataset.lastEventTime)) < 100) {
+                return;
+            }
+            
+            // 이벤트 시간 기록
+            rotateHandle.dataset.lastEventTime = Date.now().toString();
+            
             startEmojiRotate(e, emojiElement, side, emojiData.id);
         };
-        rotateHandle.ontouchstart = function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            e.stopImmediatePropagation();
-            startEmojiRotate(e, emojiElement, side, emojiData.id);
-        };
+        
+        // 포인터 이벤트만 사용 (모든 디바이스에서 작동)
+        rotateHandle.addEventListener('pointerdown', handleRotateStart, { passive: false });
+        
         emojiElement.appendChild(rotateHandle);
         
-        // 크기 조정 핸들 추가
+        // 크기 조정 핸들 추가 (기본적으로 숨김)
         const resizeHandles = [
             { class: 'top-left', cursor: 'nw-resize' },
             { class: 'top-right', cursor: 'ne-resize' },
@@ -2430,28 +2643,46 @@ function renderEmojisForSide(side) {
             const handleElement = document.createElement('div');
             handleElement.className = `emoji-resize-handle ${handle.class}`;
             handleElement.style.cursor = handle.cursor;
-            handleElement.style.display = 'block';
+            handleElement.style.display = 'none';
             handleElement.style.opacity = '0.7';
             handleElement.setAttribute('data-handle', handle.class);
             handleElement.setAttribute('data-side', side);
             handleElement.setAttribute('data-emoji-id', emojiData.id);
             
-            // 단순한 직접 이벤트 리스너 추가
+            // 크기 조정 핸들 이벤트 리스너
             const handleMouseDown = function(e) {
-                console.log('이모지 크기 조정 핸들 클릭:', handle.class);
+                console.log('이모지 크기 조정 핸들 클릭:', handle.class, e.type);
                 e.preventDefault();
                 e.stopPropagation();
+                e.stopImmediatePropagation();
+                
+                // 이벤트 버블링 완전 차단
+                if (e.cancelable) {
+                    e.preventDefault();
+                }
+                
+                // 이미 처리된 이벤트인지 확인
+                if (handleElement.dataset.lastEventTime && 
+                    (Date.now() - parseInt(handleElement.dataset.lastEventTime)) < 100) {
+                    console.log('크기 조정 핸들 중복 이벤트 방지');
+                    return;
+                }
+                
+                // 이벤트 시간 기록
+                handleElement.dataset.lastEventTime = Date.now().toString();
                 
                 // 이모지를 선택 상태로 만들기
                 selectEmoji(emojiElement, side);
                 
                 // 크기 조정 시작
+                console.log('크기 조정 함수 호출:', { side, emojiId: emojiData.id, handleClass: handle.class });
                 startEmojiResize(e, emojiElement, side, emojiData.id, handle.class);
+                
+                return false; // 추가적인 이벤트 전파 방지
             };
             
-            // 이벤트 리스너 등록 (단순화)
-            handleElement.addEventListener('mousedown', handleMouseDown);
-            handleElement.addEventListener('touchstart', handleMouseDown);
+            // 포인터 이벤트만 사용 (모든 디바이스에서 작동)
+            handleElement.addEventListener('pointerdown', handleMouseDown, { passive: false });
             
             emojiElement.appendChild(handleElement);
         });
@@ -2462,18 +2693,34 @@ function renderEmojisForSide(side) {
         // 드래그 가능하게 만들기
         makeDraggable(emojiElement, side);
         
-        // 새로 추가된 이모지는 자동으로 선택
-        selectEmoji(emojiElement, side);
-        
-        // 클릭 이벤트 (드래그가 아닌 클릭일 때만)
-        emojiElement.addEventListener('click', function(e) {
-            // 드래그 중이 아닐 때만 클릭 이벤트 처리
+        // 이모지 선택 이벤트 (중복 방지)
+        const handleEmojiSelect = function(e) {
+            console.log('handleEmojiSelect 호출됨, 드래그 상태:', this.classList.contains('dragging'));
+            
+            // 드래그 중이 아닐 때만 이벤트 처리
             if (!this.classList.contains('dragging')) {
                 e.stopPropagation();
-                // 클릭 시 선택 상태 토글
+                e.preventDefault();
+                
+                // 이미 처리된 이벤트인지 확인
+                if (this.dataset.lastEventTime && 
+                    (Date.now() - parseInt(this.dataset.lastEventTime)) < 100) {
+                    console.log('중복 이벤트 방지됨');
+                    return;
+                }
+                
+                // 이벤트 시간 기록
+                this.dataset.lastEventTime = Date.now().toString();
+                
+                // 선택 상태로 변경
                 selectEmoji(this, side);
+            } else {
+                console.log('드래그 중이므로 선택 이벤트 무시');
             }
-        });
+        };
+        
+        // 포인터 이벤트만 사용 (모든 디바이스에서 작동)
+        emojiElement.addEventListener('pointerdown', handleEmojiSelect, { passive: false });
         
         console.log(`${side} 면 이모지 추가 완료:`, emojiElement);
         console.log(`${side} 면 이모지 레이어 자식 요소:`, emojiLayer.children.length);
@@ -2482,7 +2729,26 @@ function renderEmojisForSide(side) {
     // 이모지 선택 해제 함수
     function deselectAllEmojis() {
         const allEmojis = emojiLayer.querySelectorAll('.emoji');
-        allEmojis.forEach(emoji => emoji.classList.remove('selected'));
+        allEmojis.forEach(emoji => {
+            emoji.classList.remove('selected');
+            // 모든 핸들과 삭제 버튼 숨기기
+            const resizeHandles = emoji.querySelectorAll('.emoji-resize-handle');
+            const rotateHandle = emoji.querySelector('.emoji-rotate-handle');
+            const deleteBtn = emoji.querySelector('.emoji-delete-btn');
+            
+            resizeHandles.forEach(handle => {
+                handle.style.display = 'none';
+                handle.style.visibility = 'hidden';
+            });
+            if (rotateHandle) {
+                rotateHandle.style.display = 'none';
+                rotateHandle.style.visibility = 'hidden';
+            }
+            if (deleteBtn) {
+                deleteBtn.style.display = 'none';
+                deleteBtn.style.visibility = 'hidden';
+            }
+        });
         console.log('이모지 선택 해제됨');
     }
     
@@ -2512,7 +2778,26 @@ function renderEmojisForSide(side) {
                 const allEmojiLayers = document.querySelectorAll('.emoji-layer');
                 allEmojiLayers.forEach(layer => {
                     const allEmojis = layer.querySelectorAll('.emoji');
-                    allEmojis.forEach(emoji => emoji.classList.remove('selected'));
+                                    allEmojis.forEach(emoji => {
+                    emoji.classList.remove('selected');
+                    // 모든 핸들과 삭제 버튼 숨기기
+                    const resizeHandles = emoji.querySelectorAll('.emoji-resize-handle');
+                    const rotateHandle = emoji.querySelector('.emoji-rotate-handle');
+                    const deleteBtn = emoji.querySelector('.emoji-delete-btn');
+                    
+                    resizeHandles.forEach(handle => {
+                        handle.style.display = 'none';
+                        handle.style.visibility = 'hidden';
+                    });
+                    if (rotateHandle) {
+                        rotateHandle.style.display = 'none';
+                        rotateHandle.style.visibility = 'hidden';
+                    }
+                    if (deleteBtn) {
+                        deleteBtn.style.display = 'none';
+                        deleteBtn.style.visibility = 'hidden';
+                    }
+                });
                 });
                 console.log('전역 클릭으로 이모지 선택 해제');
             }
@@ -2520,110 +2805,152 @@ function renderEmojisForSide(side) {
         document.addEventListener('click', window.globalEmojiDeselectHandler);
     }
     
-    // 간단한 이벤트 위임 핸들러 (한 번만 등록)
-    if (!window.emojiResizeHandler) {
-        window.emojiResizeHandler = function(e) {
-            if (e.target.classList.contains('emoji-resize-handle')) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                const handleClass = e.target.getAttribute('data-handle');
-                const side = e.target.getAttribute('data-side');
-                const emojiId = e.target.getAttribute('data-emoji-id');
-                const emojiElement = e.target.closest('.emoji');
-                
-                if (emojiElement && handleClass && side && emojiId) {
-                    console.log('이벤트 위임으로 크기 조정 시작:', handleClass);
-                    
-                    // 이모지를 선택 상태로 만들기
-                    selectEmoji(emojiElement, side);
-                    
-                    // 크기 조정 함수 호출
-                    startEmojiResize(e, emojiElement, side, emojiId, handleClass);
-                }
-            }
-        };
-        
-        // 이벤트 리스너 등록 (한 번만)
-        document.addEventListener('mousedown', window.emojiResizeHandler);
-        document.addEventListener('touchstart', window.emojiResizeHandler);
-        
-        console.log('이모지 크기 조정 이벤트 위임 핸들러 등록 완료');
-    }
+    // 이벤트 위임 핸들러 제거 (직접 이벤트 리스너 사용)
+    console.log('이모지 크기 조정 직접 이벤트 리스너 사용');
     
     console.log(`${side} 면 이모지 렌더링 완료:`, emojis.length);
 }
 
 // 이모지 선택 함수
 function selectEmoji(emojiElement, side) {
+    console.log('selectEmoji 함수 호출됨:', emojiElement, side);
+    
     // 모든 이모지 선택 해제
     const allEmojis = document.querySelectorAll('.emoji');
-    allEmojis.forEach(emoji => emoji.classList.remove('selected'));
+    allEmojis.forEach(emoji => {
+        emoji.classList.remove('selected');
+        // 모든 핸들과 삭제 버튼 숨기기
+        const resizeHandles = emoji.querySelectorAll('.emoji-resize-handle');
+        const rotateHandle = emoji.querySelector('.emoji-rotate-handle');
+        const deleteBtn = emoji.querySelector('.emoji-delete-btn');
+        
+        resizeHandles.forEach(handle => {
+            handle.style.display = 'none';
+            handle.style.visibility = 'hidden';
+        });
+        if (rotateHandle) {
+            rotateHandle.style.display = 'none';
+            rotateHandle.style.visibility = 'hidden';
+        }
+        if (deleteBtn) {
+            deleteBtn.style.display = 'none';
+            deleteBtn.style.visibility = 'hidden';
+        }
+    });
     
     // 선택된 이모지 활성화
     emojiElement.classList.add('selected');
+    console.log('이모지 selected 클래스 추가됨');
     
     // 크기 조정 핸들 표시
     const resizeHandles = emojiElement.querySelectorAll('.emoji-resize-handle');
+    console.log('크기 조정 핸들 개수:', resizeHandles.length);
     resizeHandles.forEach(handle => {
         handle.style.display = 'block';
         handle.style.opacity = '1';
+        handle.style.visibility = 'visible';
+        console.log('크기 조정 핸들 표시됨:', handle.className);
     });
     
-    console.log('이모지 선택됨:', emojiElement.textContent);
+    // 회전 핸들 표시
+    const rotateHandle = emojiElement.querySelector('.emoji-rotate-handle');
+    if (rotateHandle) {
+        rotateHandle.style.display = 'block';
+        rotateHandle.style.visibility = 'visible';
+        console.log('회전 핸들 표시됨');
+    } else {
+        console.log('회전 핸들 없음');
+    }
+    
+    // 삭제 버튼 표시
+    const deleteBtn = emojiElement.querySelector('.emoji-delete-btn');
+    if (deleteBtn) {
+        deleteBtn.style.display = 'block';
+        deleteBtn.style.visibility = 'visible';
+        console.log('삭제 버튼 표시됨');
+    } else {
+        console.log('삭제 버튼 없음');
+    }
+    
+    console.log('이모지 선택 완료:', emojiElement.textContent);
 }
 
 // 이모지 크기 조정 시작 (완전히 새로운 간단한 버전)
 function startEmojiResize(event, emojiElement, side, emojiId, handleClass) {
+    console.log('startEmojiResize 함수 진입:', { handleClass, side, emojiId, eventType: event.type });
+    
     event.preventDefault();
     event.stopPropagation();
     
     console.log('이모지 크기 조정 시작:', { handleClass, side, emojiId });
     
-    // 시작 위치와 크기 정보
-    let startX = event.clientX || event.touches[0].clientX;
-    let startY = event.clientY || event.touches[0].clientY;
+    // 시작 위치와 크기 정보 (터치 이벤트 지원)
+    let startX, startY;
+    if (event.type === 'touchstart' || event.type === 'pointerdown') {
+        startX = event.touches ? event.touches[0].clientX : event.clientX;
+        startY = event.touches ? event.touches[0].clientY : event.clientY;
+    } else {
+        startX = event.clientX;
+        startY = event.clientY;
+    }
+    
+    console.log('시작 위치:', { startX, startY });
+    
     let startSize = parseInt(emojiElement.style.fontSize) || 24;
     let startLeft = parseInt(emojiElement.style.left) || 0;
     let startTop = parseInt(emojiElement.style.top) || 0;
     
+    console.log('시작 상태:', { startSize, startLeft, startTop });
+    
     // 크기 조정 상태 설정
     emojiElement.classList.add('resizing');
+    
+    // 크기 조정 중에는 transition 비활성화
+    emojiElement.style.transition = 'none';
     
     // 전역 변수로 리사이징 상태 추적
     window.isEmojiResizing = true;
     
     function onMouseMove(e) {
-        if (!window.isEmojiResizing) return;
+        if (!window.isEmojiResizing) {
+            console.log('크기 조정 상태가 아님, 무시');
+            return;
+        }
         
         e.preventDefault();
         
-        let currentX = e.clientX || e.touches[0].clientX;
-        let currentY = e.clientY || e.touches[0].clientY;
+        // 터치 이벤트 지원
+        let currentX, currentY;
+        if (e.type === 'touchmove' || e.type === 'pointermove') {
+            currentX = e.touches ? e.touches[0].clientX : e.clientX;
+            currentY = e.touches ? e.touches[0].clientY : e.clientY;
+        } else {
+            currentX = e.clientX;
+            currentY = e.clientY;
+        }
         
         let deltaX = currentX - startX;
         let deltaY = currentY - startY;
         
-        // 크기 변화량 계산
+        console.log('마우스 이동:', { currentX, currentY, deltaX, deltaY, handleClass });
+        
+        // 크기 변화량 계산 (더 간단하고 직관적인 방식)
         let sizeChange = 0;
         
-        switch (handleClass) {
-            case 'top-left':
-                sizeChange = -(deltaX + deltaY) / 2;
-                break;
-            case 'top-right':
-                sizeChange = (deltaX - deltaY) / 2;
-                break;
-            case 'bottom-left':
-                sizeChange = (-deltaX + deltaY) / 2;
-                break;
-            case 'bottom-right':
-                sizeChange = (deltaX + deltaY) / 2;
-                break;
+        if (handleClass === 'bottom-right') {
+            sizeChange = Math.max(deltaX, deltaY);
+        } else if (handleClass === 'bottom-left') {
+            sizeChange = Math.max(-deltaX, deltaY);
+        } else if (handleClass === 'top-right') {
+            sizeChange = Math.max(deltaX, -deltaY);
+        } else if (handleClass === 'top-left') {
+            sizeChange = Math.max(-deltaX, -deltaY);
         }
         
         let newSize = Math.max(12, Math.min(80, startSize + sizeChange));
         let sizeDiff = newSize - startSize;
+        
+        console.log('크기 계산:', { sizeChange, newSize, sizeDiff });
         
         // 위치 조정 (크기가 변할 때 중심점 유지)
         let newLeft = startLeft;
@@ -2636,14 +2963,20 @@ function startEmojiResize(event, emojiElement, side, emojiId, handleClass) {
             newTop = startTop - sizeDiff;
         }
         
-        // 스타일 적용
-        emojiElement.style.fontSize = newSize + 'px';
+        // 크기 조정 중에는 transition 비활성화
+        emojiElement.style.transition = 'none';
+        
+        // 스타일 적용 (강제 적용)
+        emojiElement.style.setProperty('font-size', newSize + 'px', 'important');
         emojiElement.style.left = newLeft + 'px';
         emojiElement.style.top = newTop + 'px';
         
         // 회전 유지
         let rotation = parseFloat(emojiElement.dataset.rotation) || 0;
         emojiElement.style.transform = `rotate(${rotation}deg)`;
+        
+        // 강제 리플로우 트리거
+        emojiElement.offsetHeight;
         
         // 상태 업데이트
         if (photoCardEditState[side] && photoCardEditState[side].emojis) {
@@ -2652,10 +2985,26 @@ function startEmojiResize(event, emojiElement, side, emojiId, handleClass) {
                 emojiData.size = newSize;
                 emojiData.x = newLeft;
                 emojiData.y = newTop;
+                console.log('이모지 데이터 업데이트됨');
             }
         }
         
-        console.log('크기 조정 중:', { newSize, newLeft, newTop });
+        console.log('크기 조정 중:', { newSize, newLeft, newTop, handleClass });
+        console.log('이모지 스타일 적용됨:', {
+            fontSize: emojiElement.style.fontSize,
+            left: emojiElement.style.left,
+            top: emojiElement.style.top,
+            transform: emojiElement.style.transform
+        });
+        
+        // 실제 계산된 스타일 확인
+        const computedStyle = window.getComputedStyle(emojiElement);
+        console.log('실제 계산된 스타일:', {
+            fontSize: computedStyle.fontSize,
+            left: computedStyle.left,
+            top: computedStyle.top,
+            transform: computedStyle.transform
+        });
     }
     
     function onMouseUp(e) {
@@ -2664,21 +3013,32 @@ function startEmojiResize(event, emojiElement, side, emojiId, handleClass) {
         window.isEmojiResizing = false;
         emojiElement.classList.remove('resizing');
         
+        // transition 다시 활성화
+        emojiElement.style.transition = 'all 0.3s ease';
+        
+        // 최종 크기 강제 적용
+        emojiElement.style.setProperty('font-size', emojiElement.style.fontSize, 'important');
+        
         // 이벤트 리스너 제거
         document.removeEventListener('mousemove', onMouseMove);
         document.removeEventListener('mouseup', onMouseUp);
         document.removeEventListener('touchmove', onMouseMove);
         document.removeEventListener('touchend', onMouseUp);
         document.removeEventListener('touchcancel', onMouseUp);
+        document.removeEventListener('pointermove', onMouseMove);
+        document.removeEventListener('pointerup', onMouseUp);
     }
     
-    // 이벤트 리스너 등록
-    document.addEventListener('mousemove', onMouseMove);
+    // 이벤트 리스너 등록 (터치 이벤트 최적화)
+    document.addEventListener('mousemove', onMouseMove, { passive: false });
     document.addEventListener('mouseup', onMouseUp);
-    document.addEventListener('touchmove', onMouseMove);
+    document.addEventListener('touchmove', onMouseMove, { passive: false });
     document.addEventListener('touchend', onMouseUp);
     document.addEventListener('touchcancel', onMouseUp);
+    document.addEventListener('pointermove', onMouseMove, { passive: false });
+    document.addEventListener('pointerup', onMouseUp);
     
+    console.log('이모지 크기 조정 이벤트 리스너 등록 완료');
     console.log('이모지 크기 조정 준비 완료');
 }
 
@@ -3127,14 +3487,9 @@ function makeDraggable(element, side) {
     let hasMoved = false;
     let listenersAdded = false;
 
-    // 마우스 이벤트
-    element.addEventListener('mousedown', dragStart);
-    element.addEventListener('mouseup', dragEnd);
-    
-    // 터치 이벤트 (모바일 최적화)
-    element.addEventListener('touchstart', dragStart, { passive: false });
-    element.addEventListener('touchend', dragEnd, { passive: false });
-    element.addEventListener('touchcancel', dragEnd, { passive: false });
+    // 포인터 이벤트 (모든 디바이스에서 작동)
+    element.addEventListener('pointerdown', dragStart, { passive: false });
+    element.addEventListener('pointerup', dragEnd, { passive: false });
 
     function dragStart(e) {
         e.preventDefault();
@@ -3163,14 +3518,9 @@ function makeDraggable(element, side) {
         startTime = Date.now();
         hasMoved = false;
         
-        // 현재 마우스/터치 위치
-        if (e.type === 'touchstart') {
-            startX = e.touches[0].clientX;
-            startY = e.touches[0].clientY;
-        } else {
-            startX = e.clientX;
-            startY = e.clientY;
-        }
+        // 현재 포인터 위치
+        startX = e.clientX;
+        startY = e.clientY;
         
         // 이모지의 현재 위치
         elementStartX = parseInt(element.style.left) || 0;
@@ -3178,24 +3528,18 @@ function makeDraggable(element, side) {
 
         // 이모지 자체나 이모지의 자식 요소를 클릭했을 때만 드래그 시작
         if (e.target === element || element.contains(e.target)) {
+            console.log('이모지 클릭/터치 감지됨');
+            
+            // 선택 상태로 만들기 (드래그 시작 전에 먼저 실행)
+            selectEmoji(element, side);
+            
             isDragging = true;
             element.classList.add('dragging');
             
-            // 선택 상태로 만들기
-            const emojiLayer = element.closest('.emoji-layer');
-            if (emojiLayer) {
-                const allEmojis = emojiLayer.querySelectorAll('.emoji');
-                allEmojis.forEach(emoji => emoji.classList.remove('selected'));
-                element.classList.add('selected');
-            }
-            
             // 드래그 이벤트 리스너 추가 (중복 방지)
             if (!listenersAdded) {
-                document.addEventListener('mousemove', drag, { passive: false });
-                document.addEventListener('touchmove', drag, { passive: false });
-                document.addEventListener('mouseup', dragEnd, { passive: false });
-                document.addEventListener('touchend', dragEnd, { passive: false });
-                document.addEventListener('touchcancel', dragEnd, { passive: false });
+                document.addEventListener('pointermove', drag, { passive: false });
+                document.addEventListener('pointerup', dragEnd, { passive: false });
                 listenersAdded = true;
             }
         }
@@ -3209,21 +3553,19 @@ function makeDraggable(element, side) {
             isDragging = false;
             element.classList.remove('dragging');
             
-            // 드래그 시간이 짧고 이동이 없으면 클릭으로 처리하지 않음
+            // 드래그 시간이 짧고 이동이 없으면 클릭으로 처리
             const dragDuration = Date.now() - startTime;
-            if (dragDuration > 100 || hasMoved) {
-                e.preventDefault();
+            if (dragDuration < 100 && !hasMoved) {
+                // 클릭으로 처리 - 핸들이 이미 표시되어 있음
+                console.log('이모지 클릭으로 처리됨');
+            } else {
+                console.log('드래그 종료:', hasMoved ? '이동됨' : '클릭만');
             }
-            
-            console.log('드래그 종료:', hasMoved ? '이동됨' : '클릭만');
             
             // 이벤트 리스너 제거
             if (listenersAdded) {
-                document.removeEventListener('mousemove', drag);
-                document.removeEventListener('touchmove', drag);
-                document.removeEventListener('mouseup', dragEnd);
-                document.removeEventListener('touchend', dragEnd);
-                document.removeEventListener('touchcancel', dragEnd);
+                document.removeEventListener('pointermove', drag);
+                document.removeEventListener('pointerup', dragEnd);
                 listenersAdded = false;
             }
         }
@@ -3236,13 +3578,8 @@ function makeDraggable(element, side) {
 
             let currentX, currentY;
             
-            if (e.type === 'touchmove') {
-                currentX = e.touches[0].clientX;
-                currentY = e.touches[0].clientY;
-            } else {
-                currentX = e.clientX;
-                currentY = e.clientY;
-            }
+            currentX = e.clientX;
+            currentY = e.clientY;
 
             // 이동 거리 계산
             const deltaX = currentX - startX;
@@ -3811,8 +4148,8 @@ function loadCurrentImageOrPhotoCard() {
 function startEmojiRotate(event, emojiElement, side, emojiId) {
     event.preventDefault();
     
-    const startX = event.type === 'mousedown' ? event.clientX : event.touches[0].clientX;
-    const startY = event.type === 'mousedown' ? event.clientY : event.touches[0].clientY;
+    const startX = event.type === 'mousedown' ? event.clientX : (event.touches ? event.touches[0].clientX : event.clientX);
+    const startY = event.type === 'mousedown' ? event.clientY : (event.touches ? event.touches[0].clientY : event.clientY);
     const startRotation = parseFloat(emojiElement.dataset.rotation) || 0;
     
     // 현재 위치 정보 가져오기
@@ -3835,8 +4172,8 @@ function startEmojiRotate(event, emojiElement, side, emojiId) {
     function onMouseMove(e) {
         e.preventDefault();
         
-        const mouseX = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX;
-        const mouseY = e.type === 'mousemove' ? e.clientY : e.touches[0].clientY;
+        const mouseX = e.type === 'mousemove' ? e.clientX : (e.touches ? e.touches[0].clientX : e.clientX);
+        const mouseY = e.type === 'mousemove' ? e.clientY : (e.touches ? e.touches[0].clientY : e.clientY);
         
         // 현재 각도 계산
         const currentAngle = Math.atan2(mouseY - centerY, mouseX - centerX);
@@ -3875,16 +4212,11 @@ function startEmojiRotate(event, emojiElement, side, emojiId) {
     
     function onMouseUp() {
         emojiElement.classList.remove('rotating');
-        document.removeEventListener('mousemove', onMouseMove);
-        document.removeEventListener('mouseup', onMouseUp);
-        document.removeEventListener('touchmove', onMouseMove);
-        document.removeEventListener('touchend', onMouseUp);
-        
+        document.removeEventListener('pointermove', onMouseMove);
+        document.removeEventListener('pointerup', onMouseUp);
         console.log('회전 완료');
     }
     
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
-    document.addEventListener('touchmove', onMouseMove);
-    document.addEventListener('touchend', onMouseUp);
+    document.addEventListener('pointermove', onMouseMove, { passive: false });
+    document.addEventListener('pointerup', onMouseUp);
 }
