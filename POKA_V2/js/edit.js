@@ -246,7 +246,7 @@ function createPhotoCard() {
         return;
     }
     
-    console.log('포토카드 생성:', { 
+    console.log('새로운 포토카드 생성:', { 
         front: selectedFrontImage, 
         back: selectedBackImage 
     });
@@ -254,7 +254,7 @@ function createPhotoCard() {
     // 포토카드 데이터 생성
     const photoCard = {
         id: Date.now() + Math.random(),
-        name: `포토카드_${Date.now()}`,
+        name: `새 포토카드_${Date.now()}`,
         frontImage: selectedFrontImage.dataUrl,
         frontImageName: selectedFrontImage.name,
         backImage: selectedBackImage.dataUrl,
@@ -267,13 +267,140 @@ function createPhotoCard() {
     POKA.AppState.currentPhotoCard = photoCard;
     POKA.AppState.saveToStorage('currentPhotoCard', photoCard);
     
-    // 편집 모드로 전환
-    loadPhotoCardForEdit(photoCard);
+    // 새로운 포토카드 편집 모드로 전환 (기존 상태 초기화)
+    loadNewPhotoCardForEdit(photoCard);
 }
 
-// 포토카드 편집 모드 로드
+// 새로운 포토카드 편집 모드 로드 (기존 상태 초기화)
+function loadNewPhotoCardForEdit(photoCard) {
+    console.log('새로운 포토카드 편집 모드 로드:', photoCard);
+    
+    // 포토카드 정보 저장
+    currentPhotoCard = photoCard;
+    POKA.AppState.currentPhotoCard = photoCard; // AppState도 업데이트
+    localStorage.setItem('currentPhotoCard', JSON.stringify(photoCard));
+
+    // 이미지 선택 섹션 숨기기
+    imageSelectionSection.style.display = 'none';
+    
+    // 편집 섹션 표시
+    editSection.style.display = 'block';
+    
+    // 포토카드 동시 편집 모드 표시
+    const photoCardSimultaneousEdit = document.getElementById('photoCardSimultaneousEdit');
+    const singleImageEdit = document.getElementById('singleImageEdit');
+    
+    if (photoCardSimultaneousEdit) {
+        photoCardSimultaneousEdit.style.display = 'block';
+    }
+    
+    if (singleImageEdit) {
+        singleImageEdit.style.display = 'none';
+    }
+    
+    // 포토카드 이름 설정 (새로운 이름)
+    const nameInput = document.getElementById('photoCardNameEditInput');
+    const nameCounter = document.getElementById('nameCounterEdit');
+    
+    if (nameInput) {
+        nameInput.value = photoCard.name || '';
+        if (nameCounter) {
+            nameCounter.textContent = (photoCard.name || '').length;
+        }
+    }
+    
+    // 편집 상태 초기화 (새로운 포토카드이므로 기존 편집 상태 제거)
+    photoCardEditState.front = {
+        image: photoCard.frontImage,
+        rotation: 0,
+        flip: { horizontal: false, vertical: false },
+        filter: 'none',
+        emojis: []
+    };
+    
+    photoCardEditState.back = {
+        image: photoCard.backImage,
+        rotation: 0,
+        flip: { horizontal: false, vertical: false },
+        filter: 'none',
+        emojis: []
+    };
+    
+    // 앞면 이미지 로드 (편집 상태 없이)
+    if (photoCard.frontImage) {
+        console.log('앞면 이미지 로드 (새 포토카드):', {
+            frontImageLength: photoCard.frontImage.length,
+            frontImageStart: photoCard.frontImage.substring(0, 50)
+        });
+        
+        const frontImage = document.getElementById('frontEditImage');
+        const frontFallback = document.getElementById('frontImageFallback');
+        
+        if (frontImage && frontFallback) {
+            frontImage.src = photoCard.frontImage;
+            frontImage.style.display = 'block';
+            frontFallback.style.display = 'none';
+            
+            // 기존 이모지 제거
+            const frontEmojiLayer = document.getElementById('frontEmojiLayer');
+            if (frontEmojiLayer) {
+                frontEmojiLayer.innerHTML = '';
+            }
+            
+            // 초기 편집 상태 적용 (회전, 플립, 필터 초기화)
+            applyImageEditState('front');
+            
+            console.log('앞면 이미지 로드됨 (새 포토카드)');
+        }
+    }
+    
+    // 뒷면 이미지 로드 (편집 상태 없이)
+    if (photoCard.backImage) {
+        console.log('뒷면 이미지 로드 (새 포토카드):', {
+            backImageLength: photoCard.backImage.length,
+            backImageStart: photoCard.backImage.substring(0, 50)
+        });
+        
+        const backImage = document.getElementById('backEditImage');
+        const backFallback = document.getElementById('backImageFallback');
+        
+        if (backImage && backFallback) {
+            backImage.src = photoCard.backImage;
+            backImage.style.display = 'block';
+            backFallback.style.display = 'none';
+            
+            // 기존 이모지 제거
+            const backEmojiLayer = document.getElementById('backEmojiLayer');
+            if (backEmojiLayer) {
+                backEmojiLayer.innerHTML = '';
+            }
+            
+            // 초기 편집 상태 적용 (회전, 플립, 필터 초기화)
+            applyImageEditState('back');
+            
+            console.log('뒷면 이미지 로드됨 (새 포토카드)');
+        }
+    }
+    
+    // 이미지 클릭 이벤트 설정
+    setupImageClickEvents();
+    
+    // 이미지 로딩 완료 후 상태 업데이트
+    setTimeout(() => {
+        updateImageSelectionState();
+        // 초기 상태 설정 (앞면 선택)
+        switchImageSide('front');
+    }, 100);
+    
+    // 초기 선택 상태 설정
+    updateImageSelectionState();
+    
+    POKA.Toast.success('새로운 포토카드 편집을 시작합니다');
+}
+
+// 기존 포토카드 편집 모드 로드 (저장된 편집 상태 포함)
 function loadPhotoCardForEdit(photoCard) {
-    console.log('포토카드 편집 모드 로드:', photoCard);
+    console.log('기존 포토카드 편집 모드 로드:', photoCard);
     
     // 포토카드 정보 저장
     currentPhotoCard = photoCard;
@@ -408,7 +535,7 @@ function loadPhotoCardForEdit(photoCard) {
     // 초기 선택 상태 설정
     updateImageSelectionState();
     
-    POKA.Toast.success('포토카드 편집 모드로 전환되었습니다');
+    POKA.Toast.success('기존 포토카드 편집 모드로 전환되었습니다');
 }
 
 // 현재 이미지 로드
