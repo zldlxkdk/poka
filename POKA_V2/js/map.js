@@ -370,6 +370,17 @@ function requestLocation() {
     console.log('검색 위치 선택 상태:', isSearchLocationSelected);
     console.log('검색 위치 데이터:', searchLocationData);
     
+    // 위치정보 로딩 이모지 표시
+    if (loadingState) {
+        loadingState.style.display = 'flex';
+        // 이모지와 텍스트로 로딩 표시
+        loadingState.innerHTML = `
+            <div class="loading-spinner"></div>
+            <div style="font-size:2.2rem; margin-bottom: 8px;">🗺️📍</div>
+            <p>위치 정보를 불러오는 중입니다...</p>
+        `;
+    }
+    
     // 검색 위치 선택 상태 로그
     if (isSearchLocationSelected) {
         console.log('검색 위치 선택 상태에서 GPS 위치 업데이트 실행');
@@ -399,7 +410,7 @@ function requestLocation() {
                 // 주소 표시 업데이트
                 if (isSearchLocationSelected && searchLocationData) {
                     // 검색 위치 선택 상태에서는 검색 위치 주소 표시
-                    currentAddressElement.textContent = `🔍 ${searchLocationData.address}`;
+                    currentAddressElement.textContent = `? ${searchLocationData.address}`;
                     locationDetailElement.textContent = `검색 위치: ${searchLocationData.subAddress} (내 위치로 돌아가려면 "내 위치" 버튼을 클릭하세요)`;
                 } else {
                     // 일반 상태에서는 현재 위치 주소 표시
@@ -436,6 +447,9 @@ function requestLocation() {
                     renderKioskList();
                 }
                 
+                // 위치정보 로딩 이모지 숨김
+                if (loadingState) loadingState.style.display = 'none';
+                
                 console.log('위치 정보 업데이트 완료');
             },
             (error) => {
@@ -458,6 +472,9 @@ function requestLocation() {
                 currentAddressElement.textContent = '서울시 강남구';
                 locationDetailElement.textContent = '강남대로 464, 강남역 인근';
                 
+                // 위치정보 로딩 이모지 숨김
+                if (loadingState) loadingState.style.display = 'none';
+                
                 console.log('기본 위치로 설정됨');
             },
             options
@@ -466,6 +483,8 @@ function requestLocation() {
         console.error('위치 정보 지원 안됨');
         currentAddressElement.textContent = '서울시 강남구';
         locationDetailElement.textContent = '강남대로 464, 강남역 인근';
+        // 위치정보 로딩 이모지 숨김
+        if (loadingState) loadingState.style.display = 'none';
     }
 }
 
@@ -524,7 +543,7 @@ function displaySearchResults(results) {
         const subAddress = addressParts.slice(1, 3).join(', '); // 첫 번째와 두 번째 부분만 사용
         
         resultItem.innerHTML = `
-            <div class="search-result-icon">📍</div>
+            <div class="search-result-icon">?</div>
             <div class="search-result-content">
                 <div class="search-result-title">${mainAddress}</div>
                 <div class="search-result-address">${subAddress}</div>
@@ -572,7 +591,7 @@ function selectSearchResult(result) {
     localStorage.setItem('searchLocationData', JSON.stringify(searchLocationData));
     
     // 주소 표시 업데이트 (검색 위치임을 명시)
-    currentAddressElement.textContent = `🔍 ${searchAddress}`;
+    currentAddressElement.textContent = `? ${searchAddress}`;
     locationDetailElement.textContent = `검색 위치: ${searchSubAddress} (내 위치로 돌아가려면 "내 위치" 버튼을 클릭하세요)`;
     
     // 사용자에게 피드백 제공
@@ -633,13 +652,13 @@ function selectSearchResult(result) {
 
 // 검색 로딩 표시
 function showSearchLoading() {
-    searchResults.innerHTML = '<div class="search-loading">🔍 지역을 검색하고 있습니다...</div>';
+    searchResults.innerHTML = '<div class="search-loading">? 지역을 검색하고 있습니다...</div>';
     searchResults.style.display = 'block';
 }
 
 // 검색 오류 표시
 function showSearchError(message) {
-    searchResults.innerHTML = `<div class="search-error">⚠️ ${message}</div>`;
+    searchResults.innerHTML = `<div class="search-error">?? ${message}</div>`;
     searchResults.style.display = 'block';
     isSearching = false;
 }
@@ -714,7 +733,7 @@ function initMap() {
             // OpenStreetMap 타일 레이어 추가
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
-                attribution: '© OpenStreetMap contributors'
+                attribution: '? OpenStreetMap contributors'
             }).addTo(map);
             console.log('타일 레이어 추가됨');
             
@@ -757,7 +776,7 @@ function showMapFallback() {
     if (mapContainer) {
         mapContainer.innerHTML = `
             <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #666; flex-direction: column; gap: 10px; background: #f8f9fa; border-radius: 12px;">
-                <div style="font-size: 1.2rem; font-weight: bold;">🗺️</div>
+                <div style="font-size: 1.2rem; font-weight: bold;">??</div>
                 <div>지도를 불러올 수 없습니다</div>
                 <div style="font-size: 0.8rem; text-align: center;">키오스크 목록은 아래에서 확인하세요</div>
             </div>
@@ -772,7 +791,7 @@ function addUserMarker() {
     // 사용자 위치 마커 추가
     userMarker = L.marker([currentPosition.lat, currentPosition.lng])
         .addTo(map)
-        .bindPopup('📍 현재 위치')
+        .bindPopup('? 현재 위치')
         .openPopup();
     
     // 사용자 위치 원형 표시
@@ -813,14 +832,14 @@ function addKioskMarkers() {
     kioskData.forEach(kiosk => {
         // 상태에 따른 마커 색상 설정
         let markerColor = '#22c55e'; // 기본 온라인 (초록색)
-        let statusIcon = '🟢';
+        let statusIcon = '?';
         
         if (kiosk.status === 'maintenance') {
             markerColor = '#fb923c'; // 점검 (주황색)
-            statusIcon = '🟡';
+            statusIcon = '?';
         } else if (kiosk.status === 'offline') {
             markerColor = '#ef4444'; // 오프라인 (빨간색)
-            statusIcon = '🔴';
+            statusIcon = '?';
         }
         
         // 커스텀 마커 아이콘 생성
@@ -1039,21 +1058,21 @@ function showKioskPopup(kiosk) {
             </div>
             <div class="kiosk-detail-info">
                 <div class="info-item">
-                    <div class="info-icon">📍</div>
+                    <div class="info-icon">?</div>
                     <div class="info-content">
                         <div class="info-label">거리</div>
                         <div class="info-value">${kiosk.distance.toFixed(1)}km</div>
                     </div>
                 </div>
                 <div class="info-item">
-                    <div class="info-icon">⏰</div>
+                    <div class="info-icon">?</div>
                     <div class="info-content">
                         <div class="info-label">운영시간</div>
                         <div class="info-value">${kiosk.operatingHours}</div>
                     </div>
                 </div>
                 <div class="info-item">
-                    <div class="info-icon">🔄</div>
+                    <div class="info-icon">?</div>
                     <div class="info-content">
                         <div class="info-label">상태</div>
                         <div class="info-value kiosk-status ${kiosk.status}">
@@ -1064,7 +1083,7 @@ function showKioskPopup(kiosk) {
                 </div>
                 ${kiosk.phone ? `
                 <div class="info-item">
-                    <div class="info-icon">📞</div>
+                    <div class="info-icon">?</div>
                     <div class="info-content">
                         <div class="info-label">연락처</div>
                         <div class="info-value">${kiosk.phone}</div>
@@ -1073,7 +1092,7 @@ function showKioskPopup(kiosk) {
                 ` : ''}
                 ${kiosk.facilities && kiosk.facilities.length > 0 && kiosk.facilities[0] !== '점검중' && kiosk.facilities[0] !== '중단' ? `
                 <div class="info-item">
-                    <div class="info-icon">🏢</div>
+                    <div class="info-icon">?</div>
                     <div class="info-content">
                         <div class="info-label">편의시설</div>
                         <div class="info-value">${kiosk.facilities.join(', ')}</div>
@@ -1081,7 +1100,7 @@ function showKioskPopup(kiosk) {
                 </div>
                 ` : ''}
                 <div class="info-item">
-                    <div class="info-icon">📅</div>
+                    <div class="info-icon">?</div>
                     <div class="info-content">
                         <div class="info-label">마지막 업데이트</div>
                         <div class="info-value">${kiosk.lastUpdate}</div>
@@ -1089,7 +1108,7 @@ function showKioskPopup(kiosk) {
                 </div>
                 ${kiosk.description ? `
                 <div class="info-item">
-                    <div class="info-icon">ℹ️</div>
+                    <div class="info-icon">??</div>
                     <div class="info-content">
                         <div class="info-label">설명</div>
                         <div class="info-value">${kiosk.description}</div>
