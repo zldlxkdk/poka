@@ -1779,8 +1779,48 @@ function enterPhotoCardEditMode() {
 function loadPhotoCardData() {
     console.log('포토카드 데이터 로드 시작');
     
-    const photoCardData = JSON.parse(localStorage.getItem('currentPhotoCardData') || '{}');
-    console.log('로드된 포토카드 데이터:', photoCardData);
+    // 여러 소스에서 포토카드 데이터 로드 시도
+    let photoCardData = {};
+    
+    // 1. localStorage에서 직접 로드
+    try {
+        const storedData = localStorage.getItem('currentPhotoCardData');
+        if (storedData) {
+            photoCardData = JSON.parse(storedData);
+            console.log('localStorage에서 포토카드 데이터 로드:', photoCardData);
+        }
+    } catch (error) {
+        console.error('localStorage 데이터 파싱 오류:', error);
+    }
+    
+    // 2. AppState에서 로드 시도
+    if (!photoCardData.frontImage && !photoCardData.backImage) {
+        try {
+            const appStateData = POKA.AppState.getFromStorage('currentPhotoCard');
+            if (appStateData) {
+                photoCardData = appStateData;
+                console.log('AppState에서 포토카드 데이터 로드:', photoCardData);
+            }
+        } catch (error) {
+            console.error('AppState 데이터 로드 오류:', error);
+        }
+    }
+    
+    // 3. 업로드된 이미지에서 로드 시도
+    if (!photoCardData.frontImage && !photoCardData.backImage) {
+        try {
+            const uploadedImages = JSON.parse(localStorage.getItem('uploadedImages') || '[]');
+            if (uploadedImages.length > 0) {
+                photoCardData = {
+                    frontImage: uploadedImages[0].dataUrl,
+                    backImage: uploadedImages.length > 1 ? uploadedImages[1].dataUrl : null
+                };
+                console.log('업로드된 이미지에서 포토카드 데이터 생성:', photoCardData);
+            }
+        } catch (error) {
+            console.error('업로드된 이미지 로드 오류:', error);
+        }
+    }
     
     // 포토카드 이름 로드
     const photoCardName = localStorage.getItem('currentPhotoCardName') || '';
@@ -1805,20 +1845,27 @@ function loadPhotoCardData() {
         const frontImage = document.getElementById('frontEditImage');
         const frontFallback = document.getElementById('frontImageFallback');
         
-        frontImage.src = photoCardData.frontImage;
-        frontImage.style.display = 'block';
-        frontFallback.style.display = 'none';
-        
-        console.log('앞면 이미지 로드됨');
+        if (frontImage && frontFallback) {
+            frontImage.src = photoCardData.frontImage;
+            frontImage.style.display = 'block';
+            frontImage.style.width = '100%';
+            frontImage.style.height = '100%';
+            frontImage.style.objectFit = 'contain';
+            frontFallback.style.display = 'none';
+            
+            console.log('앞면 이미지 로드됨:', photoCardData.frontImage.substring(0, 50) + '...');
+        }
     } else {
         photoCardEditState.front.image = null;
         const frontImage = document.getElementById('frontEditImage');
         const frontFallback = document.getElementById('frontImageFallback');
         
-        frontImage.style.display = 'none';
-        frontFallback.style.display = 'flex';
-        
-        console.log('앞면 이미지 없음');
+        if (frontImage && frontFallback) {
+            frontImage.style.display = 'none';
+            frontFallback.style.display = 'flex';
+            
+            console.log('앞면 이미지 없음');
+        }
     }
     
     // 뒷면 이미지 처리
@@ -1827,33 +1874,60 @@ function loadPhotoCardData() {
         const backImage = document.getElementById('backEditImage');
         const backFallback = document.getElementById('backImageFallback');
         
-        backImage.src = photoCardData.backImage;
-        backImage.style.display = 'block';
-        backFallback.style.display = 'none';
-        
-        console.log('뒷면 이미지 로드됨');
+        if (backImage && backFallback) {
+            backImage.src = photoCardData.backImage;
+            backImage.style.display = 'block';
+            backImage.style.width = '100%';
+            backImage.style.height = '100%';
+            backImage.style.objectFit = 'contain';
+            backFallback.style.display = 'none';
+            
+            console.log('뒷면 이미지 로드됨:', photoCardData.backImage.substring(0, 50) + '...');
+        }
     } else {
         photoCardEditState.back.image = null;
         const backImage = document.getElementById('backEditImage');
         const backFallback = document.getElementById('backImageFallback');
         
-        backImage.style.display = 'none';
-        backFallback.style.display = 'flex';
-        
-        console.log('뒷면 이미지 없음');
+        if (backImage && backFallback) {
+            backImage.style.display = 'none';
+            backFallback.style.display = 'flex';
+            
+            console.log('뒷면 이미지 없음');
+        }
     }
-    
-    // 이미지 클릭 이벤트 제거
     
     // 초기 선택 상태를 앞면으로 설정
     currentSelectedSide = 'front';
     updateImageSelectionState();
+    
+    // 포토카드 편집 상태 초기화 확인
+    if (!photoCardEditState.front) {
+        photoCardEditState.front = {
+            image: photoCardData.frontImage,
+            rotation: 0,
+            flip: { horizontal: false, vertical: false },
+            filter: 'none',
+            emojis: []
+        };
+    }
+    
+    if (!photoCardEditState.back) {
+        photoCardEditState.back = {
+            image: photoCardData.backImage,
+            rotation: 0,
+            flip: { horizontal: false, vertical: false },
+            filter: 'none',
+            emojis: []
+        };
+    }
     
     // 이모지 렌더링
     renderEmojisForSide('front');
     renderEmojisForSide('back');
     
     console.log('포토카드 데이터 로드 완료');
+    console.log('포토카드 편집 상태:', photoCardEditState);
 }
 
 // 이미지 클릭 이벤트 설정 (비활성화)
@@ -1864,31 +1938,74 @@ function setupImageClickEvents() {
 
 // 이미지 업로드 선택
 function selectImageForUpload(side) {
+    console.log(`${side} 면 이미지 업로드 시작`);
+    
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
+    input.style.display = 'none';
+    
     input.onchange = function(e) {
         const file = e.target.files[0];
         if (file) {
+            console.log('선택된 파일:', file.name, file.size, file.type);
+            
             const reader = new FileReader();
             reader.onload = function(e) {
                 const imageData = e.target.result;
+                console.log('이미지 데이터 로드됨:', imageData.substring(0, 50) + '...');
+                
+                // 포토카드 편집 상태 업데이트
+                if (!photoCardEditState[side]) {
+                    photoCardEditState[side] = {
+                        image: null,
+                        rotation: 0,
+                        flip: { horizontal: false, vertical: false },
+                        filter: 'none',
+                        emojis: []
+                    };
+                }
+                
                 photoCardEditState[side].image = imageData;
                 
                 const imageElement = document.getElementById(side === 'front' ? 'frontEditImage' : 'backEditImage');
                 const fallbackElement = document.getElementById(side === 'front' ? 'frontImageFallback' : 'backImageFallback');
                 
-                imageElement.src = imageData;
-                imageElement.style.display = 'block';
-                fallbackElement.style.display = 'none';
-                
-                // 편집 상태 초기화
-                resetImageEdit(side);
+                if (imageElement && fallbackElement) {
+                    imageElement.src = imageData;
+                    imageElement.style.display = 'block';
+                    imageElement.style.width = '100%';
+                    imageElement.style.height = '100%';
+                    imageElement.style.objectFit = 'contain';
+                    fallbackElement.style.display = 'none';
+                    
+                    console.log(`${side} 면 이미지 업로드 완료`);
+                    
+                    // 편집 상태 초기화
+                    resetImageEdit(side);
+                    
+                    // 현재 선택된 면이면 즉시 적용
+                    if (currentSelectedSide === side) {
+                        updateImageSelectionState();
+                    }
+                } else {
+                    console.error(`${side} 면 이미지 엘리먼트를 찾을 수 없습니다`);
+                }
             };
+            
+            reader.onerror = function() {
+                console.error('이미지 파일 읽기 오류');
+                POKA.Toast.error('이미지 파일을 읽을 수 없습니다');
+            };
+            
             reader.readAsDataURL(file);
         }
     };
+    
+    // 파일 선택 다이얼로그 열기
+    document.body.appendChild(input);
     input.click();
+    document.body.removeChild(input);
 }
 
 // 이미지 편집 초기화
@@ -1983,12 +2100,32 @@ function applyImageEditState(side) {
 
 // 이미지 회전
 function rotateImageEdit(side, angle) {
+    // 이미지가 있는지 확인
+    if (!photoCardEditState[side] || !photoCardEditState[side].image) {
+        if (typeof POKA !== 'undefined' && POKA.Toast) {
+            POKA.Toast.warning('이미지를 추가해주세요');
+        } else {
+            alert('이미지를 추가해주세요');
+        }
+        return;
+    }
+    
     photoCardEditState[side].rotation += angle;
     applyImageEditState(side);
 }
 
 // 이미지 뒤집기
 function flipImageEdit(side, direction) {
+    // 이미지가 있는지 확인
+    if (!photoCardEditState[side] || !photoCardEditState[side].image) {
+        if (typeof POKA !== 'undefined' && POKA.Toast) {
+            POKA.Toast.warning('이미지를 추가해주세요');
+        } else {
+            alert('이미지를 추가해주세요');
+        }
+        return;
+    }
+    
     if (direction === 'horizontal') {
         photoCardEditState[side].flip.horizontal = !photoCardEditState[side].flip.horizontal;
     } else if (direction === 'vertical') {
@@ -1999,6 +2136,16 @@ function flipImageEdit(side, direction) {
 
 // 필터 적용
 function applyFilterEdit(side, filter) {
+    // 이미지가 있는지 확인
+    if (!photoCardEditState[side] || !photoCardEditState[side].image) {
+        if (typeof POKA !== 'undefined' && POKA.Toast) {
+            POKA.Toast.warning('이미지를 추가해주세요');
+        } else {
+            alert('이미지를 추가해주세요');
+        }
+        return;
+    }
+    
     photoCardEditState[side].filter = filter;
     applyImageEditState(side);
     
@@ -2021,11 +2168,32 @@ let emojiToDeleteSide = null;
 function addEmojiEdit(side, emoji) {
     console.log('이모지 추가:', side, emoji);
     
+    // 이미지가 있는지 확인
+    if (!photoCardEditState[side] || !photoCardEditState[side].image) {
+        if (typeof POKA !== 'undefined' && POKA.Toast) {
+            POKA.Toast.warning('이미지를 추가해주세요');
+        } else {
+            alert('이미지를 추가해주세요');
+        }
+        return;
+    }
+    
     // 현재 선택된 면 확인
     if (side !== currentSelectedSide) {
         console.log('현재 선택된 면과 다름, 면 변경:', side);
         currentSelectedSide = side;
         switchImageSide(side);
+    }
+    
+    // 포토카드 편집 상태 초기화 확인
+    if (!photoCardEditState[side]) {
+        photoCardEditState[side] = {
+            image: null,
+            rotation: 0,
+            flip: { horizontal: false, vertical: false },
+            filter: 'none',
+            emojis: []
+        };
     }
     
     if (!photoCardEditState[side].emojis) {
@@ -2034,17 +2202,18 @@ function addEmojiEdit(side, emoji) {
     
     // 이미지 컨테이너의 크기를 기준으로 중앙 위치 계산
     const imageContainer = document.getElementById(side === 'front' ? 'frontImageEditContainer' : 'backImageEditContainer');
-    let centerX = 50;
-    let centerY = 50;
+    let centerX = 100;
+    let centerY = 100;
     
     if (imageContainer) {
         const rect = imageContainer.getBoundingClientRect();
         // 컨테이너 크기의 50% 위치에 배치 (안전한 여백 포함)
-        centerX = Math.max(30, Math.min(rect.width - 30, rect.width * 0.5));
-        centerY = Math.max(30, Math.min(rect.height - 30, rect.height * 0.5));
+        centerX = Math.max(20, Math.min(rect.width - 20, rect.width * 0.5));
+        centerY = Math.max(20, Math.min(rect.height - 20, rect.height * 0.5));
         
         console.log(`${side} 면 컨테이너 크기:`, rect.width, 'x', rect.height);
         console.log(`${side} 면 이모지 위치:`, centerX, centerY);
+        console.log(`${side} 면 컨테이너:`, imageContainer);
     }
     
     // 이모지 데이터 생성
@@ -2059,13 +2228,40 @@ function addEmojiEdit(side, emoji) {
     
     photoCardEditState[side].emojis.push(emojiData);
     
-    // 이모지 렌더링
+    // 이모지 렌더링 (기존 이모지 상태 보존)
     renderEmojisForSide(side);
     
+    console.log(`${side} 면 전체 이모지 상태:`, photoCardEditState[side].emojis);
+    
     console.log(`${side} 면에 이모지 추가 완료:`, emojiData);
+    console.log(`${side} 면 현재 이모지 개수:`, photoCardEditState[side].emojis.length);
+    
+    // 이모지 레이어 확인
+    const emojiLayer = document.getElementById(side === 'front' ? 'frontEmojiLayer' : 'backEmojiLayer');
+    if (emojiLayer) {
+        console.log(`${side} 면 이모지 레이어 자식 요소 수:`, emojiLayer.children.length);
+        console.log(`${side} 면 이모지 레이어 HTML:`, emojiLayer.innerHTML);
+    }
     
     // 성공 메시지 표시
-    POKA.Toast.success('이모지가 추가되었습니다');
+    if (typeof POKA !== 'undefined' && POKA.Toast) {
+        POKA.Toast.success('이모지가 추가되었습니다');
+    } else {
+        console.log('이모지가 추가되었습니다');
+    }
+    
+    // 디버깅: 1초 후 이모지 상태 확인
+    setTimeout(() => {
+        const emojiLayer = document.getElementById(side === 'front' ? 'frontEmojiLayer' : 'backEmojiLayer');
+        if (emojiLayer) {
+            console.log(`[DEBUG] ${side} 면 이모지 레이어 상태:`, {
+                childrenCount: emojiLayer.children.length,
+                innerHTML: emojiLayer.innerHTML.substring(0, 200),
+                computedStyle: window.getComputedStyle(emojiLayer),
+                rect: emojiLayer.getBoundingClientRect()
+            });
+        }
+    }, 1000);
 }
 
 // 이모지 삭제 함수 (X 버튼용)
@@ -2121,10 +2317,29 @@ function loadImageWithFallback(imageElement, imageData, side) {
         img.onload = function() {
             imageElement.src = imageData;
             imageElement.style.display = 'block';
+            
+            // 이미지 초기 위치 설정 (중앙)
+            const container = imageElement.parentElement;
+            if (container) {
+                const containerRect = container.getBoundingClientRect();
+                const imgRect = imageElement.getBoundingClientRect();
+                
+                // 이미지를 컨테이너 중앙에 배치
+                imageElement.style.left = '50%';
+                imageElement.style.top = '50%';
+                imageElement.style.transform = 'translate(-50%, -50%)';
+            }
+            
             const fallbackElement = document.getElementById(side === 'front' ? 'frontImageFallback' : 'backImageFallback');
             if (fallbackElement) {
                 fallbackElement.style.display = 'none';
             }
+            
+            // 이미지 드래그 및 크기 조정 기능 설정
+            setTimeout(() => {
+                makeImageDraggable(imageElement, side);
+            }, 100);
+            
             console.log(`${side} 이미지 로드 성공:`, imageData.substring(0, 50) + '...');
             resolve(true);
         };
@@ -2151,21 +2366,30 @@ function renderEmojisForSide(side) {
         return;
     }
     
+    console.log(`${side} 면 이모지 렌더링 시작`);
+    console.log(`${side} 면 이모지 개수:`, photoCardEditState[side]?.emojis?.length || 0);
+    console.log(`${side} 면 이모지 레이어:`, emojiLayer);
+    
     // 기존 이모지 제거
     emojiLayer.innerHTML = '';
     
     // 저장된 이모지들 렌더링
-    const emojis = photoCardEditState[side].emojis || [];
+    const emojis = photoCardEditState[side]?.emojis || [];
     emojis.forEach(emojiData => {
-    const emojiElement = document.createElement('div');
-    emojiElement.className = 'emoji';
+        console.log(`${side} 면 이모지 렌더링:`, emojiData);
+        
+        const emojiElement = document.createElement('div');
+        emojiElement.className = 'emoji';
         emojiElement.textContent = emojiData.emoji;
         emojiElement.style.left = emojiData.x + 'px';
         emojiElement.style.top = emojiData.y + 'px';
         emojiElement.style.fontSize = (emojiData.size || 24) + 'px';
-        emojiElement.style.transform = `translate3d(${emojiData.x}px, ${emojiData.y}px, 0) rotate(${emojiData.rotation || 0}deg)`;
+        emojiElement.style.transform = `rotate(${emojiData.rotation || 0}deg)`;
         emojiElement.dataset.emojiId = emojiData.id;
-    emojiElement.dataset.side = side;
+        emojiElement.dataset.side = side;
+        emojiElement.dataset.rotation = emojiData.rotation || 0;
+        
+        console.log(`이모지 렌더링: ${emojiData.emoji}, 위치: (${emojiData.x}, ${emojiData.y}), 크기: ${emojiData.size || 24}, 회전: ${emojiData.rotation || 0}`);
         
         // 삭제 버튼 추가
         const deleteBtn = document.createElement('button');
@@ -2181,11 +2405,15 @@ function renderEmojisForSide(side) {
         const rotateHandle = document.createElement('div');
         rotateHandle.className = 'emoji-rotate-handle';
         rotateHandle.onmousedown = function(e) {
+            e.preventDefault();
             e.stopPropagation();
+            e.stopImmediatePropagation();
             startEmojiRotate(e, emojiElement, side, emojiData.id);
         };
         rotateHandle.ontouchstart = function(e) {
+            e.preventDefault();
             e.stopPropagation();
+            e.stopImmediatePropagation();
             startEmojiRotate(e, emojiElement, side, emojiData.id);
         };
         emojiElement.appendChild(rotateHandle);
@@ -2202,19 +2430,98 @@ function renderEmojisForSide(side) {
             const handleElement = document.createElement('div');
             handleElement.className = `emoji-resize-handle ${handle.class}`;
             handleElement.style.cursor = handle.cursor;
-            handleElement.onmousedown = function(e) {
+            handleElement.style.display = 'block';
+            handleElement.style.opacity = '0.7';
+            handleElement.setAttribute('data-handle', handle.class);
+            handleElement.setAttribute('data-side', side);
+            handleElement.setAttribute('data-emoji-id', emojiData.id);
+            
+            // 직접 이벤트 리스너 추가
+            const handleMouseDown = function(e) {
+                console.log('이모지 크기 조정 핸들 마우스다운:', handle.class);
+                e.preventDefault();
                 e.stopPropagation();
-                startEmojiResize(e, emojiElement, side, emojiData.id, handle.class);
+                e.stopImmediatePropagation();
+                
+                // 이모지를 선택 상태로 만들기
+                const allEmojis = document.querySelectorAll('.emoji');
+                allEmojis.forEach(emoji => emoji.classList.remove('selected'));
+                emojiElement.classList.add('selected');
+                
+                // 크기 조정 핸들 표시
+                const resizeHandles = emojiElement.querySelectorAll('.emoji-resize-handle');
+                resizeHandles.forEach(handle => {
+                    handle.style.display = 'block';
+                    handle.style.opacity = '1';
+                });
+                
+                // 즉시 크기 조정 시작
+                startEmojiResizeDirect(e, emojiElement, side, emojiData.id, handle.class);
             };
-            handleElement.ontouchstart = function(e) {
+            
+            const handleTouchStart = function(e) {
+                console.log('이모지 크기 조정 핸들 터치스타트:', handle.class);
+                e.preventDefault();
                 e.stopPropagation();
-                startEmojiResize(e, emojiElement, side, emojiData.id, handle.class);
+                e.stopImmediatePropagation();
+                
+                // 이모지를 선택 상태로 만들기
+                const allEmojis = document.querySelectorAll('.emoji');
+                allEmojis.forEach(emoji => emoji.classList.remove('selected'));
+                emojiElement.classList.add('selected');
+                
+                // 크기 조정 핸들 표시
+                const resizeHandles = emojiElement.querySelectorAll('.emoji-resize-handle');
+                resizeHandles.forEach(handle => {
+                    handle.style.display = 'block';
+                    handle.style.opacity = '1';
+                });
+                
+                // 즉시 크기 조정 시작
+                startEmojiResizeDirect(e, emojiElement, side, emojiData.id, handle.class);
             };
+            
+            // 이벤트 리스너 등록 (더 강력한 방식)
+            handleElement.addEventListener('mousedown', handleMouseDown, { passive: false, capture: true });
+            handleElement.addEventListener('touchstart', handleTouchStart, { passive: false, capture: true });
+            
+            // 추가 이벤트 리스너 (중복 방지)
+            handleElement.addEventListener('pointerdown', function(e) {
+                if (e.pointerType === 'mouse') {
+                    handleMouseDown(e);
+                } else {
+                    handleTouchStart(e);
+                }
+            }, { passive: false, capture: true });
+            
+            // 클릭 이벤트도 추가 (모바일 대응)
+            handleElement.addEventListener('click', function(e) {
+                console.log('이모지 크기 조정 핸들 클릭:', handle.class);
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+            }, { passive: false, capture: true });
+            
             emojiElement.appendChild(handleElement);
         });
         
+        // 이모지 레이어에 추가
+        emojiLayer.appendChild(emojiElement);
+        
         // 드래그 가능하게 만들기
-        makeDraggable(emojiElement);
+        makeDraggable(emojiElement, side);
+        
+        // 새로 추가된 이모지는 자동으로 선택
+        const allEmojis = emojiLayer.querySelectorAll('.emoji');
+        allEmojis.forEach(emoji => emoji.classList.remove('selected'));
+        emojiElement.classList.add('selected');
+        
+        // 크기 조정 핸들 표시
+        const newResizeHandles = emojiElement.querySelectorAll('.emoji-resize-handle');
+        newResizeHandles.forEach(handle => {
+            handle.style.display = 'block';
+            handle.style.opacity = '1';
+        });
         
         // 클릭 이벤트 (드래그가 아닌 클릭일 때만)
         emojiElement.addEventListener('click', function(e) {
@@ -2225,30 +2532,107 @@ function renderEmojisForSide(side) {
                 const allEmojis = emojiLayer.querySelectorAll('.emoji');
                 allEmojis.forEach(emoji => emoji.classList.remove('selected'));
                 this.classList.add('selected');
+                
+                console.log('이모지 선택됨:', emojiData.emoji);
+                
+                        // 크기 조정 핸들 표시 강제 업데이트
+        const selectedResizeHandles = this.querySelectorAll('.emoji-resize-handle');
+        selectedResizeHandles.forEach(handle => {
+            handle.style.display = 'block';
+            handle.style.opacity = '1';
+        });
             }
         });
-    
-    emojiLayer.appendChild(emojiElement);
+        
+        console.log(`${side} 면 이모지 추가 완료:`, emojiElement);
+        console.log(`${side} 면 이모지 레이어 자식 요소:`, emojiLayer.children.length);
     });
+    
+    // 이모지 선택 해제 함수
+    function deselectAllEmojis() {
+        const allEmojis = emojiLayer.querySelectorAll('.emoji');
+        allEmojis.forEach(emoji => emoji.classList.remove('selected'));
+        console.log('이모지 선택 해제됨');
+    }
     
     // 이모지 레이어 클릭 시 모든 이모지 선택 해제
-    emojiLayer.addEventListener('click', function(e) {
+    emojiLayer.onclick = function(e) {
         if (e.target === emojiLayer) {
-            const allEmojis = emojiLayer.querySelectorAll('.emoji');
-            allEmojis.forEach(emoji => emoji.classList.remove('selected'));
+            deselectAllEmojis();
         }
-    });
+    };
     
     // 이미지 컨테이너 클릭 시에도 이모지 선택 해제
     const imageContainer = document.getElementById(side === 'front' ? 'frontImageEditContainer' : 'backImageEditContainer');
     if (imageContainer) {
-        imageContainer.addEventListener('click', function(e) {
+        imageContainer.onclick = function(e) {
             // 이미지나 fallback을 클릭한 경우에만 선택 해제
             if (e.target.tagName === 'IMG' || e.target.classList.contains('image-fallback') || e.target === imageContainer) {
-                const allEmojis = emojiLayer.querySelectorAll('.emoji');
-                allEmojis.forEach(emoji => emoji.classList.remove('selected'));
+                deselectAllEmojis();
             }
-        });
+        };
+    }
+    
+    // 전역 클릭 이벤트로 이모지 선택 해제 (한 번만 등록)
+    if (!window.globalEmojiDeselectHandler) {
+        window.globalEmojiDeselectHandler = function(e) {
+            // 이모지나 이모지 관련 요소가 아닌 곳을 클릭했을 때만 선택 해제
+            if (!e.target.closest('.emoji') && !e.target.closest('.emoji-layer')) {
+                const allEmojiLayers = document.querySelectorAll('.emoji-layer');
+                allEmojiLayers.forEach(layer => {
+                    const allEmojis = layer.querySelectorAll('.emoji');
+                    allEmojis.forEach(emoji => emoji.classList.remove('selected'));
+                });
+                console.log('전역 클릭으로 이모지 선택 해제');
+            }
+        };
+        document.addEventListener('click', window.globalEmojiDeselectHandler);
+    }
+    
+    // 크기 조정 핸들 이벤트 위임
+    if (!window.emojiResizeHandler) {
+        window.emojiResizeHandler = function(e) {
+            console.log('이벤트 위임 핸들러 호출됨:', e.target);
+            
+            if (e.target.classList.contains('emoji-resize-handle')) {
+                console.log('크기 조정 핸들 감지됨');
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                
+                const handleClass = e.target.getAttribute('data-handle');
+                const side = e.target.getAttribute('data-side');
+                const emojiId = e.target.getAttribute('data-emoji-id');
+                const emojiElement = e.target.closest('.emoji');
+                
+                console.log('핸들 데이터:', { handleClass, side, emojiId, emojiElement });
+                
+                if (emojiElement && handleClass && side && emojiId) {
+                    console.log('크기 조정 시작 - 이벤트 위임:', handleClass);
+                    
+                    // 이모지를 선택 상태로 만들기
+                    const allEmojis = document.querySelectorAll('.emoji');
+                    allEmojis.forEach(emoji => emoji.classList.remove('selected'));
+                    emojiElement.classList.add('selected');
+                    
+                    // 크기 조정 핸들 표시
+                    const resizeHandles = emojiElement.querySelectorAll('.emoji-resize-handle');
+                    resizeHandles.forEach(handle => {
+                        handle.style.display = 'block';
+                        handle.style.opacity = '1';
+                    });
+                    
+                    // 크기 조정 함수 호출
+                    startEmojiResize(e, emojiElement, side, emojiId, handleClass);
+                }
+            }
+        };
+        
+        // 이벤트 리스너 등록 (한 번만, capture 모드로)
+        document.addEventListener('mousedown', window.emojiResizeHandler, { passive: false, capture: true });
+        document.addEventListener('touchstart', window.emojiResizeHandler, { passive: false, capture: true });
+        
+        console.log('크기 조정 이벤트 위임 핸들러 등록됨 (capture 모드)');
     }
     
     console.log(`${side} 면 이모지 렌더링 완료:`, emojis.length);
@@ -2257,17 +2641,34 @@ function renderEmojisForSide(side) {
 // 이모지 크기 조정 시작
 function startEmojiResize(event, emojiElement, side, emojiId, handleClass) {
     event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
     
+    console.log('크기 조정 시작:', { handleClass, side, emojiId, eventType: event.type });
+    
+    // 시작 위치와 크기 정보 저장
     const startX = event.type === 'mousedown' ? event.clientX : event.touches[0].clientX;
     const startY = event.type === 'mousedown' ? event.clientY : event.touches[0].clientY;
     const startSize = parseInt(emojiElement.style.fontSize) || 24;
     const startLeft = parseInt(emojiElement.style.left) || 0;
     const startTop = parseInt(emojiElement.style.top) || 0;
     
-    emojiElement.classList.add('resizing');
+    console.log('초기값:', { startSize, startLeft, startTop, startX, startY });
     
-    function onMouseMove(e) {
+    // 크기 조정 상태 설정
+    emojiElement.classList.add('resizing');
+    emojiElement.classList.remove('dragging');
+    
+    // 드래그 방지 플래그
+    let isResizing = true;
+    
+    // 이벤트 핸들러 함수들
+    const handleMove = function(e) {
+        if (!isResizing) return;
+        
         e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
         
         const currentX = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX;
         const currentY = e.type === 'mousemove' ? e.clientY : e.touches[0].clientY;
@@ -2275,29 +2676,37 @@ function startEmojiResize(event, emojiElement, side, emojiId, handleClass) {
         const deltaX = currentX - startX;
         const deltaY = currentY - startY;
         
+        console.log('이동:', { currentX, currentY, deltaX, deltaY, eventType: e.type });
+        
         let newSize = startSize;
         let newLeft = startLeft;
         let newTop = startTop;
         
         // 핸들 위치에 따라 크기 조정 방향 결정
-        if (handleClass.includes('right')) {
-            newSize = Math.max(12, Math.min(72, startSize + deltaX));
-        } else if (handleClass.includes('left')) {
-            newSize = Math.max(12, Math.min(72, startSize - deltaX));
+        if (handleClass === 'top-left') {
+            newSize = Math.max(12, Math.min(72, startSize - Math.max(deltaX, deltaY)));
             newLeft = startLeft + (startSize - newSize);
+            newTop = startTop + (startSize - newSize);
+        } else if (handleClass === 'top-right') {
+            newSize = Math.max(12, Math.min(72, startSize + deltaX - deltaY));
+            newTop = startTop + (startSize - newSize);
+        } else if (handleClass === 'bottom-left') {
+            newSize = Math.max(12, Math.min(72, startSize - deltaX + deltaY));
+            newLeft = startLeft + (startSize - newSize);
+        } else if (handleClass === 'bottom-right') {
+            newSize = Math.max(12, Math.min(72, startSize + Math.max(deltaX, deltaY)));
         }
         
-        if (handleClass.includes('bottom')) {
-            newSize = Math.max(12, Math.min(72, startSize + deltaY));
-        } else if (handleClass.includes('top')) {
-            newSize = Math.max(12, Math.min(72, startSize - deltaY));
-            newTop = startTop + (startSize - newSize);
-        }
+        console.log('계산된 값:', { newSize, newLeft, newTop, handleClass });
         
         // 이모지 크기와 위치 업데이트
         emojiElement.style.fontSize = newSize + 'px';
         emojiElement.style.left = newLeft + 'px';
         emojiElement.style.top = newTop + 'px';
+        
+        // 회전 정보 유지
+        const currentRotation = parseFloat(emojiElement.dataset.rotation) || 0;
+        emojiElement.style.transform = `rotate(${currentRotation}deg)`;
         
         // 상태 업데이트
         if (photoCardEditState[side] && photoCardEditState[side].emojis) {
@@ -2306,22 +2715,206 @@ function startEmojiResize(event, emojiElement, side, emojiId, handleClass) {
                 emojiData.size = newSize;
                 emojiData.x = newLeft;
                 emojiData.y = newTop;
+                console.log('상태 업데이트됨:', { id: emojiId, size: newSize, x: newLeft, y: newTop });
             }
         }
-    }
+    };
     
-    function onMouseUp() {
+    const handleEnd = function(e) {
+        if (!isResizing) return;
+        
+        console.log('크기 조정 완료');
+        isResizing = false;
         emojiElement.classList.remove('resizing');
-        document.removeEventListener('mousemove', onMouseMove);
-        document.removeEventListener('mouseup', onMouseUp);
-        document.removeEventListener('touchmove', onMouseMove);
-        document.removeEventListener('touchend', onMouseUp);
-    }
+        
+        // 이벤트 리스너 제거
+        document.removeEventListener('mousemove', handleMove, { passive: false, capture: true });
+        document.removeEventListener('mouseup', handleEnd, { passive: false, capture: true });
+        document.removeEventListener('touchmove', handleMove, { passive: false, capture: true });
+        document.removeEventListener('touchend', handleEnd, { passive: false, capture: true });
+        document.removeEventListener('touchcancel', handleEnd, { passive: false, capture: true });
+        
+        // window 이벤트 리스너도 제거
+        window.removeEventListener('mousemove', handleMove, { passive: false, capture: true });
+        window.removeEventListener('mouseup', handleEnd, { passive: false, capture: true });
+        window.removeEventListener('touchmove', handleMove, { passive: false, capture: true });
+        window.removeEventListener('touchend', handleEnd, { passive: false, capture: true });
+        window.removeEventListener('touchcancel', handleEnd, { passive: false, capture: true });
+        
+        // body 이벤트 리스너도 제거
+        document.body.removeEventListener('mousemove', handleMove, { passive: false, capture: true });
+        document.body.removeEventListener('mouseup', handleEnd, { passive: false, capture: true });
+        document.body.removeEventListener('touchmove', handleMove, { passive: false, capture: true });
+        document.body.removeEventListener('touchend', handleEnd, { passive: false, capture: true });
+        document.body.removeEventListener('touchcancel', handleEnd, { passive: false, capture: true });
+    };
     
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
-    document.addEventListener('touchmove', onMouseMove);
-    document.addEventListener('touchend', onMouseUp);
+    // 이벤트 리스너 등록 (capture 모드로 등록)
+    document.addEventListener('mousemove', handleMove, { passive: false, capture: true });
+    document.addEventListener('mouseup', handleEnd, { passive: false, capture: true });
+    document.addEventListener('touchmove', handleMove, { passive: false, capture: true });
+    document.addEventListener('touchend', handleEnd, { passive: false, capture: true });
+    document.addEventListener('touchcancel', handleEnd, { passive: false, capture: true });
+    
+    // 추가 이벤트 리스너 (모바일 대응)
+    window.addEventListener('mousemove', handleMove, { passive: false, capture: true });
+    window.addEventListener('mouseup', handleEnd, { passive: false, capture: true });
+    window.addEventListener('touchmove', handleMove, { passive: false, capture: true });
+    window.addEventListener('touchend', handleEnd, { passive: false, capture: true });
+    window.addEventListener('touchcancel', handleEnd, { passive: false, capture: true });
+    
+    // body에도 이벤트 리스너 추가 (더 안정적인 이벤트 캐치)
+    document.body.addEventListener('mousemove', handleMove, { passive: false, capture: true });
+    document.body.addEventListener('mouseup', handleEnd, { passive: false, capture: true });
+    document.body.addEventListener('touchmove', handleMove, { passive: false, capture: true });
+    document.body.addEventListener('touchend', handleEnd, { passive: false, capture: true });
+    document.body.addEventListener('touchcancel', handleEnd, { passive: false, capture: true });
+    
+    console.log('이모지 이벤트 리스너 등록됨:', {
+        mousemove: '등록됨 (document, window, body)',
+        mouseup: '등록됨 (document, window, body)',
+        touchmove: '등록됨 (document, window, body)',
+        touchend: '등록됨 (document, window, body)',
+        touchcancel: '등록됨 (document, window, body)'
+    });
+    
+    // 즉시 실행하여 상태 확인
+    setTimeout(() => {
+            console.log('이모지 크기 조정 상태 확인:', {
+        element: emojiElement,
+        isResizing: emojiElement.classList.contains('resizing'),
+        fontSize: emojiElement.style.fontSize,
+        left: emojiElement.style.left,
+        top: emojiElement.style.top
+    });
+}, 100);
+}
+
+// 새로운 이모지 크기 조정 함수 (직접 실행)
+function startEmojiResizeDirect(event, emojiElement, side, emojiId, handleClass) {
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    
+    console.log('이모지 크기 조정 직접 시작:', { handleClass, side, emojiId, eventType: event.type });
+    
+    // 시작 위치와 크기 정보 저장
+    const startX = event.type === 'mousedown' ? event.clientX : event.touches[0].clientX;
+    const startY = event.type === 'mousedown' ? event.clientY : event.touches[0].clientY;
+    const startSize = parseInt(emojiElement.style.fontSize) || 24;
+    const startLeft = parseInt(emojiElement.style.left) || 0;
+    const startTop = parseInt(emojiElement.style.top) || 0;
+    
+    console.log('이모지 직접 초기값:', { startSize, startLeft, startTop, startX, startY });
+    
+    // 크기 조정 상태 설정
+    emojiElement.classList.add('resizing');
+    emojiElement.classList.remove('dragging');
+    
+    // 이벤트 핸들러 함수들
+    const handleMove = function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        
+        const currentX = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX;
+        const currentY = e.type === 'mousemove' ? e.clientY : e.touches[0].clientY;
+        
+        const deltaX = currentX - startX;
+        const deltaY = currentY - startY;
+        
+        console.log('이모지 직접 이동:', { currentX, currentY, deltaX, deltaY, eventType: e.type });
+        
+        let newSize = startSize;
+        let newLeft = startLeft;
+        let newTop = startTop;
+        
+        // 핸들 위치에 따라 크기 조정 방향 결정
+        if (handleClass === 'top-left') {
+            newSize = Math.max(12, Math.min(72, startSize - Math.max(deltaX, deltaY)));
+            newLeft = startLeft + (startSize - newSize);
+            newTop = startTop + (startSize - newSize);
+        } else if (handleClass === 'top-right') {
+            newSize = Math.max(12, Math.min(72, startSize + deltaX - deltaY));
+            newTop = startTop + (startSize - newSize);
+        } else if (handleClass === 'bottom-left') {
+            newSize = Math.max(12, Math.min(72, startSize - deltaX + deltaY));
+            newLeft = startLeft + (startSize - newSize);
+        } else if (handleClass === 'bottom-right') {
+            newSize = Math.max(12, Math.min(72, startSize + Math.max(deltaX, deltaY)));
+        }
+        
+        console.log('이모지 직접 계산된 값:', { newSize, newLeft, newTop, handleClass });
+        
+        // 이모지 크기와 위치 업데이트
+        emojiElement.style.fontSize = newSize + 'px';
+        emojiElement.style.left = newLeft + 'px';
+        emojiElement.style.top = newTop + 'px';
+        
+        // 회전 정보 유지
+        const currentRotation = parseFloat(emojiElement.dataset.rotation) || 0;
+        emojiElement.style.transform = `rotate(${currentRotation}deg)`;
+        
+        // 상태 업데이트
+        if (photoCardEditState[side] && photoCardEditState[side].emojis) {
+            const emojiData = photoCardEditState[side].emojis.find(emoji => emoji.id === emojiId);
+            if (emojiData) {
+                emojiData.size = newSize;
+                emojiData.x = newLeft;
+                emojiData.y = newTop;
+                console.log('이모지 직접 상태 업데이트됨:', { id: emojiId, size: newSize, x: newLeft, y: newTop });
+            }
+        }
+    };
+    
+    const handleEnd = function(e) {
+        console.log('이모지 직접 크기 조정 완료');
+        emojiElement.classList.remove('resizing');
+        
+        // 이벤트 리스너 제거
+        document.removeEventListener('mousemove', handleMove);
+        document.removeEventListener('mouseup', handleEnd);
+        document.removeEventListener('touchmove', handleMove);
+        document.removeEventListener('touchend', handleEnd);
+        document.removeEventListener('touchcancel', handleEnd);
+        
+        // window 이벤트 리스너도 제거
+        window.removeEventListener('mousemove', handleMove);
+        window.removeEventListener('mouseup', handleEnd);
+        window.removeEventListener('touchmove', handleMove);
+        window.removeEventListener('touchend', handleEnd);
+        window.removeEventListener('touchcancel', handleEnd);
+        
+        // body 이벤트 리스너도 제거
+        document.body.removeEventListener('mousemove', handleMove);
+        document.body.removeEventListener('mouseup', handleEnd);
+        document.body.removeEventListener('touchmove', handleMove);
+        document.body.removeEventListener('touchend', handleEnd);
+        document.body.removeEventListener('touchcancel', handleEnd);
+    };
+    
+    // 이벤트 리스너 등록
+    document.addEventListener('mousemove', handleMove);
+    document.addEventListener('mouseup', handleEnd);
+    document.addEventListener('touchmove', handleMove);
+    document.addEventListener('touchend', handleEnd);
+    document.addEventListener('touchcancel', handleEnd);
+    
+    // 추가 이벤트 리스너 (모바일 대응)
+    window.addEventListener('mousemove', handleMove);
+    window.addEventListener('mouseup', handleEnd);
+    window.addEventListener('touchmove', handleMove);
+    window.addEventListener('touchend', handleEnd);
+    window.addEventListener('touchcancel', handleEnd);
+    
+    // body에도 이벤트 리스너 추가
+    document.body.addEventListener('mousemove', handleMove);
+    document.body.addEventListener('mouseup', handleEnd);
+    document.body.addEventListener('touchmove', handleMove);
+    document.body.addEventListener('touchend', handleEnd);
+    document.body.addEventListener('touchcancel', handleEnd);
+    
+    console.log('이모지 직접 이벤트 리스너 등록됨');
 }
 
 // 3D 카드 회전 효과를 위한 이미지 사이드 전환
@@ -2677,21 +3270,21 @@ function uploadFromGallery(side) {
                         .then(() => {
                             photoCardEditState[side].image = imageData;
                             resetImageEdit(side);
-                            alert(`${side === 'front' ? '앞면' : '뒷면'} 이미지가 업로드되었습니다`);
+                            POKA.Toast.success(`${side === 'front' ? '앞면' : '뒷면'} 이미지가 업로드되었습니다`);
                         })
                         .catch((error) => {
                             console.error('이미지 로드 중 오류:', error);
-                            alert('이미지 로드에 실패했습니다.');
+                            POKA.Toast.error('이미지 로드에 실패했습니다.');
                         });
                 } else {
                     console.error('이미지 엘리먼트를 찾을 수 없습니다:', side);
-                    alert('이미지 엘리먼트를 찾을 수 없습니다.');
+                    POKA.Toast.error('이미지 엘리먼트를 찾을 수 없습니다.');
                 }
             };
             
             reader.onerror = function() {
                 console.error('파일 읽기 실패');
-                alert('파일을 읽을 수 없습니다.');
+                POKA.Toast.error('파일을 읽을 수 없습니다.');
             };
             
             reader.readAsDataURL(file);
@@ -2726,21 +3319,21 @@ function takePhoto(side) {
                         .then(() => {
                             photoCardEditState[side].image = imageData;
                             resetImageEdit(side);
-                            alert(`${side === 'front' ? '앞면' : '뒷면'} 사진이 촬영되었습니다`);
+                            POKA.Toast.success(`${side === 'front' ? '앞면' : '뒷면'} 사진이 촬영되었습니다`);
                         })
                         .catch((error) => {
                             console.error('이미지 로드 중 오류:', error);
-                            alert('이미지 로드에 실패했습니다.');
+                            POKA.Toast.error('이미지 로드에 실패했습니다.');
                         });
                 } else {
                     console.error('이미지 엘리먼트를 찾을 수 없습니다:', side);
-                    alert('이미지 엘리먼트를 찾을 수 없습니다.');
+                    POKA.Toast.error('이미지 엘리먼트를 찾을 수 없습니다.');
                 }
             };
             
             reader.onerror = function() {
                 console.error('파일 읽기 실패');
-                alert('파일을 읽을 수 없습니다.');
+                POKA.Toast.error('파일을 읽을 수 없습니다.');
             };
             
             reader.readAsDataURL(file);
@@ -2753,15 +3346,15 @@ function takePhoto(side) {
 }
 
 // 요소를 드래그 가능하게 만드는 함수
-function makeDraggable(element) {
+function makeDraggable(element, side) {
     let isDragging = false;
-    let currentX;
-    let currentY;
-    let initialX;
-    let initialY;
-    let xOffset = 0;
-    let yOffset = 0;
+    let startX = 0;
+    let startY = 0;
+    let elementStartX = 0;
+    let elementStartY = 0;
     let startTime = 0;
+    let hasMoved = false;
+    let listenersAdded = false;
 
     // 마우스 이벤트
     element.addEventListener('mousedown', dragStart);
@@ -2776,15 +3369,33 @@ function makeDraggable(element) {
         e.preventDefault();
         e.stopPropagation();
         
-        startTime = Date.now();
-        
-        if (e.type === 'touchstart') {
-            initialX = e.touches[0].clientX - xOffset;
-            initialY = e.touches[0].clientY - yOffset;
-        } else {
-            initialX = e.clientX - xOffset;
-            initialY = e.clientY - yOffset;
+        // 크기 조정 중이면 드래그 방지
+        if (element.classList.contains('resizing')) {
+            console.log('크기 조정 중이므로 드래그 방지');
+            return;
         }
+        
+        // 크기 조정 핸들을 클릭한 경우 드래그 방지
+        if (e.target.classList.contains('emoji-resize-handle')) {
+            console.log('크기 조정 핸들 클릭으로 드래그 방지');
+            return;
+        }
+        
+        startTime = Date.now();
+        hasMoved = false;
+        
+        // 현재 마우스/터치 위치
+        if (e.type === 'touchstart') {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+        } else {
+            startX = e.clientX;
+            startY = e.clientY;
+        }
+        
+        // 이모지의 현재 위치
+        elementStartX = parseInt(element.style.left) || 0;
+        elementStartY = parseInt(element.style.top) || 0;
 
         // 이모지 자체나 이모지의 자식 요소를 클릭했을 때만 드래그 시작
         if (e.target === element || element.contains(e.target)) {
@@ -2798,6 +3409,16 @@ function makeDraggable(element) {
                 allEmojis.forEach(emoji => emoji.classList.remove('selected'));
                 element.classList.add('selected');
             }
+            
+            // 드래그 이벤트 리스너 추가 (중복 방지)
+            if (!listenersAdded) {
+                document.addEventListener('mousemove', drag, { passive: false });
+                document.addEventListener('touchmove', drag, { passive: false });
+                document.addEventListener('mouseup', dragEnd, { passive: false });
+                document.addEventListener('touchend', dragEnd, { passive: false });
+                document.addEventListener('touchcancel', dragEnd, { passive: false });
+                listenersAdded = true;
+            }
         }
     }
 
@@ -2809,10 +3430,22 @@ function makeDraggable(element) {
             isDragging = false;
             element.classList.remove('dragging');
             
-            // 드래그 시간이 짧으면 클릭으로 처리하지 않음
+            // 드래그 시간이 짧고 이동이 없으면 클릭으로 처리하지 않음
             const dragDuration = Date.now() - startTime;
-            if (dragDuration > 100) {
+            if (dragDuration > 100 || hasMoved) {
                 e.preventDefault();
+            }
+            
+            console.log('드래그 종료:', hasMoved ? '이동됨' : '클릭만');
+            
+            // 이벤트 리스너 제거
+            if (listenersAdded) {
+                document.removeEventListener('mousemove', drag);
+                document.removeEventListener('touchmove', drag);
+                document.removeEventListener('mouseup', dragEnd);
+                document.removeEventListener('touchend', dragEnd);
+                document.removeEventListener('touchcancel', dragEnd);
+                listenersAdded = false;
             }
         }
     }
@@ -2822,49 +3455,219 @@ function makeDraggable(element) {
             e.preventDefault();
             e.stopPropagation();
 
+            let currentX, currentY;
+            
             if (e.type === 'touchmove') {
-                currentX = e.touches[0].clientX - initialX;
-                currentY = e.touches[0].clientY - initialY;
+                currentX = e.touches[0].clientX;
+                currentY = e.touches[0].clientY;
             } else {
-                currentX = e.clientX - initialX;
-                currentY = e.clientY - initialY;
+                currentX = e.clientX;
+                currentY = e.clientY;
             }
 
-            xOffset = currentX;
-            yOffset = currentY;
-
-            setTranslate(currentX, currentY, element);
+            // 이동 거리 계산
+            const deltaX = currentX - startX;
+            const deltaY = currentY - startY;
+            const moveDistance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
             
-            // 포토카드 편집 모드에서 이모지 위치 업데이트
+            if (moveDistance > 5) {
+                hasMoved = true;
+            }
+
+            // 새로운 위치 계산
+            const newX = elementStartX + deltaX;
+            const newY = elementStartY + deltaY;
+
+            // 이모지 위치 업데이트
+            element.style.left = newX + 'px';
+            element.style.top = newY + 'px';
+            
+            // 포토카드 편집 모드에서 이모지 데이터 업데이트
             if (element.classList.contains('emoji')) {
-                const side = element.dataset.side;
                 const emojiId = element.dataset.emojiId;
                 
                 if (side && emojiId && photoCardEditState[side] && photoCardEditState[side].emojis) {
                     const emojiData = photoCardEditState[side].emojis.find(emoji => emoji.id === emojiId);
                     if (emojiData) {
-                        emojiData.x = currentX;
-                        emojiData.y = currentY;
-                        // 회전 정보 유지
-                        const currentRotation = parseFloat(element.dataset.rotation) || 0;
-                        element.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) rotate(${currentRotation}deg)`;
-                        // 위치 정보도 업데이트
-                        element.style.left = currentX + 'px';
-                        element.style.top = currentY + 'px';
+                        emojiData.x = newX;
+                        emojiData.y = newY;
                     }
                 }
             }
         }
     }
 
-    function setTranslate(xPos, yPos, el) {
-        el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
-    }
+    // setTranslate 함수 제거 (더 이상 사용하지 않음)
 
-    // 전역 이벤트 리스너
-    document.addEventListener('mousemove', drag, { passive: false });
-    document.addEventListener('touchmove', drag, { passive: false });
+    // 전역 이벤트 리스너는 제거 (dragStart에서 필요할 때만 추가)
 } 
+
+// 이미지 드래그 및 크기 조정 기능
+function makeImageDraggable(imageElement, side) {
+    console.log('이미지 드래그 기능 초기화:', side);
+    
+    // 이미지 선택 상태로 만들기
+    imageElement.classList.add('selected');
+    
+    // 크기 조정 핸들 추가
+    addImageResizeHandles(imageElement, side);
+
+    // 이미지 클릭 이벤트
+    imageElement.addEventListener('mousedown', startImageDrag);
+    imageElement.addEventListener('touchstart', startImageDrag, { passive: false });
+    
+    function startImageDrag(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        console.log('이미지 드래그 시작');
+        
+        const startX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
+        const startY = e.type === 'mousedown' ? e.clientY : e.touches[0].clientY;
+        
+        const rect = imageElement.getBoundingClientRect();
+        const startLeft = rect.left;
+        const startTop = rect.top;
+        
+        function onDrag(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const currentX = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX;
+            const currentY = e.type === 'mousemove' ? e.clientY : e.touches[0].clientY;
+            
+            const deltaX = currentX - startX;
+            const deltaY = currentY - startY;
+            
+            const newLeft = startLeft + deltaX;
+            const newTop = startTop + deltaY;
+            
+            imageElement.style.left = newLeft + 'px';
+            imageElement.style.top = newTop + 'px';
+            imageElement.style.transform = 'none';
+            
+            console.log('이미지 드래그 중:', { newLeft, newTop });
+        }
+        
+        function onDragEnd(e) {
+            console.log('이미지 드래그 종료');
+            
+            document.removeEventListener('mousemove', onDrag);
+            document.removeEventListener('mouseup', onDragEnd);
+            document.removeEventListener('touchmove', onDrag);
+            document.removeEventListener('touchend', onDragEnd);
+        }
+        
+        document.addEventListener('mousemove', onDrag);
+        document.addEventListener('mouseup', onDragEnd);
+        document.addEventListener('touchmove', onDrag);
+        document.addEventListener('touchend', onDragEnd);
+    }
+}
+
+// 이미지 크기 조정 핸들 추가
+function addImageResizeHandles(imageElement, side) {
+    console.log('이미지 크기 조정 핸들 추가:', side);
+    
+    // 기존 핸들 제거
+    const existingHandles = imageElement.parentElement.querySelectorAll('.image-resize-handle');
+    existingHandles.forEach(handle => handle.remove());
+    
+    const handles = [
+        { class: 'top-left', cursor: 'nw-resize' },
+        { class: 'top-right', cursor: 'ne-resize' },
+        { class: 'bottom-left', cursor: 'sw-resize' },
+        { class: 'bottom-right', cursor: 'se-resize' }
+    ];
+    
+    handles.forEach(handle => {
+        const handleElement = document.createElement('div');
+        handleElement.className = `image-resize-handle ${handle.class}`;
+        handleElement.style.cursor = handle.cursor;
+        handleElement.style.display = 'block';
+        handleElement.style.opacity = '1';
+        handleElement.setAttribute('data-handle', handle.class);
+        handleElement.setAttribute('data-side', side);
+        
+        // 크기 조정 이벤트
+        handleElement.addEventListener('mousedown', startImageResize);
+        handleElement.addEventListener('touchstart', startImageResize, { passive: false });
+        
+        imageElement.parentElement.appendChild(handleElement);
+    });
+    
+    function startImageResize(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const handleClass = e.target.classList[1];
+        console.log('이미지 크기 조정 시작:', handleClass);
+        
+        const startX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
+        const startY = e.type === 'mousedown' ? e.clientY : e.touches[0].clientY;
+        
+        const rect = imageElement.getBoundingClientRect();
+        const startWidth = rect.width;
+        const startHeight = rect.height;
+        const startLeft = rect.left;
+        const startTop = rect.top;
+        
+        function onResize(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const currentX = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX;
+            const currentY = e.type === 'mousemove' ? e.clientY : e.touches[0].clientY;
+            
+            const deltaX = currentX - startX;
+            const deltaY = currentY - startY;
+            
+            let newWidth = startWidth;
+            let newHeight = startHeight;
+            let newLeft = startLeft;
+            let newTop = startTop;
+            
+            if (handleClass === 'top-left') {
+                newWidth = Math.max(50, startWidth - deltaX);
+                newHeight = Math.max(50, startHeight - deltaY);
+                newLeft = startLeft + (startWidth - newWidth);
+                newTop = startTop + (startHeight - newHeight);
+            } else if (handleClass === 'top-right') {
+                newWidth = Math.max(50, startWidth + deltaX);
+                newHeight = Math.max(50, startHeight - deltaY);
+                newTop = startTop + (startHeight - newHeight);
+            } else if (handleClass === 'bottom-left') {
+                newWidth = Math.max(50, startWidth - deltaX);
+                newHeight = Math.max(50, startHeight + deltaY);
+                newLeft = startLeft + (startWidth - newWidth);
+            } else if (handleClass === 'bottom-right') {
+                newWidth = Math.max(50, startWidth + deltaX);
+                newHeight = Math.max(50, startHeight + deltaY);
+            }
+            
+            imageElement.style.width = newWidth + 'px';
+            imageElement.style.height = newHeight + 'px';
+            imageElement.style.left = newLeft + 'px';
+            imageElement.style.top = newTop + 'px';
+            
+            console.log('이미지 크기 조정 중:', { newWidth, newHeight, newLeft, newTop });
+        }
+        
+        function onResizeEnd(e) {
+            console.log('이미지 크기 조정 종료');
+            
+            document.removeEventListener('mousemove', onResize);
+            document.removeEventListener('mouseup', onResizeEnd);
+            document.removeEventListener('touchmove', onResize);
+            document.removeEventListener('touchend', onResizeEnd);
+        }
+        
+        document.addEventListener('mousemove', onResize);
+        document.addEventListener('mouseup', onResizeEnd);
+        document.addEventListener('touchmove', onResize);
+        document.addEventListener('touchend', onResizeEnd);
+    }
+}
 
 // 포토카드 이름 입력 이벤트 처리
 function setupPhotoCardNameEdit() {
@@ -2941,11 +3744,57 @@ function updateNameCounter() {
 document.addEventListener('DOMContentLoaded', function() {
     console.log('편집 페이지 로드됨');
     
+    // 포토카드 편집 상태 초기화
+    if (!photoCardEditState.front) {
+        photoCardEditState.front = {
+            image: null,
+            rotation: 0,
+            flip: { horizontal: false, vertical: false },
+            filter: 'none',
+            emojis: []
+        };
+    }
+    if (!photoCardEditState.back) {
+        photoCardEditState.back = {
+            image: null,
+            rotation: 0,
+            flip: { horizontal: false, vertical: false },
+            filter: 'none',
+            emojis: []
+        };
+    }
+    
+    // 현재 선택된 면 초기화
+    currentSelectedSide = 'front';
+    
     // 포토카드 이름 입력 설정
     setupPhotoCardNameEdit();
     
     // 이모지 컨트롤 스크롤 드래그 설정
     setupEmojiScrollDrag();
+    
+    // 포토카드 편집 상태 초기화
+    if (!photoCardEditState.front) {
+        photoCardEditState.front = {
+            image: null,
+            rotation: 0,
+            flip: { horizontal: false, vertical: false },
+            filter: 'none',
+            emojis: []
+        };
+    }
+    
+    if (!photoCardEditState.back) {
+        photoCardEditState.back = {
+            image: null,
+            rotation: 0,
+            flip: { horizontal: false, vertical: false },
+            filter: 'none',
+            emojis: []
+        };
+    }
+    
+    console.log('포토카드 편집 상태 초기화 완료:', photoCardEditState);
     
     // POKA 객체 확인
     const checkPOKA = () => {
@@ -3066,7 +3915,7 @@ function loadCurrentImageOrPhotoCard() {
     // 편집 섹션 표시
     const editSection = document.getElementById('editSection');
     if (editSection) {
-    editSection.style.display = 'block';
+        editSection.style.display = 'block';
     }
     
     // 포토카드 동시 편집 모드 표시
@@ -3083,6 +3932,14 @@ function loadCurrentImageOrPhotoCard() {
     
     // 포토카드 데이터 로드
     loadPhotoCardData();
+    
+    // 이모지 스크롤 드래그 설정
+    setupEmojiScrollDrag();
+    
+    // 포토카드 이름 편집 설정
+    setupPhotoCardNameEdit();
+    
+    console.log('편집 페이지 초기화 완료');
 }
 
 // 이모지 회전 시작
@@ -3101,6 +3958,8 @@ function startEmojiRotate(event, emojiElement, side, emojiId) {
     const rect = emojiElement.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
+    
+    console.log('회전 시작 - 현재 위치:', currentX, currentY, '중심점:', centerX, centerY);
     
     // 이전 각도 추적을 위한 변수
     let lastAngle = Math.atan2(startY - centerY, startX - centerX);
@@ -3130,8 +3989,8 @@ function startEmojiRotate(event, emojiElement, side, emojiId) {
         // 누적 회전 각도 업데이트
         totalRotation += deltaAngle * 180 / Math.PI;
         
-        // 위치와 회전을 함께 적용
-        emojiElement.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) rotate(${totalRotation}deg)`;
+        // 회전만 적용 (위치는 left/top으로 제어)
+        emojiElement.style.transform = `rotate(${totalRotation}deg)`;
         emojiElement.dataset.rotation = totalRotation;
         
         // 상태 업데이트
@@ -3139,10 +3998,11 @@ function startEmojiRotate(event, emojiElement, side, emojiId) {
             const emojiData = photoCardEditState[side].emojis.find(emoji => emoji.id === emojiId);
             if (emojiData) {
                 emojiData.rotation = totalRotation;
-                emojiData.x = currentX;
-                emojiData.y = currentY;
+                console.log(`회전 상태 저장: ID ${emojiId}, 회전 ${totalRotation.toFixed(1)}도`);
             }
         }
+        
+        console.log(`회전: ${totalRotation.toFixed(1)}도`);
         
         // 현재 각도를 다음 계산을 위해 저장
         lastAngle = currentAngle;
@@ -3154,10 +4014,12 @@ function startEmojiRotate(event, emojiElement, side, emojiId) {
         document.removeEventListener('mouseup', onMouseUp);
         document.removeEventListener('touchmove', onMouseMove);
         document.removeEventListener('touchend', onMouseUp);
+        
+        console.log('회전 완료');
     }
     
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
     document.addEventListener('touchmove', onMouseMove);
     document.addEventListener('touchend', onMouseUp);
-} 
+}

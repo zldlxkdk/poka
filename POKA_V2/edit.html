@@ -92,8 +92,11 @@
                     </div>
                     
                     <div class="single-image-edit-container">
-                        <!-- 이미지 선택 버튼 -->
+                        <!-- 이미지 선택 버튼과 편집 액션 -->
                         <div class="image-side-selector">
+                            <button class="btn btn-reset btn-compact" onclick="resetImageEdit(currentSelectedSide)">
+                                <span class="btn-icon">🔄</span>
+                            </button>
                             <button class="side-btn active" id="frontSideBtn" onclick="switchImageSide('front')">
                                 <span class="btn-icon">🖼️</span>
                                 <span class="btn-text">앞면</span>
@@ -101,6 +104,9 @@
                             <button class="side-btn" id="backSideBtn" onclick="switchImageSide('back')">
                                 <span class="btn-icon">🖼️</span>
                                 <span class="btn-text">뒷면</span>
+                            </button>
+                            <button class="btn btn-delete btn-compact" onclick="deleteImageEdit(currentSelectedSide)">
+                                <span class="btn-icon">🗑️</span>
                             </button>
                         </div>
                         
@@ -113,11 +119,11 @@
                                         <img id="frontEditImage" src="" alt="앞면">
                                         <div class="image-fallback" id="frontImageFallback">
                                             <div class="upload-options">
-                                                <button class="upload-btn" onclick="event.stopPropagation(); uploadFromGallery('front')">
+                                                <button class="upload-btn" onclick="event.stopPropagation(); event.preventDefault(); uploadFromGallery('front')">
                                                     <span class="btn-icon">🖼️</span>
                                                     <span class="btn-text">갤러리에서 선택</span>
                                                 </button>
-                                                <button class="upload-btn" onclick="event.stopPropagation(); takePhoto('front')">
+                                                <button class="upload-btn" onclick="event.stopPropagation(); event.preventDefault(); takePhoto('front')">
                                                     <span class="btn-icon">📷</span>
                                                     <span class="btn-text">카메라로 촬영</span>
                                                 </button>
@@ -133,11 +139,11 @@
                                         <img id="backEditImage" src="" alt="뒷면">
                                         <div class="image-fallback" id="backImageFallback">
                                             <div class="upload-options">
-                                                <button class="upload-btn" onclick="event.stopPropagation(); uploadFromGallery('back')">
+                                                <button class="upload-btn" onclick="event.stopPropagation(); event.preventDefault(); uploadFromGallery('back')">
                                                     <span class="btn-icon">🖼️</span>
                                                     <span class="btn-text">갤러리에서 선택</span>
                                                 </button>
-                                                <button class="upload-btn" onclick="event.stopPropagation(); takePhoto('back')">
+                                                <button class="upload-btn" onclick="event.stopPropagation(); event.preventDefault(); takePhoto('back')">
                                                     <span class="btn-icon">📷</span>
                                                     <span class="btn-text">카메라로 촬영</span>
                                                 </button>
@@ -147,18 +153,6 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        
-                        <!-- 편집 액션 버튼 -->
-                        <div class="edit-actions-panel">
-                            <button class="btn btn-reset" onclick="resetImageEdit(currentSelectedSide)">
-                                <span class="btn-icon">🔄</span>
-                                <span class="btn-text">초기화</span>
-                            </button>
-                            <button class="btn btn-delete" onclick="deleteImageEdit(currentSelectedSide)">
-                                <span class="btn-icon">🗑️</span>
-                                <span class="btn-text">삭제</span>
-                            </button>
                         </div>
                     </div>
                     
@@ -355,5 +349,24 @@
 
     <script src="js/common.js"></script>
     <script src="js/edit.js"></script>
+    <script>
+        // 페이지 로드 완료 후 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('편집 페이지 DOM 로드 완료');
+            
+            // POKA 객체가 로드될 때까지 대기
+            const checkPOKA = () => {
+                if (typeof POKA !== 'undefined' && POKA.AppState) {
+                    console.log('POKA 객체 로드됨, 초기화 시작');
+                    loadCurrentImageOrPhotoCard();
+                } else {
+                    console.log('POKA 객체 대기 중...');
+                    setTimeout(checkPOKA, 100);
+                }
+            };
+            
+            checkPOKA();
+        });
+    </script>
 </body>
 </html> 

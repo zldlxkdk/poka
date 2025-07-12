@@ -1,13 +1,13 @@
-/* POKA V2 - Áöµµ ÆäÀÌÁö ½ºÅ¸ÀÏ */
+/* POKA V2 - ì§€ë„ í˜ì´ì§€ ìŠ¤íƒ€ì¼ */
 
-/* ¸ŞÀÎ ÄÁÅÙÃ÷ ¿À¹ö¶óÀÌµå */
+/* ë©”ì¸ ì»¨í…ì¸  ì˜¤ë²„ë¼ì´ë“œ */
 .main-content {
     flex: 1;
     padding: 20px 16px;
-    padding-bottom: 120px; /* ÇÏ´Ü ³×ºñ°ÔÀÌ¼Ç °ø°£ + Ãß°¡ ¿©¹é */
+    padding-bottom: 120px; /* í•˜ë‹¨ ë„¤ë¹„ê²Œì´ì…˜ ê³µê°„ + ì¶”ê°€ ì—¬ë°± */
 }
 
-/* À§Ä¡ Á¤º¸ ¼½¼Ç */
+/* ìœ„ì¹˜ ì •ë³´ ì„¹ì…˜ */
 .location-section {
     padding: 20px;
     background: var(--surface-color);
@@ -28,6 +28,31 @@
     color: var(--primary-color);
     min-width: 40px;
     text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+/* ë¡œë”© ìƒíƒœì¼ ë•Œ ì•„ì´ì½˜ ìˆ¨ê¸°ê¸° */
+.location-icon.loading {
+    font-size: 0;
+    color: transparent;
+}
+
+.location-icon.loading {
+    position: relative;
+    width: 24px;
+    height: 24px;
+    border: 2px solid #e5e7eb;
+    border-top: 2px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+}
+
+.location-icon.loading::before {
+    content: "";
 }
 
 .location-text {
@@ -53,7 +78,7 @@
     font-style: italic;
 }
 
-/* ÁÖ¼Ò °Ë»ö ½ºÅ¸ÀÏ */
+/* ì£¼ì†Œ ê²€ìƒ‰ ìŠ¤íƒ€ì¼ */
 .location-search {
     border-top: 1px solid var(--border-color);
     padding-top: 16px;
@@ -113,7 +138,7 @@
     font-size: 1rem;
 }
 
-/* °Ë»ö °á°ú ½ºÅ¸ÀÏ */
+/* ê²€ìƒ‰ ê²°ê³¼ ìŠ¤íƒ€ì¼ */
 .search-results {
     margin-top: 12px;
     max-height: 200px;
@@ -181,7 +206,7 @@
     font-size: 0.9rem;
 }
 
-/* Áöµµ ¼½¼Ç */
+/* ì§€ë„ ì„¹ì…˜ */
 .map-section {
     margin-bottom: 20px;
 }
@@ -204,14 +229,14 @@
     font-size: 1.1rem;
 }
 
-/* Leaflet Áöµµ ½ºÅ¸ÀÏ */
+/* Leaflet ì§€ë„ ìŠ¤íƒ€ì¼ */
 .leaflet-container {
     height: 100% !important;
     width: 100% !important;
     border-radius: 12px;
 }
 
-/* Çì´õ°¡ Áöµµº¸´Ù À§¿¡ ¿Àµµ·Ï ¼³Á¤ */
+/* í—¤ë”ê°€ ì§€ë„ë³´ë‹¤ ìœ„ì— ì˜¤ë„ë¡ ì„¤ì • */
 .header {
     position: relative;
     z-index: 100;
@@ -281,7 +306,7 @@
     font-size: 1.3rem;
 }
 
-/* ³×ºñ°ÔÀÌ¼Ç ¹Ù°¡ Áöµµº¸´Ù À§¿¡ ¿Àµµ·Ï ¼³Á¤ */
+/* ë„¤ë¹„ê²Œì´ì…˜ ë°”ê°€ ì§€ë„ë³´ë‹¤ ìœ„ì— ì˜¤ë„ë¡ ì„¤ì • */
 .bottom-nav {
     position: fixed;
     bottom: 0;
@@ -327,7 +352,7 @@
     font-weight: 500;
 }
 
-/* Leaflet ÆË¾÷ ½ºÅ¸ÀÏ °³¼± */
+/* Leaflet íŒì—… ìŠ¤íƒ€ì¼ ê°œì„  */
 .leaflet-popup-content-wrapper {
     background: var(--surface-color) !important;
     border-radius: 12px !important;
@@ -399,7 +424,7 @@
     font-size: 1.2rem;
 }
 
-/* Å°¿À½ºÅ© ¸ñ·Ï ¼½¼Ç */
+/* í‚¤ì˜¤ìŠ¤í¬ ëª©ë¡ ì„¹ì…˜ */
 .kiosk-list-section {
     background: var(--surface-color);
     border-radius: 12px;
@@ -505,7 +530,7 @@
     box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.2), 0 2px 8px rgba(0, 212, 255, 0.15);
 }
 
-/* Å°¿À½ºÅ© ¸ñ·Ï */
+/* í‚¤ì˜¤ìŠ¤í¬ ëª©ë¡ */
 .kiosk-list {
     display: flex;
     flex-direction: column;
@@ -610,7 +635,7 @@
     background: currentColor;
 }
 
-/* ÆË¾÷ ½ºÅ¸ÀÏ */
+/* íŒì—… ìŠ¤íƒ€ì¼ */
 .popup-overlay {
     position: fixed;
     top: 0;
@@ -709,7 +734,7 @@
     flex-shrink: 0;
 }
 
-/* Å°¿À½ºÅ© »ó¼¼ Á¤º¸ */
+/* í‚¤ì˜¤ìŠ¤í¬ ìƒì„¸ ì •ë³´ */
 .kiosk-detail {
     display: flex;
     flex-direction: column;
@@ -785,7 +810,7 @@
     line-height: 1.3;
 }
 
-/* ºó »óÅÂ */
+/* ë¹ˆ ìƒíƒœ */
 .empty-state {
     text-align: center;
     padding: 40px 20px;
@@ -808,7 +833,7 @@
     margin: 0;
 }
 
-/* ·Îµù »óÅÂ - Áöµµ ¾Æ·¡ */
+/* ë¡œë”© ìƒíƒœ - ì§€ë„ ì•„ë˜ */
 .loading-state {
     display: flex;
     flex-direction: column;
@@ -839,7 +864,7 @@
     margin-bottom: 8px;
 }
 
-/* Å°¿À½ºÅ© ¸ñ·Ï ·Îµù ½ºÄÌ·¹Åæ */
+/* í‚¤ì˜¤ìŠ¤í¬ ëª©ë¡ ë¡œë”© ìŠ¤ì¼ˆë ˆí†¤ */
 .kiosk-list-loading {
     margin-bottom: 20px;
 }
@@ -914,7 +939,18 @@
     100% { transform: rotate(360deg); }
 }
 
-/* ¹İÀÀÇü µğÀÚÀÎ */
+.location-spinner {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    border: 3px solid #e5e7eb;
+    border-top: 3px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    box-sizing: border-box;
+}
+
+/* ë°˜ì‘í˜• ë””ìì¸ */
 @media (max-width: 768px) {
     .map-display {
         height: 250px;
@@ -969,7 +1005,7 @@
         font-size: 0.8rem;
     }
     
-    /* ¸ğ¹ÙÀÏ ÁÖ¼Ò °Ë»ö ½ºÅ¸ÀÏ */
+    /* ëª¨ë°”ì¼ ì£¼ì†Œ ê²€ìƒ‰ ìŠ¤íƒ€ì¼ */
     .location-section {
         padding: 16px;
     }
@@ -990,7 +1026,7 @@
     .search-input {
         width: 100%;
         padding: 10px 12px;
-        font-size: 16px; /* iOS¿¡¼­ ÁÜ ¹æÁö */
+        font-size: 16px; /* iOSì—ì„œ ì¤Œ ë°©ì§€ */
     }
     
     .search-btn {
@@ -1105,7 +1141,7 @@
         font-size: 1.2rem;
     }
     
-    /* ÀÛÀº ¸ğ¹ÙÀÏ È­¸é ÁÖ¼Ò °Ë»ö ½ºÅ¸ÀÏ */
+    /* ì‘ì€ ëª¨ë°”ì¼ í™”ë©´ ì£¼ì†Œ ê²€ìƒ‰ ìŠ¤íƒ€ì¼ */
     .location-info {
         margin-bottom: 10px;
     }
@@ -1113,6 +1149,10 @@
     .location-icon {
         font-size: 1.5rem;
         min-width: 32px;
+    }
+    
+    .location-icon.loading::before {
+        font-size: 1.2rem;
     }
     
     .location-address {
@@ -1186,7 +1226,7 @@
     }
 }
 
-/* ¸Å¿ì ÀÛÀº È­¸é (320px ÀÌÇÏ) */
+/* ë§¤ìš° ì‘ì€ í™”ë©´ (320px ì´í•˜) */
 @media (max-width: 320px) {
     .location-section {
         padding: 10px;
@@ -1194,6 +1234,15 @@
     
     .location-info {
         margin-bottom: 8px;
+    }
+    
+    .location-icon {
+        font-size: 1.2rem;
+        min-width: 28px;
+    }
+    
+    .location-icon.loading::before {
+        font-size: 1rem;
     }
     
     .location-search {
@@ -1225,7 +1274,7 @@
         font-size: 0.65rem;
     }
     
-    /* ¸Å¿ì ÀÛÀº È­¸é ÆË¾÷ ÃÖÀûÈ­ */
+    /* ë§¤ìš° ì‘ì€ í™”ë©´ íŒì—… ìµœì í™” */
     .popup-content {
         max-height: 95vh;
         max-width: 98%;
@@ -1266,14 +1315,14 @@
     }
 }
 
-/* Áöµµ ÄÁÅ×ÀÌ³Ê °­Á¦ ½ºÅ¸ÀÏ */
+/* ì§€ë„ ì»¨í…Œì´ë„ˆ ê°•ì œ ìŠ¤íƒ€ì¼ */
 #map {
     width: 100% !important;
     height: 300px !important;
     background: #f0f0f0 !important;
 }
 
-/* Leaflet ÄÁÅ×ÀÌ³Ê °­Á¦ ½ºÅ¸ÀÏ */
+/* Leaflet ì»¨í…Œì´ë„ˆ ê°•ì œ ìŠ¤íƒ€ì¼ */
 .leaflet-container {
     width: 100% !important;
     height: 100% !important;

@@ -370,15 +370,11 @@ function requestLocation() {
     console.log('검색 위치 선택 상태:', isSearchLocationSelected);
     console.log('검색 위치 데이터:', searchLocationData);
     
-    // 위치정보 로딩 이모지 표시
-    if (loadingState) {
-        loadingState.style.display = 'flex';
-        // 이모지와 텍스트로 로딩 표시
-        loadingState.innerHTML = `
-            <div class="loading-spinner"></div>
-            <div style="font-size:2.2rem; margin-bottom: 8px;">🗺️📍</div>
-            <p>위치 정보를 불러오는 중입니다...</p>
-        `;
+    // 로딩 상태 표시
+    const locationIcon = document.getElementById('locationIcon');
+    if (locationIcon) {
+        locationIcon.classList.add('loading');
+        locationIcon.innerHTML = '<span class="location-spinner"></span>';
     }
     
     // 검색 위치 선택 상태 로그
@@ -403,6 +399,13 @@ function requestLocation() {
                     lat: position.coords.latitude,
                     lng: position.coords.longitude
                 };
+                
+                // 로딩 상태 해제
+                const locationIcon = document.getElementById('locationIcon');
+                if (locationIcon) {
+                    locationIcon.classList.remove('loading');
+                    locationIcon.innerHTML = '📍';
+                }
                 
                 // 지도 중심을 현재 위치로 업데이트 (검색 위치 선택 상태와 관계없이)
                 mapCenter = { ...currentPosition };
@@ -447,15 +450,19 @@ function requestLocation() {
                     renderKioskList();
                 }
                 
-                // 위치정보 로딩 이모지 숨김
-                if (loadingState) loadingState.style.display = 'none';
-                
                 console.log('위치 정보 업데이트 완료');
             },
             (error) => {
                 console.error('위치 정보 오류:', error);
                 console.error('오류 코드:', error.code);
                 console.error('오류 메시지:', error.message);
+                
+                // 로딩 상태 해제
+                const locationIcon = document.getElementById('locationIcon');
+                if (locationIcon) {
+                    locationIcon.classList.remove('loading');
+                    locationIcon.innerHTML = '📍';
+                }
                 
                 // 기본 위치로 설정
                 currentPosition = {
@@ -472,19 +479,22 @@ function requestLocation() {
                 currentAddressElement.textContent = '서울시 강남구';
                 locationDetailElement.textContent = '강남대로 464, 강남역 인근';
                 
-                // 위치정보 로딩 이모지 숨김
-                if (loadingState) loadingState.style.display = 'none';
-                
                 console.log('기본 위치로 설정됨');
             },
             options
         );
     } else {
         console.error('위치 정보 지원 안됨');
+        
+        // 로딩 상태 해제
+        const locationIcon = document.getElementById('locationIcon');
+        if (locationIcon) {
+            locationIcon.classList.remove('loading');
+            locationIcon.innerHTML = '📍';
+        }
+        
         currentAddressElement.textContent = '서울시 강남구';
         locationDetailElement.textContent = '강남대로 464, 강남역 인근';
-        // 위치정보 로딩 이모지 숨김
-        if (loadingState) loadingState.style.display = 'none';
     }
 }
 
@@ -543,7 +553,7 @@ function displaySearchResults(results) {
         const subAddress = addressParts.slice(1, 3).join(', '); // 첫 번째와 두 번째 부분만 사용
         
         resultItem.innerHTML = `
-            <div class="search-result-icon">?</div>
+            <div class="search-result-icon">📍</div>
             <div class="search-result-content">
                 <div class="search-result-title">${mainAddress}</div>
                 <div class="search-result-address">${subAddress}</div>
@@ -650,22 +660,29 @@ function selectSearchResult(result) {
     }
 }
 
-// 검색 로딩 표시
-function showSearchLoading() {
-    searchResults.innerHTML = '<div class="search-loading">? 지역을 검색하고 있습니다...</div>';
-    searchResults.style.display = 'block';
-}
+    // 검색 로딩 표시
+    function showSearchLoading() {
+        searchResults.innerHTML = '<div class="search-loading">🔍 지역을 검색하고 있습니다...</div>';
+        searchResults.style.display = 'block';
+    }
 
-// 검색 오류 표시
-function showSearchError(message) {
-    searchResults.innerHTML = `<div class="search-error">?? ${message}</div>`;
-    searchResults.style.display = 'block';
-    isSearching = false;
-}
+    // 검색 오류 표시
+    function showSearchError(message) {
+        searchResults.innerHTML = `<div class="search-error">⚠️ ${message}</div>`;
+        searchResults.style.display = 'block';
+        isSearching = false;
+    }
 
 // 좌표를 주소로 변환 (실제 API 사용)
 function getAddressFromCoords(coords) {
     console.log('주소 변환 시작:', coords);
+    
+    // 주소 변환 중 로딩 상태 표시
+    const locationIcon = document.getElementById('locationIcon');
+    if (locationIcon) {
+        locationIcon.classList.add('loading');
+        locationIcon.innerHTML = '<span class="location-spinner"></span>';
+    }
     
     // OpenStreetMap Nominatim API를 사용한 역지오코딩
     const reverseUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${coords.lat}&lon=${coords.lng}&zoom=18&addressdetails=1`;
@@ -674,6 +691,12 @@ function getAddressFromCoords(coords) {
         .then(response => response.json())
         .then(data => {
             console.log('역지오코딩 결과:', data);
+            
+            // 로딩 상태 해제
+            if (locationIcon) {
+                locationIcon.classList.remove('loading');
+                locationIcon.innerHTML = '📍';
+            }
             
             if (data.display_name) {
                 const addressParts = data.display_name.split(', ');
@@ -692,6 +715,13 @@ function getAddressFromCoords(coords) {
         })
         .catch(error => {
             console.error('주소 변환 오류:', error);
+            
+            // 로딩 상태 해제
+            if (locationIcon) {
+                locationIcon.classList.remove('loading');
+                locationIcon.innerHTML = '📍';
+            }
+            
             // 오류 시 기본 주소 표시
             currentAddressElement.textContent = '현재 위치';
             locationDetailElement.textContent = `위도: ${coords.lat.toFixed(4)}, 경도: ${coords.lng.toFixed(4)}`;
@@ -771,28 +801,28 @@ function initMap() {
     }
 }
 
-// 지도 대체 표시
-function showMapFallback() {
-    if (mapContainer) {
-        mapContainer.innerHTML = `
-            <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #666; flex-direction: column; gap: 10px; background: #f8f9fa; border-radius: 12px;">
-                <div style="font-size: 1.2rem; font-weight: bold;">??</div>
-                <div>지도를 불러올 수 없습니다</div>
-                <div style="font-size: 0.8rem; text-align: center;">키오스크 목록은 아래에서 확인하세요</div>
-            </div>
-        `;
+    // 지도 대체 표시
+    function showMapFallback() {
+        if (mapContainer) {
+            mapContainer.innerHTML = `
+                <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #666; flex-direction: column; gap: 10px; background: #f8f9fa; border-radius: 12px;">
+                    <div style="font-size: 1.2rem; font-weight: bold;">🗺️</div>
+                    <div>지도를 불러올 수 없습니다</div>
+                    <div style="font-size: 0.8rem; text-align: center;">키오스크 목록은 아래에서 확인하세요</div>
+                </div>
+            `;
+        }
     }
-}
 
-// 사용자 위치 마커 추가 (Leaflet)
-function addUserMarker() {
-    if (!map || typeof L === 'undefined') return;
-    
-    // 사용자 위치 마커 추가
-    userMarker = L.marker([currentPosition.lat, currentPosition.lng])
-        .addTo(map)
-        .bindPopup('? 현재 위치')
-        .openPopup();
+    // 사용자 위치 마커 추가 (Leaflet)
+    function addUserMarker() {
+        if (!map || typeof L === 'undefined') return;
+        
+        // 사용자 위치 마커 추가
+        userMarker = L.marker([currentPosition.lat, currentPosition.lng])
+            .addTo(map)
+            .bindPopup('📍 현재 위치')
+            .openPopup();
     
     // 사용자 위치 원형 표시
     L.circle([currentPosition.lat, currentPosition.lng], {
@@ -832,14 +862,14 @@ function addKioskMarkers() {
     kioskData.forEach(kiosk => {
         // 상태에 따른 마커 색상 설정
         let markerColor = '#22c55e'; // 기본 온라인 (초록색)
-        let statusIcon = '?';
+        let statusIcon = '🟢';
         
         if (kiosk.status === 'maintenance') {
             markerColor = '#fb923c'; // 점검 (주황색)
-            statusIcon = '?';
+            statusIcon = '🟡';
         } else if (kiosk.status === 'offline') {
             markerColor = '#ef4444'; // 오프라인 (빨간색)
-            statusIcon = '?';
+            statusIcon = '🔴';
         }
         
         // 커스텀 마커 아이콘 생성
@@ -1058,21 +1088,21 @@ function showKioskPopup(kiosk) {
             </div>
             <div class="kiosk-detail-info">
                 <div class="info-item">
-                    <div class="info-icon">?</div>
+                    <div class="info-icon">📏</div>
                     <div class="info-content">
                         <div class="info-label">거리</div>
                         <div class="info-value">${kiosk.distance.toFixed(1)}km</div>
                     </div>
                 </div>
                 <div class="info-item">
-                    <div class="info-icon">?</div>
+                    <div class="info-icon">🕒</div>
                     <div class="info-content">
                         <div class="info-label">운영시간</div>
                         <div class="info-value">${kiosk.operatingHours}</div>
                     </div>
                 </div>
                 <div class="info-item">
-                    <div class="info-icon">?</div>
+                    <div class="info-icon">📊</div>
                     <div class="info-content">
                         <div class="info-label">상태</div>
                         <div class="info-value kiosk-status ${kiosk.status}">
@@ -1083,7 +1113,7 @@ function showKioskPopup(kiosk) {
                 </div>
                 ${kiosk.phone ? `
                 <div class="info-item">
-                    <div class="info-icon">?</div>
+                    <div class="info-icon">📞</div>
                     <div class="info-content">
                         <div class="info-label">연락처</div>
                         <div class="info-value">${kiosk.phone}</div>
@@ -1092,7 +1122,7 @@ function showKioskPopup(kiosk) {
                 ` : ''}
                 ${kiosk.facilities && kiosk.facilities.length > 0 && kiosk.facilities[0] !== '점검중' && kiosk.facilities[0] !== '중단' ? `
                 <div class="info-item">
-                    <div class="info-icon">?</div>
+                    <div class="info-icon">🏪</div>
                     <div class="info-content">
                         <div class="info-label">편의시설</div>
                         <div class="info-value">${kiosk.facilities.join(', ')}</div>
@@ -1100,7 +1130,7 @@ function showKioskPopup(kiosk) {
                 </div>
                 ` : ''}
                 <div class="info-item">
-                    <div class="info-icon">?</div>
+                    <div class="info-icon">🕐</div>
                     <div class="info-content">
                         <div class="info-label">마지막 업데이트</div>
                         <div class="info-value">${kiosk.lastUpdate}</div>
@@ -1108,7 +1138,7 @@ function showKioskPopup(kiosk) {
                 </div>
                 ${kiosk.description ? `
                 <div class="info-item">
-                    <div class="info-icon">??</div>
+                    <div class="info-icon">📝</div>
                     <div class="info-content">
                         <div class="info-label">설명</div>
                         <div class="info-value">${kiosk.description}</div>
@@ -1164,6 +1194,13 @@ function zoomOut() {
 // 내 위치로 이동
 function centerOnUser() {
     if (map && currentPosition) {
+        // 위치 아이콘 로딩 상태 표시
+        const locationIcon = document.getElementById('locationIcon');
+        if (locationIcon) {
+            locationIcon.classList.add('loading');
+            locationIcon.innerHTML = '<span class="location-spinner"></span>';
+        }
+        
         // 검색 위치 선택 상태 해제
         isSearchLocationSelected = false;
         searchLocationData = null;
@@ -1216,6 +1253,13 @@ function refreshLocation() {
     const refreshBtn = document.querySelector('.header-btn');
     if (refreshBtn) {
         refreshBtn.classList.add('refreshing');
+    }
+    
+    // 위치 아이콘 로딩 상태 표시
+    const locationIcon = document.getElementById('locationIcon');
+    if (locationIcon) {
+        locationIcon.classList.add('loading');
+        locationIcon.innerHTML = '<span class="location-spinner"></span>';
     }
     
     // 키오스크 목록 로딩 상태 표시
