@@ -572,38 +572,83 @@ input:checked + .toggle-slider:before {
 /* 반응형 디자인 */
 @media (max-width: 480px) {
     .login-card {
-        padding: 32px 20px;
+        padding: 24px 16px;
     }
     
     .login-icon {
-        font-size: 3rem;
-        width: 60px;
-        height: 60px;
+        font-size: 2.5rem;
+        width: 50px;
+        height: 50px;
     }
     
     .login-title {
-        font-size: 1.3rem;
+        font-size: 1.2rem;
     }
     
     .user-card {
-        flex-direction: column;
-        text-align: center;
-        gap: 16px;
+        flex-direction: row;
+        text-align: left;
+        gap: 12px;
+        padding: 16px;
+    }
+    
+    .user-avatar {
+        flex-shrink: 0;
+    }
+    
+    .avatar-placeholder {
+        width: 60px;
+        height: 60px;
+        font-size: 2rem;
+    }
+    
+    .user-info {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .user-name {
+        font-size: 1.2rem;
+        margin-bottom: 4px;
+    }
+    
+    .user-email {
+        font-size: 0.9rem;
+        margin-bottom: 2px;
+    }
+    
+    .user-join-date {
+        font-size: 0.8rem;
     }
     
     .edit-profile-btn {
         position: static;
-        width: 100%;
-        justify-content: center;
+        padding: 6px 12px;
+        font-size: 0.8rem;
+        white-space: nowrap;
     }
     
     .stats-grid {
-        grid-template-columns: 1fr;
-        gap: 12px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+    
+    .stat-card {
+        padding: 12px;
+    }
+    
+    .stat-icon {
+        font-size: 1.5rem;
+        width: 40px;
+        height: 40px;
+    }
+    
+    .stat-number {
+        font-size: 1.2rem;
     }
     
     .stat-label {
-        font-size: 0.8rem;
+        font-size: 0.7rem;
     }
     
     .actions-grid {
@@ -612,7 +657,15 @@ input:checked + .toggle-slider:before {
     }
     
     .actions-grid .action-btn {
-        padding: 20px 16px;
+        padding: 16px 12px;
+    }
+    
+    .action-icon {
+        font-size: 1.5rem;
+    }
+    
+    .action-text {
+        font-size: 0.9rem;
     }
     
     .setting-item {
@@ -623,32 +676,178 @@ input:checked + .toggle-slider:before {
         gap: 12px;
     }
     
-    .info-item {
-        padding: 12px;
+    .setting-icon {
+        font-size: 1.2rem;
+        width: 24px;
+    }
+    
+    .setting-title {
+        font-size: 0.9rem;
+    }
+    
+    .setting-description {
+        font-size: 0.8rem;
     }
     
     .info-item {
+        padding: 12px;
         gap: 12px;
+    }
+    
+    .info-icon {
+        font-size: 1.2rem;
+        width: 24px;
+    }
+    
+    .info-title {
+        font-size: 0.8rem;
+    }
+    
+    .info-value {
+        font-size: 0.9rem;
     }
     
     /* 쿠폰 섹션 반응형 */
+    .coupon-section {
+        margin-bottom: 24px;
+    }
+    
     .coupon-overview {
-        flex-direction: column;
-        gap: 16px;
-        text-align: center;
+        flex-direction: row;
+        gap: 12px;
+        text-align: left;
+        padding: 16px;
     }
     
     .coupon-summary {
-        flex-direction: column;
+        flex-direction: row;
         gap: 12px;
+        flex: 1;
+    }
+    
+    .coupon-icon {
+        font-size: 2rem;
+        width: 50px;
+        height: 50px;
+    }
+    
+    .coupon-title {
+        font-size: 1rem;
+    }
+    
+    .coupon-count {
+        font-size: 0.8rem;
     }
     
     .coupon-manage-btn {
-        width: 100%;
-        justify-content: center;
+        padding: 8px 12px;
+        font-size: 0.8rem;
+        white-space: nowrap;
     }
     
+    /* 섹션 간격 조정 */
+    .user-section,
+    .coupon-section,
+    .stats-section,
+    .actions-section,
+    .account-section {
+        margin-bottom: 20px;
+    }
+    
+    .section-title {
+        font-size: 1.1rem;
+        margin-bottom: 12px;
+    }
+}
 
+/* 더 작은 모바일 화면 최적화 */
+@media (max-width: 360px) {
+    .user-card {
+        padding: 12px;
+        gap: 8px;
+    }
+    
+    .avatar-placeholder {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+    }
+    
+    .user-name {
+        font-size: 1.1rem;
+    }
+    
+    .user-email {
+        font-size: 0.8rem;
+    }
+    
+    .user-join-date {
+        font-size: 0.7rem;
+    }
+    
+    .edit-profile-btn {
+        padding: 4px 8px;
+        font-size: 0.7rem;
+    }
+    
+    .stats-grid {
+        gap: 6px;
+    }
+    
+    .stat-card {
+        padding: 8px;
+    }
+    
+    .stat-icon {
+        font-size: 1.2rem;
+        width: 32px;
+        height: 32px;
+    }
+    
+    .stat-number {
+        font-size: 1rem;
+    }
+    
+    .stat-label {
+        font-size: 0.6rem;
+    }
+    
+    .coupon-overview {
+        padding: 12px;
+        gap: 8px;
+    }
+    
+    .coupon-icon {
+        font-size: 1.5rem;
+        width: 40px;
+        height: 40px;
+    }
+    
+    .coupon-title {
+        font-size: 0.9rem;
+    }
+    
+    .coupon-count {
+        font-size: 0.7rem;
+    }
+    
+    .coupon-manage-btn {
+        padding: 6px 8px;
+        font-size: 0.7rem;
+    }
+    
+    .section-title {
+        font-size: 1rem;
+        margin-bottom: 8px;
+    }
+    
+    .user-section,
+    .coupon-section,
+    .stats-section,
+    .actions-section,
+    .account-section {
+        margin-bottom: 16px;
+    }
 }
 
 /* 애니메이션 */

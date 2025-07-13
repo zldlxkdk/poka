@@ -56,6 +56,15 @@ const AppState = {
         }
     },
     
+    // 로컬 스토리지에서 제거
+    removeFromStorage(key) {
+        try {
+            localStorage.removeItem(`poka_v2_${key}`);
+        } catch (error) {
+            console.error('Storage remove error:', error);
+        }
+    },
+    
     // 디바이스 ID 생성
     generateDeviceId() {
         return 'device_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);

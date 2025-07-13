@@ -419,54 +419,275 @@
 
 /* 반응형 디자인 */
 @media (max-width: 480px) {
+    .coupon-register-card {
+        padding: 16px;
+        margin-bottom: 20px;
+    }
+    
+    .register-icon {
+        font-size: 2.5rem;
+        width: 50px;
+        height: 50px;
+    }
+    
+    .register-title {
+        font-size: 1.2rem;
+    }
+    
+    .register-description {
+        font-size: 0.9rem;
+    }
+    
     .coupon-input-container {
         flex-direction: column;
         gap: 8px;
     }
     
+    .coupon-input {
+        padding: 10px 12px;
+        font-size: 0.9rem;
+    }
+    
     .register-btn {
         width: 100%;
         justify-content: center;
+        padding: 10px 16px;
+        font-size: 0.9rem;
+    }
+    
+    .coupons-section {
+        margin-bottom: 20px;
+    }
+    
+    .section-header {
+        margin-bottom: 12px;
+    }
+    
+    .section-title {
+        font-size: 1.1rem;
+    }
+    
+    .coupon-count {
+        font-size: 0.9rem;
     }
     
     .coupon-tabs {
         flex-direction: row;
         gap: 2px;
+        margin-bottom: 16px;
     }
     
     .tab-btn {
         text-align: center;
         font-size: 0.8rem;
-        padding: 10px 8px;
+        padding: 8px 6px;
+    }
+    
+    .coupon-list {
+        gap: 12px;
+    }
+    
+    .coupon-item {
+        padding: 16px;
     }
     
     .coupon-header {
-        flex-direction: column;
+        flex-direction: row;
         gap: 8px;
+        margin-bottom: 8px;
+    }
+    
+    .coupon-code {
+        font-size: 1rem;
+    }
+    
+    .coupon-name {
+        font-size: 0.9rem;
+    }
+    
+    .coupon-discount {
+        font-size: 0.9rem;
+        white-space: nowrap;
     }
     
     .coupon-details {
-        flex-direction: column;
+        flex-direction: row;
         gap: 8px;
-        align-items: flex-start;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .coupon-expiry {
+        font-size: 0.8rem;
+    }
+    
+    .coupon-status {
+        font-size: 0.8rem;
+        padding: 4px 8px;
     }
     
     .coupon-actions {
         flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 8px;
+    }
+    
+    .coupon-action-btn {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
+    
+    .empty-state {
+        padding: 30px 16px;
+    }
+    
+    .empty-icon {
+        font-size: 3rem;
+        margin-bottom: 12px;
+    }
+    
+    .empty-state h3 {
+        font-size: 1.1rem;
+    }
+    
+    .empty-state p {
+        font-size: 0.8rem;
+    }
+    
+    .guide-section {
+        margin-bottom: 20px;
+    }
+    
+    .guide-steps {
+        gap: 12px;
     }
     
     .guide-step {
         flex-direction: row;
         text-align: left;
         gap: 12px;
+        padding: 12px;
     }
     
     .guide-step .step-icon {
         flex-shrink: 0;
+        font-size: 1.2rem;
     }
     
     .guide-step .step-content {
         flex: 1;
+    }
+    
+    .guide-step .step-content h4 {
+        font-size: 0.9rem;
+    }
+    
+    .guide-step .step-content p {
+        font-size: 0.8rem;
+    }
+}
+
+/* 더 작은 모바일 화면 최적화 */
+@media (max-width: 360px) {
+    .coupon-register-card {
+        padding: 12px;
+        margin-bottom: 16px;
+    }
+    
+    .register-icon {
+        font-size: 2rem;
+        width: 40px;
+        height: 40px;
+    }
+    
+    .register-title {
+        font-size: 1.1rem;
+    }
+    
+    .register-description {
+        font-size: 0.8rem;
+    }
+    
+    .coupon-input {
+        padding: 8px 10px;
+        font-size: 0.8rem;
+    }
+    
+    .register-btn {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+    }
+    
+    .section-title {
+        font-size: 1rem;
+    }
+    
+    .coupon-count {
+        font-size: 0.8rem;
+    }
+    
+    .tab-btn {
+        font-size: 0.7rem;
+        padding: 6px 4px;
+    }
+    
+    .coupon-item {
+        padding: 12px;
+    }
+    
+    .coupon-code {
+        font-size: 0.9rem;
+    }
+    
+    .coupon-name {
+        font-size: 0.8rem;
+    }
+    
+    .coupon-discount {
+        font-size: 0.8rem;
+    }
+    
+    .coupon-expiry {
+        font-size: 0.7rem;
+    }
+    
+    .coupon-status {
+        font-size: 0.7rem;
+        padding: 3px 6px;
+    }
+    
+    .coupon-action-btn {
+        padding: 4px 8px;
+        font-size: 0.7rem;
+    }
+    
+    .empty-icon {
+        font-size: 2.5rem;
+    }
+    
+    .empty-state h3 {
+        font-size: 1rem;
+    }
+    
+    .empty-state p {
+        font-size: 0.7rem;
+    }
+    
+    .guide-step {
+        padding: 8px;
+        gap: 8px;
+    }
+    
+    .guide-step .step-icon {
+        font-size: 1rem;
+    }
+    
+    .guide-step .step-content h4 {
+        font-size: 0.8rem;
+    }
+    
+    .guide-step .step-content p {
+        font-size: 0.7rem;
     }
 }
 

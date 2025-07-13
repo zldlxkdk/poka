@@ -184,17 +184,34 @@ function createPhotoCardItem(photoCard, index) {
     const isFavorite = photoCard.favorite ? 'favorite' : '';
     const favoriteIcon = photoCard.favorite ? '?' : '☆';
     
+
+    
     item.innerHTML = `
         <div class="photo-card-container">
-            <div class="photo-card">
+            <div class="photo-card" id="photoCard-${photoCard.id}">
+                <!-- 카드 앞면 -->
                 <div class="photo-card-front">
                     <img src="${photoCard.frontImage}" alt="${photoCard.name || '앞면'}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                     <div class="image-fallback">📷</div>
                 </div>
+                
+                <!-- 카드 뒷면 -->
                 <div class="photo-card-back">
                     <img src="${photoCard.backImage}" alt="${photoCard.name || '뒷면'}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                     <div class="image-fallback">📷</div>
                 </div>
+                
+                <!-- 카드 측면들 (두께감 표현) -->
+                <div class="photo-card-side photo-card-side-top"></div>
+                <div class="photo-card-side photo-card-side-bottom"></div>
+                <div class="photo-card-side photo-card-side-left"></div>
+                <div class="photo-card-side photo-card-side-right"></div>
+                
+                <!-- 카드 내부 측면들 (앞면과 뒷면 사이) -->
+                <div class="photo-card-inner-side photo-card-inner-top"></div>
+                <div class="photo-card-inner-side photo-card-inner-bottom"></div>
+                <div class="photo-card-inner-side photo-card-inner-left"></div>
+                <div class="photo-card-inner-side photo-card-inner-right"></div>
             </div>
             <!-- 즐겨찾기 표시 -->
             ${photoCard.favorite ? '<div class="favorite-badge">⭐</div>' : ''}
@@ -209,8 +226,6 @@ function createPhotoCardItem(photoCard, index) {
         </div>
     `;
     
-
-    
     // 클릭 이벤트
     item.addEventListener('click', (e) => {
         openPhotoCardModal(photoCard, index);
@@ -218,6 +233,10 @@ function createPhotoCardItem(photoCard, index) {
     
     // 애니메이션 지연 설정
     item.style.animationDelay = `${index * 0.1}s`;
+    
+
+    
+
     
     return item;
 }
@@ -383,21 +402,47 @@ function editCurrentPhotoCard() {
         
         console.log('모달에서 편집할 포토카드 설정:', photoCard);
         
-        // localStorage에 직접 저장 (더 안정적)
+        // 저장 공간 확인 및 정리
+        const estimatedSize = JSON.stringify(photoCard).length;
+        console.log('저장할 데이터 크기:', estimatedSize, 'bytes');
+        
+        // localStorage 저장 시도
         try {
             localStorage.setItem('currentPhotoCard', JSON.stringify(photoCard));
             console.log('localStorage에 포토카드 데이터 저장됨');
         } catch (error) {
             console.error('localStorage 저장 오류:', error);
-            POKA.Toast.error('포토카드 데이터 저장 중 오류가 발생했습니다');
-            return;
+            
+            // QuotaExceededError인 경우 저장 공간 정리 시도
+            if (error.name === 'QuotaExceededError') {
+                console.log('저장 공간 부족, 정리 시도...');
+                
+                // 강력한 저장 공간 정리
+                if (cleanupStorageSpace()) {
+                    // 다시 저장 시도
+                    try {
+                        localStorage.setItem('currentPhotoCard', JSON.stringify(photoCard));
+                        console.log('정리 후 localStorage에 포토카드 데이터 저장됨');
+                    } catch (retryError) {
+                        console.error('정리 후에도 저장 실패:', retryError);
+                        POKA.Toast.error('저장 공간이 부족합니다. 일부 포토카드를 삭제한 후 다시 시도해주세요.');
+                        return;
+                    }
+                } else {
+                    console.error('저장 공간 정리 실패');
+                    POKA.Toast.error('저장 공간 정리에 실패했습니다. 일부 포토카드를 삭제한 후 다시 시도해주세요.');
+                    return;
+                }
+            } else {
+                POKA.Toast.error('포토카드 데이터 저장 중 오류가 발생했습니다');
+                return;
+            }
         }
         
         // AppState에도 저장 (호환성)
         try {
-            POKA.AppState.currentPhotoCard = photoCard;
             POKA.AppState.saveToStorage('currentPhotoCard', photoCard);
-            console.log('AppState.currentPhotoCard 설정 후:', POKA.AppState.currentPhotoCard);
+            console.log('AppState.currentPhotoCard 설정 후:', POKA.AppState.getFromStorage('currentPhotoCard'));
         } catch (error) {
             console.error('AppState 저장 오류:', error);
             // localStorage에 저장되었으므로 계속 진행
@@ -407,6 +452,8 @@ function editCurrentPhotoCard() {
         const editUrl = 'edit.html';
         console.log('편집 페이지로 이동:', editUrl);
         POKA.Navigation.navigateTo(editUrl);
+    } else {
+        POKA.Toast.error('편집할 포토카드를 선택해주세요');
     }
 }
 
@@ -471,6 +518,68 @@ function togglePhotoCardFavorite(index) {
     }
 }
 
+// 저장 공간 정리 함수
+function cleanupStorageSpace() {
+    console.log('저장 공간 정리 시작');
+    
+    try {
+        // 임시 데이터 정리
+        const tempKeys = [
+            'photoCardEditState', 
+            'photoCardNameEdit', 
+            'currentImage', 
+            'editedImages',
+            'uploadedImages',
+            'imageEditState'
+        ];
+        
+        tempKeys.forEach(key => {
+            try {
+                localStorage.removeItem(key);
+                console.log('임시 데이터 정리:', key);
+            } catch (e) {
+                console.error('임시 데이터 정리 실패:', key, e);
+            }
+        });
+        
+        // 오래된 포토카드 정리 (최근 20개만 유지)
+        try {
+            const allPhotoCards = JSON.parse(localStorage.getItem('photoCards') || '[]');
+            if (allPhotoCards.length > 20) {
+                // 날짜순으로 정렬하여 오래된 것부터 제거
+                allPhotoCards.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                const keepPhotoCards = allPhotoCards.slice(0, 20);
+                localStorage.setItem('photoCards', JSON.stringify(keepPhotoCards));
+                console.log('오래된 포토카드 정리:', allPhotoCards.length - 20, '개 제거');
+            }
+        } catch (e) {
+            console.error('포토카드 정리 실패:', e);
+        }
+        
+        // gallery 데이터도 정리
+        try {
+            const gallery = JSON.parse(localStorage.getItem('gallery') || '[]');
+            const photoCardItems = gallery.filter(item => item.type === 'photoCard');
+            if (photoCardItems.length > 20) {
+                photoCardItems.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                const keepPhotoCardItems = photoCardItems.slice(0, 20);
+                const nonPhotoCardItems = gallery.filter(item => item.type !== 'photoCard');
+                const updatedGallery = [...nonPhotoCardItems, ...keepPhotoCardItems];
+                localStorage.setItem('gallery', JSON.stringify(updatedGallery));
+                console.log('gallery 데이터 정리 완료');
+            }
+        } catch (e) {
+            console.error('gallery 데이터 정리 실패:', e);
+        }
+        
+        console.log('저장 공간 정리 완료');
+        return true;
+    } catch (error) {
+        console.error('저장 공간 정리 중 오류:', error);
+        return false;
+    }
+}
+
 // 포토카드 저장
 function savePhotoCards() {
     try {
@@ -496,7 +605,24 @@ function savePhotoCards() {
         console.log('포토카드 저장 완료:', photoCards.length, '개');
     } catch (error) {
         console.error('포토카드 저장 중 오류:', error);
-        POKA.Toast.error('포토카드 저장 중 오류가 발생했습니다');
+        
+        // 저장 실패 시 공간 정리 후 재시도
+        if (error.name === 'QuotaExceededError') {
+            console.log('저장 공간 부족, 정리 후 재시도...');
+            if (cleanupStorageSpace()) {
+                try {
+                    localStorage.setItem('photoCards', JSON.stringify(photoCards));
+                    console.log('정리 후 포토카드 저장 완료');
+                } catch (retryError) {
+                    console.error('정리 후에도 저장 실패:', retryError);
+                    POKA.Toast.error('저장 공간이 부족합니다. 일부 포토카드를 삭제한 후 다시 시도해주세요.');
+                }
+            } else {
+                POKA.Toast.error('저장 공간 정리에 실패했습니다.');
+            }
+        } else {
+            POKA.Toast.error('포토카드 저장 중 오류가 발생했습니다');
+        }
     }
 } 
 
@@ -689,3 +815,22 @@ window.addEventListener('online', () => {
 window.addEventListener('offline', () => {
     POKA.Toast.warning('인터넷 연결이 끊어졌습니다. 일부 기능이 제한될 수 있습니다.');
 }); 
+
+// 포토카드 제작하기 버튼 클릭 시 새로운 포토카드 생성 모드로 진입
+function createNewPhotoCard() {
+    console.log('새로운 포토카드 생성 모드로 진입');
+    
+    // 기존 포토카드 데이터 초기화
+    try {
+        localStorage.removeItem('currentPhotoCard');
+        if (typeof POKA !== 'undefined' && POKA.AppState) {
+            POKA.AppState.removeFromStorage('currentPhotoCard');
+        }
+        console.log('기존 포토카드 데이터 초기화 완료');
+    } catch (error) {
+        console.error('기존 포토카드 데이터 초기화 오류:', error);
+    }
+    
+    // 편집 페이지로 이동
+    POKA.Navigation.navigateTo('edit.html');
+} 

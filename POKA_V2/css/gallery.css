@@ -389,6 +389,11 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    /* 이름 부분 고정 - 회전 애니메이션에서 제외 */
+    transform: none !important;
+    animation: none !important;
+    position: relative;
+    z-index: 1;
 }
 
 .gallery-container.list-view .gallery-item-info {
@@ -419,7 +424,6 @@
     height: 200px;
     transform-style: preserve-3d;
     -webkit-transform-style: preserve-3d;
-    transition: transform 0.6s ease;
     perspective: 600px;
     -webkit-perspective: 600px;
     perspective-origin: center center;
@@ -439,6 +443,8 @@
     filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3));
     display: block;
     cursor: pointer;
+    /* 컨테이너는 고정 - 회전 애니메이션 제거 */
+    animation: none !important;
 }
 
 /* 즐겨찾기 배지 */
@@ -472,31 +478,7 @@
     }
 }
 
-/* 포토카드 */
-.photo-card {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    transform-style: preserve-3d;
-    -webkit-transform-style: preserve-3d;
-    transition: transform 0.6s ease;
-    animation: photoCardRotate 8s ease-in-out infinite;
-    border-radius: 12px;
-    transform: translate3d(0, 0, 0);
-    -webkit-transform: translate3d(0, 0, 0);
-    box-shadow: 
-        0 8px 25px rgba(0, 0, 0, 0.3),
-        0 0 0 1px rgba(255, 255, 255, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2),
-        0 0 15px rgba(255, 255, 255, 0.1);
-    will-change: transform;
-    perspective: 600px;
-    -webkit-perspective: 600px;
-    isolation: isolate;
-    contain: layout style paint;
-    overflow: visible;
-    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
-}
+
 
 /* 포토카드 앞면 */
 .photo-card-front {
@@ -505,16 +487,21 @@
     height: 100%;
     border-radius: 12px;
     overflow: hidden;
-    background: transparent;
-    border: none;
-    transform: translateZ(0.5px);
-    -webkit-transform: translateZ(0.5px);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(240, 240, 240, 0.1));
+    backdrop-filter: blur(15px);
+    border: 4px solid rgba(255, 255, 255, 0.8);
+    transform: translateZ(20px);
+    -webkit-transform: translateZ(20px);
     will-change: transform;
-    z-index: 2;
+    z-index: 10;
     isolation: isolate;
     contain: layout style paint;
-    box-shadow: none;
-    filter: none;
+    box-shadow: 
+        inset 0 0 0 1px rgba(255, 255, 255, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.2),
+        inset 0 0 20px rgba(255, 255, 255, 0.1),
+        0 4px 8px rgba(0, 0, 0, 0.2);
+    filter: brightness(1.05) contrast(1.1);
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
     display: block;
@@ -522,7 +509,6 @@
     -webkit-transform-style: preserve-3d;
     transform-origin: center center;
     -webkit-transform-origin: center center;
-    /* 앞면이 확실히 보이도록 추가 설정 */
     pointer-events: none;
 }
 
@@ -531,32 +517,36 @@
     position: absolute;
     width: 100%;
     height: 100%;
-    transform: rotateY(180deg) translateZ(0.5px);
-    -webkit-transform: rotateY(180deg) translateZ(0.5px);
+    transform: rotateY(180deg) translateZ(20px);
+    -webkit-transform: rotateY(180deg) translateZ(20px);
     border-radius: 12px;
     overflow: hidden;
-    background: transparent;
-    border: none;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(240, 240, 240, 0.1));
+    backdrop-filter: blur(15px);
+    border: 4px solid rgba(255, 255, 255, 0.8);
     will-change: transform;
-    z-index: 1;
+    z-index: 5;
     isolation: isolate;
     contain: layout style paint;
     opacity: 1;
     display: block;
     visibility: visible;
-    box-shadow: none;
-    filter: none;
+    box-shadow: 
+        inset 0 0 0 1px rgba(255, 255, 255, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.2),
+        inset 0 0 20px rgba(255, 255, 255, 0.1),
+        0 4px 8px rgba(0, 0, 0, 0.2);
+    filter: brightness(1.05) contrast(1.1);
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
     transform-style: preserve-3d;
     -webkit-transform-style: preserve-3d;
     transform-origin: center center;
     -webkit-transform-origin: center center;
-    /* 뒷면이 확실히 보이도록 추가 설정 */
     pointer-events: none;
 }
 
-/* 포토카드 이미지 */
+/* 포토카드 이미지 - 강화 */
 .photo-card-front img,
 .photo-card-back img {
     width: 100%;
@@ -564,22 +554,13 @@
     object-fit: cover;
     border-radius: 0;
     transform: translateZ(0);
-    will-change: transform;
-    image-rendering: -webkit-optimize-contrast;
-    image-rendering: crisp-edges;
-    image-rendering: pixelated;
     -webkit-transform: translateZ(0);
     transform-style: preserve-3d;
     -webkit-transform-style: preserve-3d;
     pointer-events: none;
     user-select: none;
     -webkit-user-select: none;
-    isolation: isolate;
-    contain: layout style paint;
     opacity: 1;
-    transition: opacity 0.1s ease;
-    filter: brightness(1.1) contrast(1.05) saturate(1.1) sharpness(1.2);
-    box-shadow: none;
     position: absolute;
     top: 0;
     left: 0;
@@ -597,6 +578,152 @@
     -webkit-backface-visibility: hidden;
 }
 
+/* 포토카드 측면 (두께감) - 외부 측면 */
+.photo-card-side {
+    position: absolute;
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.95), 
+        rgba(220, 220, 220, 0.8),
+        rgba(200, 200, 200, 0.7)
+    );
+    border: 3px solid rgba(255, 255, 255, 0.9);
+    will-change: transform;
+    box-shadow: 
+        inset 0 0 15px rgba(0, 0, 0, 0.3),
+        0 2px 6px rgba(0, 0, 0, 0.2),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+    filter: brightness(1.1) contrast(1.05);
+}
+
+.photo-card-side-top {
+    width: 100%;
+    height: 50px;
+    top: 0;
+    left: 0;
+    transform: rotateX(90deg) translateZ(25px);
+    border-radius: 12px 12px 0 0;
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.95), 
+        rgba(220, 220, 220, 0.8),
+        rgba(200, 200, 200, 0.7)
+    );
+}
+
+.photo-card-side-bottom {
+    width: 100%;
+    height: 50px;
+    bottom: 0;
+    left: 0;
+    transform: rotateX(-90deg) translateZ(25px);
+    border-radius: 0 0 12px 12px;
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.95), 
+        rgba(220, 220, 220, 0.8),
+        rgba(200, 200, 200, 0.7)
+    );
+}
+
+.photo-card-side-left {
+    width: 50px;
+    height: 100%;
+    top: 0;
+    left: 0;
+    transform: rotateY(-90deg) translateZ(25px);
+    border-radius: 12px 0 0 12px;
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.95), 
+        rgba(220, 220, 220, 0.8),
+        rgba(200, 200, 200, 0.7)
+    );
+}
+
+.photo-card-side-right {
+    width: 50px;
+    height: 100%;
+    top: 0;
+    right: 0;
+    transform: rotateY(90deg) translateZ(25px);
+    border-radius: 0 12px 12px 0;
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.95), 
+        rgba(220, 220, 220, 0.8),
+        rgba(200, 200, 200, 0.7)
+    );
+}
+
+/* 포토카드 내부 측면 (앞면과 뒷면 사이) */
+.photo-card-inner-side {
+    position: absolute;
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.8), 
+        rgba(200, 200, 200, 0.6),
+        rgba(180, 180, 180, 0.5)
+    );
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    will-change: transform;
+    box-shadow: 
+        inset 0 0 10px rgba(0, 0, 0, 0.2),
+        0 1px 3px rgba(0, 0, 0, 0.1),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+    filter: brightness(1.05) contrast(1.02);
+}
+
+.photo-card-inner-top {
+    width: 100%;
+    height: 25px;
+    top: 0;
+    left: 0;
+    transform: rotateX(90deg) translateZ(12.5px);
+    border-radius: 12px 12px 0 0;
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.8), 
+        rgba(200, 200, 200, 0.6),
+        rgba(180, 180, 180, 0.5)
+    );
+}
+
+.photo-card-inner-bottom {
+    width: 100%;
+    height: 25px;
+    bottom: 0;
+    left: 0;
+    transform: rotateX(-90deg) translateZ(12.5px);
+    border-radius: 0 0 12px 12px;
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.8), 
+        rgba(200, 200, 200, 0.6),
+        rgba(180, 180, 180, 0.5)
+    );
+}
+
+.photo-card-inner-left {
+    width: 25px;
+    height: 100%;
+    top: 0;
+    left: 0;
+    transform: rotateY(-90deg) translateZ(12.5px);
+    border-radius: 12px 0 0 12px;
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.8), 
+        rgba(200, 200, 200, 0.6),
+        rgba(180, 180, 180, 0.5)
+    );
+}
+
+.photo-card-inner-right {
+    width: 25px;
+    height: 100%;
+    top: 0;
+    right: 0;
+    transform: rotateY(90deg) translateZ(12.5px);
+    border-radius: 0 12px 12px 0;
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.8), 
+        rgba(200, 200, 200, 0.6),
+        rgba(180, 180, 180, 0.5)
+    );
+}
+
 /* 포토카드 앞면 이미지 특별 처리 */
 .photo-card-front img {
     z-index: 2;
@@ -606,18 +733,9 @@
 
 /* 포토카드 뒷면 이미지 특별 처리 */
 .photo-card-back img {
-    /* 뒷면 이미지는 카드가 180도 회전했을 때 올바른 방향으로 표시되도록 함 */
-    transform: translateZ(0) rotateY(180deg);
-    -webkit-transform: translateZ(0) rotateY(180deg);
+    z-index: 1;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
-    z-index: 1;
-    /* 뒷면 이미지가 회전 시 올바르게 표시되도록 추가 설정 */
-    transform-origin: center center;
-    -webkit-transform-origin: center center;
-    /* 뒷면 이미지가 확실히 보이도록 추가 설정 */
-    opacity: 1;
-    visibility: visible;
 }
 
 /* 포토카드 이미지 호버 효과 */
@@ -1280,7 +1398,22 @@
 
 /* 애니메이션 */
 .gallery-item {
-    animation: fadeInUp 0.6s ease-out, cardRotate 8s ease-in-out infinite;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* 포토카드 아이템만 회전 애니메이션 적용 */
+.gallery-item.photo-card-item {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* 포토카드 컨테이너는 고정하고 내부 카드만 회전 */
+.gallery-item.photo-card-item .photo-card-container {
+    animation: none !important;
+}
+
+/* 포토카드 내부 요소만 회전 */
+.gallery-item.photo-card-item .photo-card {
+    animation: photoCardRotate 8s linear infinite;
 }
 
 @keyframes cardRotate {
@@ -1308,6 +1441,14 @@
 .gallery-item:nth-child(4) { animation-delay: 0.4s; }
 .gallery-item:nth-child(5) { animation-delay: 0.5s; }
 .gallery-item:nth-child(6) { animation-delay: 0.6s; }
+
+/* 포토카드 내부 요소 애니메이션 지연 */
+.gallery-item.photo-card-item:nth-child(1) .photo-card { animation-delay: 0.1s; }
+.gallery-item.photo-card-item:nth-child(2) .photo-card { animation-delay: 0.2s; }
+.gallery-item.photo-card-item:nth-child(3) .photo-card { animation-delay: 0.3s; }
+.gallery-item.photo-card-item:nth-child(4) .photo-card { animation-delay: 0.4s; }
+.gallery-item.photo-card-item:nth-child(5) .photo-card { animation-delay: 0.5s; }
+.gallery-item.photo-card-item:nth-child(6) .photo-card { animation-delay: 0.6s; }
 
 @keyframes fadeInUp {
     from {
@@ -1523,33 +1664,84 @@
     border-radius: 0 12px 12px 0;
 }
 
-/* 카드 회전 애니메이션 */
+/* 카드 회전 애니메이션 - 완전히 새로 작성 */
 @keyframes photoCardRotate {
     0% { 
         transform: rotateY(0deg);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
     }
     25% { 
         transform: rotateY(90deg);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
     }
     50% { 
         transform: rotateY(180deg);
-        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
     }
     75% { 
         transform: rotateY(270deg);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
     }
     100% { 
         transform: rotateY(360deg);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
     }
 }
+
+
+
+/* 포토카드 - 완전히 새로 작성 */
+.photo-card {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d;
+    animation: photoCardRotate 8s linear infinite;
+    border-radius: 12px;
+    transform: translate3d(0, 0, 0);
+    -webkit-transform: translate3d(0, 0, 0);
+    box-shadow: 
+        0 12px 40px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        0 0 20px rgba(255, 255, 255, 0.1),
+        0 0 40px rgba(255, 255, 255, 0.05);
+    will-change: transform;
+    perspective: 800px;
+    -webkit-perspective: 800px;
+    isolation: isolate;
+    contain: layout style paint;
+    overflow: visible;
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3));
+}
+
+/* 앞면과 뒷면의 backface-visibility 설정 */
+.photo-card .photo-card-front,
+.photo-card .photo-card-back {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+/* 호버 시에도 동일하게 유지 */
+.photo-card:hover .photo-card-front,
+.photo-card:hover .photo-card-back {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+/* 이미지에도 적용 */
+.photo-card .photo-card-front img,
+.photo-card .photo-card-back img {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+
 
 /* 호버 시 회전 일시정지 */
 .photo-card-item:hover .photo-card {
     animation-play-state: paused;
+}
+
+/* 호버 시 컨테이너는 고정 유지 */
+.photo-card-item:hover .photo-card-container {
+    animation: none !important;
 }
 
 /* 클릭 시 회전 속도 증가 */
@@ -1610,6 +1802,10 @@
         -webkit-animation: photoCardRotate 6s linear infinite;
     }
     
+    .photo-card-container {
+        animation: none !important;
+    }
+    
     .photo-card-front img,
     .photo-card-back img {
         image-rendering: optimizeSpeed;
@@ -1618,6 +1814,8 @@
         image-rendering: crisp-edges;
         transition: opacity 0.1s ease, transform 0.1s ease;
         -webkit-transition: opacity 0.1s ease, transform 0.1s ease;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
     }
     
     .photo-card-side-top,
@@ -1661,6 +1859,10 @@
         animation-duration: 10s;
     }
     
+    .photo-card-container {
+        animation: none !important;
+    }
+    
     .photo-card-item:hover .photo-card {
         animation-play-state: running;
     }
@@ -1694,6 +1896,12 @@
     background: transparent;
     border: none;
     box-shadow: none;
+}
+
+/* 포토카드 아이템 호버 시 이름 부분은 고정 */
+.gallery-item.photo-card-item:hover .gallery-item-name {
+    transform: none !important;
+    animation: none !important;
 }
 
 .gallery-item.photo-card-item .gallery-item-overlay {

@@ -430,6 +430,9 @@
     transition: all 0.3s ease;
     display: block;
     position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     z-index: 1;
     background: transparent !important;
     background-color: transparent !important;

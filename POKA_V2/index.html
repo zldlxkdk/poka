@@ -58,7 +58,7 @@
 
             <!-- 빠른 시작 버튼 -->
             <section class="quick-start-section">
-                <button class="quick-start-btn" onclick="location.href='gallery.html'">
+                <button class="quick-start-btn" onclick="createNewPhotoCardFromMain()">
                     <span class="btn-icon">
                         🎴
                     </span>
@@ -131,5 +131,36 @@
 
     <script src="js/common.js"></script>
     <script src="js/index.js"></script>
+    <script>
+        // 백업 함수 정의 (스크립트 로딩 문제 해결)
+        if (typeof window.createNewPhotoCardFromMain === 'undefined') {
+            window.createNewPhotoCardFromMain = function() {
+                console.log('백업 함수: 메인 페이지에서 새로운 포토카드 생성 모드로 진입');
+                
+                // 기존 포토카드 데이터 초기화
+                try {
+                    localStorage.removeItem('currentPhotoCard');
+                    if (typeof POKA !== 'undefined' && POKA.AppState) {
+                        POKA.AppState.removeFromStorage('currentPhotoCard');
+                    }
+                    console.log('기존 포토카드 데이터 초기화 완료');
+                } catch (error) {
+                    console.error('기존 포토카드 데이터 초기화 오류:', error);
+                }
+                
+                // 편집 페이지로 이동
+                window.location.href = 'edit.html';
+            };
+        }
+        
+        if (typeof window.cardClickEffect === 'undefined') {
+            window.cardClickEffect = function(element) {
+                element.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    element.style.transform = 'scale(1)';
+                }, 150);
+            };
+        }
+    </script>
 </body>
 </html> 

@@ -246,15 +246,29 @@ function createPhotoCard() {
         return;
     }
     
+    // 포토카드 이름 가져오기
+    const photoCardName = photoCardNameInput ? photoCardNameInput.value.trim() : '';
+    const finalName = photoCardName || `새 포토카드_${Date.now()}`;
+    
     console.log('새로운 포토카드 생성:', { 
-        front: selectedFrontImage, 
-        back: selectedBackImage 
+        front: {
+            name: selectedFrontImage.name,
+            size: selectedFrontImage.dataUrl ? selectedFrontImage.dataUrl.length : 0,
+            start: selectedFrontImage.dataUrl ? selectedFrontImage.dataUrl.substring(0, 50) : '없음'
+        },
+        back: {
+            name: selectedBackImage.name,
+            size: selectedBackImage.dataUrl ? selectedBackImage.dataUrl.length : 0,
+            start: selectedBackImage.dataUrl ? selectedBackImage.dataUrl.substring(0, 50) : '없음'
+        },
+        name: finalName,
+        isSameImage: selectedFrontImage.dataUrl === selectedBackImage.dataUrl
     });
     
     // 포토카드 데이터 생성
     const photoCard = {
         id: Date.now() + Math.random(),
-        name: `새 포토카드_${Date.now()}`,
+        name: finalName,
         frontImage: selectedFrontImage.dataUrl,
         frontImageName: selectedFrontImage.name,
         backImage: selectedBackImage.dataUrl,
@@ -583,7 +597,9 @@ function loadCurrentImage() {
     originalImage = JSON.parse(JSON.stringify(currentImage));
     
     // 포토카드 편집 컨트롤 숨기기 (일반 이미지 편집 모드)
-    photoCardEditControls.style.display = 'none';
+    if (photoCardEditControls) {
+        photoCardEditControls.style.display = 'none';
+    }
     
     // 편집 모드 헤더 숨기기 (일반 이미지 편집 모드)
     const editModeHeader = document.getElementById('editModeHeader');
@@ -592,48 +608,56 @@ function loadCurrentImage() {
     }
     
     // 이미지 표시
-    editImage.src = currentImage.dataUrl;
-    editImage.style.display = 'block';
-    imageFallback.style.display = 'none';
-    
-    // 이미지 로드 완료 대기
-    editImage.onload = function() {
-        console.log('일반 이미지 로드 완료');
+    if (editImage && imageFallback) {
+        editImage.src = currentImage.dataUrl;
         editImage.style.display = 'block';
         imageFallback.style.display = 'none';
-        
-        // 편집 상태 초기화
-        currentRotation = 0;
-        currentFlipHorizontal = false;
-        currentFlipVertical = false;
-        currentFilter = 'none';
-        isCropping = false;
-        emojis = currentImage.emojis || [];
-        renderEmojis();
-        
-        // 필터 버튼 초기화
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
-        
-        // 회전 슬라이더 초기화
-        initRotationSlider();
-        
-        // 이미지 정보 표시
-        console.log('편집할 이미지:', currentImage);
-        console.log('원본 이미지 저장됨:', originalImage);
-        console.log('이미지 데이터 URL 길이:', currentImage.dataUrl.length);
-        
-        // 성공 메시지
-        POKA.Toast.success('이미지가 성공적으로 로드되었습니다');
-    };
+    }
     
-    editImage.onerror = function() {
-        console.error('일반 이미지 로드 실패');
-        editImage.style.display = 'none';
-        imageFallback.style.display = 'flex';
-        POKA.Toast.error('이미지 로드에 실패했습니다');
-    };
+    // 이미지 로드 완료 대기
+    if (editImage) {
+        editImage.onload = function() {
+            console.log('일반 이미지 로드 완료');
+            if (editImage && imageFallback) {
+                editImage.style.display = 'block';
+                imageFallback.style.display = 'none';
+            }
+            
+            // 편집 상태 초기화
+            currentRotation = 0;
+            currentFlipHorizontal = false;
+            currentFlipVertical = false;
+            currentFilter = 'none';
+            isCropping = false;
+            emojis = currentImage.emojis || [];
+            renderEmojis();
+            
+            // 필터 버튼 초기화
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // 회전 슬라이더 초기화
+            initRotationSlider();
+            
+            // 이미지 정보 표시
+            console.log('편집할 이미지:', currentImage);
+            console.log('원본 이미지 저장됨:', originalImage);
+            console.log('이미지 데이터 URL 길이:', currentImage.dataUrl.length);
+            
+            // 성공 메시지
+            POKA.Toast.success('이미지가 성공적으로 로드되었습니다');
+        };
+        
+        editImage.onerror = function() {
+            console.error('일반 이미지 로드 실패');
+            if (editImage && imageFallback) {
+                editImage.style.display = 'none';
+                imageFallback.style.display = 'flex';
+            }
+            POKA.Toast.error('이미지 로드에 실패했습니다');
+        };
+    }
 }
 
 // 테스트용 샘플 이미지 생성
@@ -1439,6 +1463,11 @@ async function savePhotoCard() {
         localStorage.removeItem('photoCardNameEdit');
         localStorage.removeItem('currentPhotoCard');
         
+        // AppState에서도 제거
+        if (typeof POKA !== 'undefined' && POKA.AppState) {
+            POKA.AppState.removeFromStorage('currentPhotoCard');
+        }
+        
         console.log('저장 완료, 갤러리로 이동');
         alert('포토카드가 성공적으로 저장되었습니다!');
         
@@ -1650,7 +1679,9 @@ function showImageSelectionMode() {
     editSection.style.display = 'none';
     
     // 포토카드 편집 컨트롤 숨기기
-    photoCardEditControls.style.display = 'none';
+    if (photoCardEditControls) {
+        photoCardEditControls.style.display = 'none';
+    }
     
     // 선택 상태 초기화
     selectedFrontImage = null;
@@ -1670,6 +1701,9 @@ function showImageSelectionMode() {
     
     // 버튼 상태 업데이트
     updateCreatePhotoCardButton();
+    
+    // 포토카드 이름 입력 이벤트 설정
+    setupPhotoCardNameInput();
     
     console.log('이미지 선택 모드 초기화 완료');
 }
@@ -1746,7 +1780,12 @@ function createImageGridItem(image, index, type) {
 
 // 포토카드용 이미지 선택
 function selectImageForPhotoCard(image, type) {
-    console.log('이미지 선택:', type, image);
+    console.log('이미지 선택:', type, {
+        imageName: image.name,
+        imageSize: image.dataUrl ? image.dataUrl.length : 0,
+        imageStart: image.dataUrl ? image.dataUrl.substring(0, 50) : '없음',
+        imageEnd: image.dataUrl ? image.dataUrl.substring(image.dataUrl.length - 20) : '없음'
+    });
     
     if (type === 'front') {
         selectedFrontImage = image;
@@ -1978,9 +2017,11 @@ function loadPhotoCardData() {
         if (frontImage && frontFallback) {
             frontImage.src = photoCardData.frontImage;
             frontImage.style.display = 'block';
-            frontImage.style.width = '100%';
-            frontImage.style.height = '100%';
-            frontImage.style.objectFit = 'contain';
+            frontImage.style.width = 'auto';
+            frontImage.style.height = 'auto';
+            frontImage.style.left = '50%';
+            frontImage.style.top = '50%';
+            frontImage.style.transform = 'translate(-50%, -50%)';
             frontFallback.style.display = 'none';
             
             console.log('앞면 이미지 로드됨:', photoCardData.frontImage.substring(0, 50) + '...');
@@ -2007,9 +2048,11 @@ function loadPhotoCardData() {
         if (backImage && backFallback) {
             backImage.src = photoCardData.backImage;
             backImage.style.display = 'block';
-            backImage.style.width = '100%';
-            backImage.style.height = '100%';
-            backImage.style.objectFit = 'contain';
+            backImage.style.width = 'auto';
+            backImage.style.height = 'auto';
+            backImage.style.left = '50%';
+            backImage.style.top = '50%';
+            backImage.style.transform = 'translate(-50%, -50%)';
             backFallback.style.display = 'none';
             
             console.log('뒷면 이미지 로드됨:', photoCardData.backImage.substring(0, 50) + '...');
@@ -2157,6 +2200,14 @@ function resetImageEdit(side) {
         applyImageEditState(side);
         clearEmojisEdit(side);
         
+        // 이미지를 중앙으로 리셋
+        if (imageElement) {
+            imageElement.style.left = '50%';
+            imageElement.style.top = '50%';
+            imageElement.style.width = 'auto';
+            imageElement.style.height = 'auto';
+        }
+        
         console.log(`${side} 면 이미지 편집 상태 초기화 완료`);
     } else {
         // 이미지가 없는 경우
@@ -2196,7 +2247,7 @@ function applyImageEditState(side) {
     }
     
     // 회전 적용
-    let transform = `rotate(${state.rotation}deg)`;
+    let transform = `translate(-50%, -50%) rotate(${state.rotation}deg)`;
     
     // 뒤집기 적용
     if (state.flip.horizontal) {
@@ -2626,17 +2677,7 @@ function loadImageWithFallback(imageElement, imageData, side) {
             imageElement.src = imageData;
             imageElement.style.display = 'block';
             
-            // 이미지 초기 위치 설정 (중앙)
-            const container = imageElement.parentElement;
-            if (container) {
-                const containerRect = container.getBoundingClientRect();
-                const imgRect = imageElement.getBoundingClientRect();
-                
-                // 이미지를 컨테이너 중앙에 배치
-                imageElement.style.left = '50%';
-                imageElement.style.top = '50%';
-                imageElement.style.transform = 'translate(-50%, -50%)';
-            }
+            // CSS에서 이미 중앙 정렬이 설정되어 있으므로 추가 위치 설정 불필요
             
             const fallbackElement = document.getElementById(side === 'front' ? 'frontImageFallback' : 'backImageFallback');
             if (fallbackElement) {
@@ -3528,6 +3569,13 @@ function uploadFromGallery(side) {
                         .then(() => {
                             photoCardEditState[side].image = imageData;
                             resetImageEdit(side);
+                            
+                            // 이미지를 중앙으로 설정
+                            imageElement.style.left = '50%';
+                            imageElement.style.top = '50%';
+                            imageElement.style.width = 'auto';
+                            imageElement.style.height = 'auto';
+                            
                             POKA.Toast.success(`${side === 'front' ? '앞면' : '뒷면'} 이미지가 업로드되었습니다`);
                         })
                         .catch((error) => {
@@ -3577,6 +3625,13 @@ function takePhoto(side) {
                         .then(() => {
                             photoCardEditState[side].image = imageData;
                             resetImageEdit(side);
+                            
+                            // 이미지를 중앙으로 설정
+                            imageElement.style.left = '50%';
+                            imageElement.style.top = '50%';
+                            imageElement.style.width = 'auto';
+                            imageElement.style.height = 'auto';
+                            
                             POKA.Toast.success(`${side === 'front' ? '앞면' : '뒷면'} 사진이 촬영되었습니다`);
                         })
                         .catch((error) => {
@@ -3781,12 +3836,25 @@ function makeImageDraggable(imageElement, side) {
         const startX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
         const startY = e.type === 'mousedown' ? e.clientY : e.touches[0].clientY;
         
-        // 이미지의 현재 위치 가져오기
+        // 이미지의 현재 위치 가져오기 (transform 고려)
         const rect = imageElement.getBoundingClientRect();
         const containerRect = imageElement.parentElement.getBoundingClientRect();
         
-        const startLeft = rect.left - containerRect.left;
-        const startTop = rect.top - containerRect.top;
+        // CSS에서 transform: translate(-50%, -50%)를 사용하므로 실제 위치 계산
+        const computedStyle = window.getComputedStyle(imageElement);
+        const transform = computedStyle.transform;
+        
+        let startLeft, startTop;
+        
+        if (transform === 'none' || transform === 'matrix(1, 0, 0, 1, 0, 0)') {
+            // transform이 없는 경우 (드래그 후)
+            startLeft = rect.left - containerRect.left;
+            startTop = rect.top - containerRect.top;
+        } else {
+            // transform이 있는 경우 (초기 상태)
+            startLeft = containerRect.width / 2;
+            startTop = containerRect.height / 2;
+        }
         
         // 드래그 상태 설정
         imageElement.classList.add('dragging');
@@ -3889,8 +3957,22 @@ function addImageResizeHandles(imageElement, side) {
         
         const startWidth = rect.width;
         const startHeight = rect.height;
-        const startLeft = rect.left - containerRect.left;
-        const startTop = rect.top - containerRect.top;
+        
+        // transform을 고려한 실제 위치 계산
+        const computedStyle = window.getComputedStyle(imageElement);
+        const transform = computedStyle.transform;
+        
+        let startLeft, startTop;
+        
+        if (transform === 'none' || transform === 'matrix(1, 0, 0, 1, 0, 0)') {
+            // transform이 없는 경우 (드래그 후)
+            startLeft = rect.left - containerRect.left;
+            startTop = rect.top - containerRect.top;
+        } else {
+            // transform이 있는 경우 (초기 상태)
+            startLeft = containerRect.width / 2 - startWidth / 2;
+            startTop = containerRect.height / 2 - startHeight / 2;
+        }
         
         // 리사이즈 상태 설정
         imageElement.classList.add('resizing');
@@ -3972,10 +4054,23 @@ function updateImageHandlePositions(imageElement) {
     const rect = imageElement.getBoundingClientRect();
     const containerRect = imageElement.parentElement.getBoundingClientRect();
     
-    const left = rect.left - containerRect.left;
-    const top = rect.top - containerRect.top;
+    // transform을 고려한 실제 위치 계산
+    const computedStyle = window.getComputedStyle(imageElement);
+    const transform = computedStyle.transform;
+    
+    let left, top;
     const width = rect.width;
     const height = rect.height;
+    
+    if (transform === 'none' || transform === 'matrix(1, 0, 0, 1, 0, 0)') {
+        // transform이 없는 경우 (드래그 후)
+        left = rect.left - containerRect.left;
+        top = rect.top - containerRect.top;
+    } else {
+        // transform이 있는 경우 (초기 상태)
+        left = containerRect.width / 2 - width / 2;
+        top = containerRect.height / 2 - height / 2;
+    }
     
     const handles = imageElement.parentElement.querySelectorAll('.image-resize-handle');
     
@@ -4208,7 +4303,7 @@ function loadCurrentImageOrPhotoCard() {
         const currentPhotoCardData = localStorage.getItem('currentPhotoCard');
         if (currentPhotoCardData) {
             const currentPhotoCard = JSON.parse(currentPhotoCardData);
-            console.log('포토카드 편집 모드:', currentPhotoCard);
+            console.log('기존 포토카드 편집 모드:', currentPhotoCard);
             loadPhotoCardForEdit(currentPhotoCard);
             return;
         }
@@ -4219,7 +4314,7 @@ function loadCurrentImageOrPhotoCard() {
     // AppState에서도 확인
     const currentPhotoCard = POKA.AppState.getFromStorage('currentPhotoCard');
     if (currentPhotoCard) {
-        console.log('AppState에서 포토카드 편집 모드:', currentPhotoCard);
+        console.log('AppState에서 기존 포토카드 편집 모드:', currentPhotoCard);
         loadPhotoCardForEdit(currentPhotoCard);
         return;
     }
@@ -4232,43 +4327,13 @@ function loadCurrentImageOrPhotoCard() {
         return;
     }
     
-    // 둘 다 없는 경우 포토카드 동시 편집 모드로 전환
-    console.log('포토카드 동시 편집 모드로 전환');
+    // 둘 다 없는 경우 새로운 포토카드 생성 모드로 전환
+    console.log('새로운 포토카드 생성 모드로 전환');
     
-    // 이미지 선택 섹션 숨기기
-    const imageSelectionSection = document.getElementById('imageSelectionSection');
-    if (imageSelectionSection) {
-        imageSelectionSection.style.display = 'none';
-    }
+    // 이미지 선택 모드 표시 (새로운 포토카드 생성)
+    showImageSelectionMode();
     
-    // 편집 섹션 표시
-    const editSection = document.getElementById('editSection');
-    if (editSection) {
-        editSection.style.display = 'block';
-    }
-    
-    // 포토카드 동시 편집 모드 표시
-    const photoCardSimultaneousEdit = document.getElementById('photoCardSimultaneousEdit');
-    const singleImageEdit = document.getElementById('singleImageEdit');
-    
-    if (photoCardSimultaneousEdit) {
-        photoCardSimultaneousEdit.style.display = 'block';
-    }
-    
-    if (singleImageEdit) {
-        singleImageEdit.style.display = 'none';
-    }
-    
-    // 포토카드 데이터 로드
-    loadPhotoCardData();
-    
-    // 이모지 스크롤 드래그 설정
-    setupEmojiScrollDrag();
-    
-    // 포토카드 이름 편집 설정
-    setupPhotoCardNameEdit();
-    
-    console.log('편집 페이지 초기화 완료');
+    console.log('새로운 포토카드 생성 모드 초기화 완료');
 }
 
 // 이모지 회전 시작
