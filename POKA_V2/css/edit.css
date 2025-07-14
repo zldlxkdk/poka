@@ -2031,7 +2031,7 @@
     width: 100vw;
     margin: 0;
     padding: 0;
-    padding-bottom: 220px;
+    padding-bottom: 280px;
     box-sizing: border-box;
   }
   .edit-section {
@@ -2053,4 +2053,33 @@
     border-radius: 0;
     box-shadow: none;
   }
+}
+
+@media (max-width: 768px) {
+    /* 헤더 모바일 최적화 - 포토카드 화면과 동일하게 */
+    .header {
+        padding: 20px 16px;
+        min-height: 80px;
+    }
+    
+    .header-content {
+        gap: 12px;
+        padding: 0;
+        min-height: 44px;
+    }
+    
+    .back-btn {
+        width: 36px;
+        height: 36px;
+        min-width: 36px;
+        font-size: 1.5rem;
+        padding: 8px;
+    }
+    
+    .page-title {
+        font-size: 1.3rem;
+        line-height: 1.2;
+        text-align: left;
+        justify-self: flex-start;
+    }
 }
