@@ -1983,3 +1983,42 @@
     gap: 8px !important;
   }
 }
+
+/* 모바일 크롬에서도 2단 강제: 상위 컨테이너 영향 차단 */
+@media (max-width: 1024px) {
+  .image-selection-section {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    overflow-x: auto !important;
+    box-sizing: border-box !important;
+  }
+  .image-selection-container {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 8px !important;
+    width: 100% !important;
+    min-width: 320px !important;
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+  }
+  .front-image-selection,
+  .back-image-selection {
+    display: block !important;
+    width: 50% !important;
+    min-width: 140px !important;
+    max-width: 50% !important;
+    box-sizing: border-box !important;
+    float: left !important;
+    vertical-align: top !important;
+  }
+  .image-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+    width: 100% !important;
+    min-width: 120px !important;
+    box-sizing: border-box !important;
+  }
+}
