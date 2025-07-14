@@ -21,20 +21,34 @@
         flex-flow: row wrap !important;
     }
     
-    .modal-image-side {
+    .modal-image-side-wrapper {
         flex: 1 !important;
         min-width: 140px !important;
         max-width: calc(50% - 6px) !important;
         width: calc(50% - 6px) !important;
-        aspect-ratio: 10/19 !important;
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
         flex-basis: calc(50% - 6px) !important;
         flex-grow: 1 !important;
         flex-shrink: 1 !important;
+        margin: 0 0 8px 0 !important;
+    }
+    
+    .modal-image-side {
+        flex: 0 0 auto !important;
+        aspect-ratio: 10/19 !important;
+        width: 100% !important;
+        height: auto !important;
+        min-width: 120px !important;
+        max-width: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
         position: relative !important;
         overflow: hidden !important;
+        background: #f0f0f0 !important;
     }
     
     .modal-image-side img {
@@ -60,6 +74,27 @@
         width: 100% !important;
         height: 100% !important;
         aspect-ratio: 10/19 !important;
+    }
+    
+    .image-side-label {
+        display: block !important;
+        position: static !important;
+        margin-bottom: 6px !important;
+        margin-top: 0 !important;
+        z-index: 1 !important;
+        background: var(--surface-color, rgba(255,255,255,0.85)) !important;
+        color: var(--text-primary, #222) !important;
+        font-size: 0.9rem !important;
+        font-weight: 600 !important;
+        border-radius: 12px !important;
+        padding: 4px 12px !important;
+        border: 1px solid rgba(0, 212, 255, 0.15) !important;
+        min-width: 48px !important;
+        max-width: 80% !important;
+        pointer-events: none !important;
+        text-align: center !important;
+        align-self: center !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
     }
 }
 
@@ -1354,15 +1389,28 @@
         align-items: flex-start !important;
     }
     
-    .modal-image-side {
+    .modal-image-side-wrapper {
         flex: 1 !important;
         min-width: 140px !important;
         max-width: calc(50% - 6px) !important;
         width: calc(50% - 6px) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        margin: 0 0 8px 0 !important;
+    }
+    
+    .modal-image-side {
+        flex: 0 0 auto !important;
         aspect-ratio: 10/19 !important;
+        width: 100% !important;
+        height: auto !important;
+        min-width: 120px !important;
+        max-width: 100% !important;
         display: block !important;
         position: relative !important;
         overflow: hidden !important;
+        background: #f0f0f0 !important;
     }
     
     .modal-image-side img {
@@ -1391,8 +1439,24 @@
     }
     
     .image-side-label {
-        font-size: 0.8rem;
-        padding: 3px 8px;
+        display: block !important;
+        position: static !important;
+        margin-bottom: 6px !important;
+        margin-top: 0 !important;
+        z-index: 1 !important;
+        background: var(--surface-color, rgba(255,255,255,0.85)) !important;
+        color: var(--text-primary, #222) !important;
+        font-size: 0.8rem !important;
+        font-weight: 600 !important;
+        border-radius: 12px !important;
+        padding: 3px 8px !important;
+        border: 1px solid rgba(0, 212, 255, 0.15) !important;
+        min-width: 48px !important;
+        max-width: 80% !important;
+        pointer-events: none !important;
+        text-align: center !important;
+        align-self: center !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
     }
     
 
@@ -2064,15 +2128,28 @@
         justify-content: space-between !important;
     }
     
-    .modal-image-side {
+    .modal-image-side-wrapper {
         flex: 1 !important;
         min-width: 120px !important;
         max-width: calc(50% - 4px) !important;
         width: calc(50% - 4px) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        margin: 0 0 6px 0 !important;
+    }
+    
+    .modal-image-side {
+        flex: 0 0 auto !important;
         aspect-ratio: 10/19 !important;
+        width: 100% !important;
+        height: auto !important;
+        min-width: 100px !important;
+        max-width: 100% !important;
         display: block !important;
         position: relative !important;
         overflow: hidden !important;
+        background: #f0f0f0 !important;
     }
     
     .modal-image-side img {
@@ -2479,4 +2556,27 @@
     max-width: 80%;
     pointer-events: none;
     text-align: center;
+}
+
+@media (max-width: 320px) {
+    .image-side-label {
+        display: block !important;
+        position: static !important;
+        margin-bottom: 4px !important;
+        margin-top: 0 !important;
+        z-index: 1 !important;
+        background: var(--surface-color, rgba(255,255,255,0.95)) !important;
+        color: var(--text-primary, #222) !important;
+        font-size: 0.7rem !important;
+        font-weight: 600 !important;
+        border-radius: 10px !important;
+        padding: 2px 6px !important;
+        border: 1px solid rgba(0, 212, 255, 0.15) !important;
+        min-width: 36px !important;
+        max-width: 90% !important;
+        pointer-events: none !important;
+        text-align: center !important;
+        align-self: center !important;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.08) !important;
+    }
 }
