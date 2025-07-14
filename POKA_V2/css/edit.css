@@ -2022,3 +2022,11 @@
     box-sizing: border-box !important;
   }
 }
+
+.app-container, .main-content {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  overflow-x: auto !important;
+  display: block !important;
+  box-sizing: border-box !important;
+}
