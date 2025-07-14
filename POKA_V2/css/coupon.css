@@ -707,11 +707,31 @@
 
 .guide-step {
     animation: slideInLeft 0.6s ease-out;
+    -webkit-animation: slideInLeft 0.6s ease-out;
+    will-change: transform, opacity;
+    -webkit-will-change: transform, opacity;
+    transform: translate3d(0, 0, 0);
+    -webkit-transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
-.guide-step:nth-child(1) { animation-delay: 0.5s; }
-.guide-step:nth-child(2) { animation-delay: 0.6s; }
-.guide-step:nth-child(3) { animation-delay: 0.7s; }
+.guide-step:nth-child(1) { 
+    animation-delay: 0.5s; 
+    -webkit-animation-delay: 0.5s;
+}
+.guide-step:nth-child(2) { 
+    animation-delay: 0.6s; 
+    -webkit-animation-delay: 0.6s;
+}
+.guide-step:nth-child(3) { 
+    animation-delay: 0.7s; 
+    -webkit-animation-delay: 0.7s;
+}
+.guide-step:nth-child(4) { 
+    animation-delay: 0.8s; 
+    -webkit-animation-delay: 0.8s;
+}
 
 @keyframes fadeInUp {
     from {
@@ -746,6 +766,17 @@
     }
 }
 
+@-webkit-keyframes slideInLeft {
+    from {
+        opacity: 0;
+        -webkit-transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        -webkit-transform: translateX(0);
+    }
+}
+
 /* 터치 디바이스 최적화 */
 @media (hover: none) and (pointer: coarse) {
     .coupon-item:hover {
@@ -770,5 +801,34 @@
     
     .coupon-action-btn:hover {
         transform: none;
+    }
+    
+    /* 모바일에서 가이드 애니메이션 일관성 보장 */
+    .guide-step {
+        will-change: transform, opacity;
+        -webkit-will-change: transform, opacity;
+        transform: translate3d(0, 0, 0);
+        -webkit-transform: translate3d(0, 0, 0);
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        perspective: 1000px;
+        -webkit-perspective: 1000px;
+    }
+    
+    .guide-step:nth-child(1) { 
+        animation-delay: 0.5s; 
+        -webkit-animation-delay: 0.5s;
+    }
+    .guide-step:nth-child(2) { 
+        animation-delay: 0.6s; 
+        -webkit-animation-delay: 0.6s;
+    }
+    .guide-step:nth-child(3) { 
+        animation-delay: 0.7s; 
+        -webkit-animation-delay: 0.7s;
+    }
+    .guide-step:nth-child(4) { 
+        animation-delay: 0.8s; 
+        -webkit-animation-delay: 0.8s;
     }
 } 
