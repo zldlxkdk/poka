@@ -39,9 +39,10 @@
         flex: 0 0 auto !important;
         aspect-ratio: 10/19 !important;
         width: 100% !important;
-        height: auto !important;
+        height: calc(100vw * 0.4 * 1.9) !important; /* 10:19 비율 강제 적용 */
         min-width: 120px !important;
         max-width: 100% !important;
+        max-height: 60vh !important; /* 최대 높이 제한 */
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
@@ -1072,7 +1073,7 @@
     flex: 0 0 auto;
     aspect-ratio: 10/19 !important;
     width: 200px;
-    height: auto;
+    height: 380px; /* 10:19 비율 강제 적용 */
     min-width: 120px;
     max-width: 280px;
     display: flex !important;
@@ -1404,9 +1405,10 @@
         flex: 0 0 auto !important;
         aspect-ratio: 10/19 !important;
         width: 100% !important;
-        height: auto !important;
+        height: calc(100vw * 0.45 * 1.9) !important; /* 10:19 비율 강제 적용 */
         min-width: 120px !important;
         max-width: 100% !important;
+        max-height: 65vh !important; /* 최대 높이 제한 */
         display: block !important;
         position: relative !important;
         overflow: hidden !important;
@@ -2143,9 +2145,10 @@
         flex: 0 0 auto !important;
         aspect-ratio: 10/19 !important;
         width: 100% !important;
-        height: auto !important;
+        height: calc(100vw * 0.48 * 1.9) !important; /* 10:19 비율 강제 적용 */
         min-width: 100px !important;
         max-width: 100% !important;
+        max-height: 70vh !important; /* 최대 높이 제한 */
         display: block !important;
         position: relative !important;
         overflow: hidden !important;
@@ -2256,6 +2259,8 @@
         min-width: 120px;
         max-width: calc(50% - 4px);
         aspect-ratio: 10/19 !important;
+        height: calc(100vw * 0.48 * 1.9) !important; /* 10:19 비율 강제 적용 */
+        max-height: 70vh !important; /* 최대 높이 제한 */
         position: relative !important;
         overflow: hidden !important;
         background: #f0f0f0 !important;
@@ -2450,7 +2455,7 @@
     flex: 0 0 auto;
     min-width: 0;
     min-height: 0;
-    height: auto;
+    height: 380px; /* 10:19 비율 강제 적용 */
     aspect-ratio: 10/19 !important;
     width: 200px;
     display: flex !important;
