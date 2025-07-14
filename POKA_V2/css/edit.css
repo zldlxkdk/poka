@@ -1963,4 +1963,23 @@
     z-index: 200;
 }
 
-/* 기존 스타일들 계속... */
+/* 모바일에서도 PC와 완전히 동일한 2단 구조 강제 (최우선 적용) */
+@media (max-width: 1024px) {
+  .image-selection-container {
+    flex-direction: row !important;
+    gap: 16px !important;
+    align-items: flex-start !important;
+  }
+  .front-image-selection,
+  .back-image-selection {
+    max-width: 50% !important;
+    min-width: 0 !important;
+    flex: 1 1 0 !important;
+    padding: 10px !important;
+    box-sizing: border-box !important;
+  }
+  .image-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+}
