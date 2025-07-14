@@ -1672,40 +1672,22 @@ window.addEventListener('offline', () => {
 
 // 이미지 선택 모드 표시
 function showImageSelectionMode() {
-    console.log('이미지 선택 모드 표시');
-    
-    // 섹션 표시/숨김
-    imageSelectionSection.style.display = 'block';
-    editSection.style.display = 'none';
-    
-    // 포토카드 편집 컨트롤 숨기기
-    if (photoCardEditControls) {
-        photoCardEditControls.style.display = 'none';
-    }
-    
-    // 선택 상태 초기화
+    // 항상 편집 UI만 보이도록 수정
+    imageSelectionSection.style.display = 'none';
+    editSection.style.display = 'block';
+    // 안내/버튼 등은 모두 렌더링하지 않음
+    // 업로드된 이미지가 없으면 카드 미리보기 영역에 "이미지를 추가하세요" 등만 표시(추후 필요시)
+    // 나머지 초기화 로직은 그대로 유지
     selectedFrontImage = null;
     selectedBackImage = null;
-    
-    // 이름 입력 필드 초기화
     if (photoCardNameInput) {
         photoCardNameInput.value = '';
         updateNameCounter();
     }
-    
-    // 업로드된 이미지 로드
     loadUploadedImages();
-    
-    // 이미지 그리드 렌더링
     renderImageGrids();
-    
-    // 버튼 상태 업데이트
     updateCreatePhotoCardButton();
-    
-    // 포토카드 이름 입력 이벤트 설정
     setupPhotoCardNameInput();
-    
-    console.log('이미지 선택 모드 초기화 완료');
 }
 
 // 업로드된 이미지 로드
