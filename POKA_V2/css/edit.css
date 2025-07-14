@@ -497,13 +497,13 @@
     transform: rotateY(180deg);
 }
 
-/* 이미지 편집 컨테이너 */
+/* 이미지 편집 컨테이너 - 포토카드 화면과 동일한 비율로 수정 */
 .image-edit-container {
     position: relative;
         width: 100%;
-    max-width: 1080px;
+    max-width: 100%;
     height: auto;
-    aspect-ratio: 9/16;
+    aspect-ratio: 3/5; /* 포토카드 화면과 동일한 3:5 비율 */
     background: transparent !important;
     background-color: transparent !important;
     border-radius: 12px;
@@ -536,11 +536,9 @@
 }
 
 .image-edit-container img {
-    width: auto;
-    height: auto;
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* 잘림 없이 전체 이미지 표시 */
     border-radius: 8px;
     transition: all 0.3s ease;
     display: block;
@@ -1335,7 +1333,7 @@
     /* 이미지 편집 컨테이너 모바일 최적화 */
     .image-edit-container {
         max-width: 100%;
-        aspect-ratio: 9/16;
+        aspect-ratio: 3/5; /* 포토카드 화면과 동일한 3:5 비율 */
         margin-bottom: 15px;
     }
     
@@ -2065,4 +2063,2889 @@
   .app-container, .main-content {
     padding-bottom: 120px;
   }
+}
+
+/* 이미지 뷰어(.image-edit-container)와 부모(.front-image-selection, .back-image-selection 등)가 세로로 꽉 차도록 min-height, height, flex-grow, align-items: stretch 등을 추가하고, position: relative를 명확히 지정합니다. 모바일에서도 동일하게 적용합니다. */
+.front-image-selection,
+.back-image-selection {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: stretch;
+    height: 100%;
+    min-height: 0;
+    position: relative;
+}
+
+/* 편집 섹션, 메인 컨텐츠도 stretch */
+.edit-section,
+.main-content {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    height: 100%;
+    min-height: 0;
+    position: relative;
+}
+
+/* 이미지 편집 컨테이너 - 세로로 꽉 차게 */
+.image-edit-container {
+    flex: 1 1 0;
+    min-height: 0;
+    height: 100%;
+    max-height: 100%;
+    box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .front-image-selection,
+  .back-image-selection,
+  .edit-section,
+  .main-content {
+    height: 100%;
+    min-height: 0;
+    align-items: stretch;
+    position: relative;
+  }
+  .image-edit-container {
+    flex: 1 1 0;
+    min-height: 0;
+    height: 100%;
+    max-height: 100%;
+  }
+}
+
+/* 이미지 폴백(업로드 버튼 영역) - 항상 클릭 가능하게 */
+.image-fallback,
+.upload-options,
+.upload-btn {
+    z-index: 10 !important;
+    pointer-events: auto !important;
+}
+
+/* 이미지가 없는 경우 버튼이 항상 위에 보이도록 */
+.image-fallback {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(30,30,30,0.1) 0%, rgba(30,30,30,0.2) 100%);
+}
+
+/* 이미지와 이모지 레이어는 기본적으로 클릭 불가(버튼 클릭 방해 방지) */
+.image-edit-container img,
+.emoji-layer {
+    pointer-events: none;
+}
+
+/* 이미지 편집 컨테이너 - 10:19 비율로 고정 */
+.image-edit-container {
+    aspect-ratio: 10/19 !important;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    min-height: 0;
+    height: auto;
+    position: relative;
+    overflow: hidden;
+    background: #222 !important;
+    border-radius: 12px;
+    border: 2px dashed var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 8px auto;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    touch-action: pan-y;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    z-index: 1;
+}
+
+/* 내부 이미지 - 드래그 이동 가능, absolute 배치 */
+.image-edit-container img {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    cursor: move;
+    z-index: 2;
+    pointer-events: auto;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    background: transparent !important;
+    background-color: transparent !important;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    touch-action: pan-y;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* 이미지가 없을 때는 이모지 레이어를 숨김 */
+.image-fallback:not([style*="display: none"]) ~ .emoji-layer {
+    pointer-events: none;
+    z-index: 1;
+}
+
+.emoji-layer .emoji {
+    position: absolute !important;
+    font-size: 28px !important;
+    cursor: move !important;
+    pointer-events: auto !important;
+    user-select: none !important;
+    z-index: 150 !important;
+    transition: all 0.3s ease !important;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3)) !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    border: none !important;
+    min-width: auto !important;
+    min-height: auto !important;
+    display: block !important;
+    align-items: unset !important;
+    justify-content: unset !important;
+    box-shadow: none !important;
+    touch-action: pan-y !important;
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+}
+
+/* 크기 조정 중에는 transition 비활성화 */
+.emoji-layer .emoji.resizing {
+    transition: none !important;
+}
+
+.emoji-layer .emoji:hover {
+    transform: scale(1.1);
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+}
+
+/* 이모지 선택 상태 */
+.emoji-layer .emoji.selected {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+    filter: drop-shadow(0 4px 8px rgba(102, 126, 234, 0.4));
+}
+
+/* 이모지 크기 조정 핸들 */
+.emoji-resize-handle {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: #667eea;
+    border: 2px solid white;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 250;
+    display: none;
+    opacity: 0.8;
+    transition: all 0.2s ease;
+    touch-action: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.emoji-resize-handle:hover {
+    opacity: 1;
+    transform: scale(1.2);
+}
+
+.emoji-resize-handle.top-left {
+    top: -6px;
+    left: -6px;
+    cursor: nw-resize;
+}
+
+.emoji-resize-handle.top-right {
+    top: -6px;
+    right: -6px;
+    cursor: ne-resize;
+}
+
+.emoji-resize-handle.bottom-left {
+    bottom: -6px;
+    left: -6px;
+    cursor: sw-resize;
+}
+
+.emoji-resize-handle.bottom-right {
+    bottom: -6px;
+    right: -6px;
+    cursor: se-resize;
+}
+
+/* 이모지 회전 핸들 */
+.emoji-rotate-handle {
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 20px;
+    background: #667eea;
+    border: 2px solid white;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 200;
+    display: none;
+    opacity: 0.8;
+    transition: all 0.2s ease;
+    touch-action: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.emoji-rotate-handle:hover {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.2);
+}
+
+.emoji-rotate-handle::before {
+    content: '↻';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* 이모지 삭제 버튼 */
+.emoji-delete-btn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 20px;
+    height: 20px;
+    background: #ff4757;
+    border: 2px solid white;
+    border-radius: 50%;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 300;
+    display: none;
+    opacity: 0.9;
+    transition: all 0.2s ease;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    padding: 0;
+    touch-action: manipulation;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.emoji-delete-btn:hover {
+    opacity: 1;
+    transform: scale(1.1);
+    background: #ff3742;
+}
+
+.emoji-delete-btn:active {
+    opacity: 1;
+    transform: scale(0.95);
+    background: #ff2e3a;
+}
+
+/* 선택된 이모지에서 핸들들 표시 */
+.emoji.selected .emoji-resize-handle,
+.emoji.selected .emoji-rotate-handle,
+.emoji.selected .emoji-delete-btn {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* 모바일 터치 최적화 */
+@media (hover: none) and (pointer: coarse) {
+    .emoji-resize-handle {
+        width: 20px;
+        height: 20px;
+        min-width: 20px;
+        min-height: 20px;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    .emoji-resize-handle.top-left {
+        top: -10px;
+        left: -10px;
+    }
+    
+    .emoji-resize-handle.top-right {
+        top: -10px;
+        right: -10px;
+    }
+    
+    .emoji-resize-handle.bottom-left {
+        bottom: -10px;
+        left: -10px;
+    }
+    
+    .emoji-resize-handle.bottom-right {
+        bottom: -10px;
+        right: -10px;
+    }
+    
+    .emoji-rotate-handle {
+        width: 28px;
+        height: 28px;
+        min-width: 28px;
+        min-height: 28px;
+        top: -35px;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    .emoji-rotate-handle::before {
+        font-size: 16px;
+    }
+    
+    .emoji-delete-btn {
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+        min-height: 32px;
+        font-size: 20px;
+        top: -16px;
+        right: -16px;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        border-width: 3px;
+    }
+    
+    .emoji-delete-btn:active {
+        transform: scale(0.9);
+        background: #ff2e3a;
+        opacity: 1;
+    }
+}
+
+/* 탭 방식 편집 도구 */
+.edit-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 5px;
+    background: rgba(240, 242, 245, 0.9);
+    border-radius: 12px;
+    padding: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.tab-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 16px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    color: #666;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 80px;
+    justify-content: center;
+}
+
+.tab-btn:hover {
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+}
+
+.tab-btn.active {
+    background: #667eea;
+    color: white;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.tab-icon {
+    font-size: 18px;
+}
+
+.tab-text {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.tab-content {
+    background: rgba(235, 238, 242, 0.95);
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(220, 225, 230, 0.8);
+}
+
+.tab-panel {
+    display: none;
+}
+
+.tab-panel.active {
+    display: block;
+}
+
+/* 탭 내용 내부 컨트롤 스타일 */
+.tab-panel .emoji-controls,
+.tab-panel .filter-controls,
+.tab-panel .rotation-controls {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 10px;
+    min-height: 60px;
+}
+
+/* 통합 편집 도구 */
+.unified-edit-controls {
+    margin-top: 25px;
+    padding: 25px;
+    background: transparent;
+    border-radius: 15px;
+    border: none;
+    box-shadow: none;
+    backdrop-filter: none;
+}
+
+.controls-row {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    align-items: stretch;
+}
+
+.unified-edit-controls .control-group {
+    width: 100%;
+    padding: 15px;
+    background: transparent;
+    border-radius: 12px;
+    border: none;
+}
+
+.control-group label {
+    display: block;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 12px;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* 회전 컨트롤 */
+.rotation-controls {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* 필터 컨트롤 */
+.filter-controls {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* 이모지 컨트롤 - 모바일 터치 최적화 */
+.emoji-controls {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 10px;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    padding: 25px 20px !important;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(102, 126, 234, 0.3) transparent;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    cursor: grab;
+    will-change: scroll-position;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    touch-action: pan-x;
+    min-height: 80px !important;
+    justify-content: flex-start !important;
+    align-items: center;
+}
+
+.emoji-controls:active {
+    cursor: grabbing;
+}
+
+.emoji-controls::-webkit-scrollbar {
+    height: 8px;
+}
+
+.emoji-controls::-webkit-scrollbar-track {
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 4px;
+}
+
+.emoji-controls::-webkit-scrollbar-thumb {
+    background: rgba(102, 126, 234, 0.5);
+    border-radius: 4px;
+}
+
+.emoji-controls::-webkit-scrollbar-thumb:hover {
+    background: rgba(102, 126, 234, 0.7);
+}
+
+/* 이모지 버튼 - 모바일 터치 최적화 */
+.emoji-btn {
+    padding: 12px !important;
+    font-size: 24px !important;
+    border-radius: 12px !important;
+    border: 2px solid rgba(102, 126, 234, 0.3);
+    background: rgba(255, 255, 255, 0.9);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 50px !important;
+    min-height: 50px !important;
+    width: 50px !important;
+    height: 50px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0 !important;
+    margin: 0 3px !important;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    pointer-events: auto;
+    touch-action: manipulation;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+    z-index: 10;
+    box-sizing: border-box;
+    /* 모바일 터치 최적화 */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+.emoji-btn:hover {
+    background: #667eea;
+    border-color: #667eea;
+    transform: translateY(-2px) scale(1.1);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+}
+
+/* 버튼 스타일 */
+.btn-small {
+    padding: 12px !important;
+    font-size: 18px !important;
+    border-radius: 12px !important;
+    border: 2px solid rgba(102, 126, 234, 0.3);
+    background: rgba(255, 255, 255, 0.95);
+    color: #667eea;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    min-width: 50px !important;
+    min-height: 50px !important;
+    width: 50px !important;
+    height: 50px !important;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+    flex-shrink: 0 !important;
+    margin: 0 2px !important;
+}
+
+.btn-small:hover {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+    transform: translateY(-2px) scale(1.1);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.3);
+}
+
+.filter-btn {
+    padding: 8px 12px;
+    font-size: 11px;
+    border-radius: 6px;
+    border: 2px solid rgba(102, 126, 234, 0.3);
+    background: rgba(255, 255, 255, 0.9);
+    color: #667eea;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.filter-btn:hover {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.filter-btn.active {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    /* 헤더 모바일 최적화 */
+    .header {
+        padding: 10px 12px;
+    }
+    
+    .header-content {
+        gap: 8px;
+        padding: 0;
+    }
+    
+    .back-btn {
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+        font-size: 1.3rem;
+        padding: 6px;
+    }
+    
+    .page-title {
+        font-size: 1.1rem;
+        line-height: 1.1;
+        text-align: left;
+        justify-self: flex-start;
+    }
+    
+    /* 편집 헤더 모바일 최적화 */
+    .edit-header {
+        flex-direction: row;
+        gap: 6px;
+        padding: 12px;
+        align-items: center;
+        flex-wrap: nowrap;
+        width: 100%;
+    }
+    
+    .edit-header .header-content {
+        flex-direction: row;
+        gap: 6px;
+        align-items: center;
+        flex-wrap: nowrap;
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    /* 이름 입력 컨테이너 모바일 최적화 */
+    .name-input-container {
+        flex-direction: row;
+        gap: 6px;
+        align-items: center;
+        min-width: 0;
+        flex: 1;
+        max-width: none;
+        margin-right: 6px;
+    }
+    
+    .name-input {
+        flex: 1;
+        min-width: 0;
+        max-width: none;
+        padding: 8px 10px;
+        font-size: 13px;
+    width: 100%;
+    }
+    
+    .name-counter {
+        flex-shrink: 0;
+        margin-top: 0;
+        padding: 4px 6px;
+        font-size: 10px;
+        min-width: 30px;
+        white-space: nowrap;
+    }
+    
+    /* 저장 버튼 모바일 최적화 */
+    .btn-compact {
+        padding: 8px 12px !important;
+        font-size: 12px !important;
+        min-width: 60px !important;
+        height: 32px !important;
+        flex-shrink: 0;
+    }
+    
+    /* 이미지 사이드 선택 버튼 모바일 최적화 */
+    .image-side-selector {
+        gap: 4px;
+        padding: 10px;
+        flex-wrap: nowrap;
+    }
+    
+    .side-btn {
+        padding: 8px 12px;
+        font-size: 12px;
+        min-width: 80px;
+        flex: 1;
+    }
+    
+    /* 컴팩트 버튼 모바일 최적화 */
+    .btn-compact {
+        padding: 6px 8px !important;
+        font-size: 12px !important;
+        min-width: 28px !important;
+        height: 28px !important;
+    }
+    
+    /* 3D 카드 컨테이너 모바일 최적화 */
+    .card-3d-container {
+        height: 500px;
+        min-height: 450px;
+    }
+    
+    /* 이미지 편집 컨테이너 모바일 최적화 */
+    .image-edit-container {
+        max-width: 100%;
+        aspect-ratio: 3/5; /* 포토카드 화면과 동일한 3:5 비율 */
+        margin-bottom: 15px;
+    }
+    
+    /* 탭 버튼 모바일 최적화 */
+    .edit-tabs {
+        gap: 4px;
+        padding: 4px;
+        margin-bottom: 3px;
+    }
+    
+    .tab-btn {
+        padding: 8px 10px;
+        min-width: 60px;
+        font-size: 10px;
+    }
+    
+    .tab-icon {
+    font-size: 14px;
+    }
+    
+    .tab-text {
+        font-size: 9px;
+    }
+    
+    .tab-content {
+        padding: 8px;
+    }
+    
+    /* 이모지 컨트롤 모바일 최적화 */
+.emoji-controls {
+        padding: 15px 10px !important;
+        gap: 8px;
+        justify-content: flex-start !important;
+    align-items: center;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+}
+
+    /* 이모지 버튼 모바일 최적화 */
+.emoji-btn {
+        padding: 10px !important;
+        font-size: 20px !important;
+        min-width: 45px !important;
+        min-height: 45px !important;
+        width: 45px !important;
+        height: 45px !important;
+        margin: 0 2px !important;
+        touch-action: manipulation !important;
+        -webkit-touch-callout: none !important;
+        -webkit-tap-highlight-color: transparent !important;
+        position: relative !important;
+        z-index: 10 !important;
+        pointer-events: auto !important;
+        background: rgba(255, 255, 255, 0.9) !important;
+        border: 2px solid rgba(102, 126, 234, 0.3) !important;
+        box-sizing: border-box !important;
+    }
+    
+    /* 버튼 모바일 최적화 */
+    .btn-small {
+        padding: 10px !important;
+        font-size: 16px !important;
+        min-width: 40px !important;
+        min-height: 40px !important;
+        width: 40px !important;
+        height: 40px !important;
+    }
+    
+    /* 필터 버튼 모바일 최적화 */
+    .filter-btn {
+        padding: 8px 10px;
+        font-size: 10px;
+        min-width: 60px;
+    }
+    
+    /* 통합 편집 도구 모바일 최적화 */
+    .unified-edit-controls {
+        padding: 15px;
+    }
+    
+    .controls-row {
+        gap: 15px;
+    }
+    
+    .unified-edit-controls .control-group {
+        padding: 12px;
+    }
+    
+    /* 회전/필터 컨트롤 모바일 최적화 */
+    .rotation-controls,
+    .filter-controls {
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        align-items: center;
+    }
+    
+    /* 모바일 이미지 선택 섹션 */
+    .image-selection-section {
+        padding: 12px 8px;
+        gap: 16px;
+    }
+    
+    .selection-header .section-title {
+        font-size: 1.2rem;
+    }
+    
+    .selection-header .section-description {
+        font-size: 0.85rem;
+    }
+    
+    .image-selection-container {
+        gap: 20px;
+    }
+    
+    .front-image-selection,
+    .back-image-selection {
+        padding: 12px;
+    }
+    
+    .selection-title {
+        font-size: 1rem;
+        margin-bottom: 10px;
+    }
+    
+    .image-grid {
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        gap: 6px;
+    }
+    
+    .photo-card-name-section {
+        padding: 12px;
+    }
+    
+    .selection-actions {
+        gap: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    /* 헤더 더 작은 모바일 최적화 */
+    .header {
+        padding: 8px 10px;
+    }
+    
+    .header-content {
+        gap: 6px;
+    }
+    
+    .back-btn {
+        width: 28px;
+        height: 28px;
+        min-width: 28px;
+        font-size: 1.2rem;
+        padding: 4px;
+    }
+    
+    .page-title {
+        font-size: 1rem;
+        line-height: 1;
+        text-align: left;
+        justify-self: flex-start;
+    }
+    
+    /* 초기화/삭제 버튼 가로 크기 조정 */
+.btn-compact {
+        padding: 4px 6px !important;
+        font-size: 11px !important;
+        min-width: 24px !important;
+        height: 24px !important;
+    }
+    
+    /* 편집 헤더 더 작은 모바일 최적화 */
+    .edit-header {
+        gap: 4px;
+        padding: 10px;
+    }
+    
+    .edit-header .header-content {
+        gap: 4px;
+    }
+    
+    /* 이름 입력 더 작게 */
+    .name-input-container {
+        gap: 4px;
+        margin-right: 4px;
+    }
+    
+    .name-input {
+        min-width: 0;
+        max-width: none;
+        padding: 6px 8px;
+        font-size: 12px;
+    width: 100%;
+    }
+    
+    .name-counter {
+        padding: 3px 4px;
+        font-size: 9px;
+        min-width: 25px;
+    }
+    
+    /* 이미지 사이드 선택 버튼 더 작게 */
+    .side-btn {
+        padding: 6px 8px;
+        font-size: 11px;
+        min-width: 60px;
+    }
+    
+    /* 3D 카드 컨테이너 더 작게 */
+    .card-3d-container {
+        height: 400px;
+        min-height: 350px;
+    }
+    
+    /* 이모지 버튼 더 작게 */
+    .emoji-btn {
+        padding: 8px !important;
+        font-size: 18px !important;
+        min-width: 40px !important;
+        min-height: 40px !important;
+        width: 40px !important;
+        height: 40px !important;
+        touch-action: manipulation !important;
+        -webkit-touch-callout: none !important;
+        -webkit-tap-highlight-color: transparent !important;
+        pointer-events: auto !important;
+        background: rgba(255, 255, 255, 0.9) !important;
+        border: 2px solid rgba(102, 126, 234, 0.3) !important;
+        box-sizing: border-box !important;
+        z-index: 10 !important;
+    }
+    
+    /* 버튼 더 작게 */
+    .btn-small {
+        padding: 8px !important;
+        font-size: 14px !important;
+        min-width: 35px !important;
+        min-height: 35px !important;
+        width: 35px !important;
+        height: 35px !important;
+    }
+    
+    /* 필터 버튼 더 작게 */
+    .filter-btn {
+        padding: 6px 8px;
+        font-size: 9px;
+        min-width: 50px;
+    }
+    
+    /* 모바일 이미지 선택 섹션 */
+    .image-selection-section {
+        padding: 8px 6px;
+        gap: 12px;
+    }
+    
+    .selection-header .section-title {
+        font-size: 1.1rem;
+    }
+    
+    .selection-header .section-description {
+        font-size: 0.8rem;
+    }
+    
+    .image-selection-container {
+        gap: 16px;
+    }
+    
+    .front-image-selection,
+    .back-image-selection {
+        padding: 10px;
+    }
+    
+    .selection-title {
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+    }
+    
+    .image-grid {
+        grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+        gap: 4px;
+    }
+    
+    .photo-card-name-section {
+        padding: 10px;
+    }
+    
+    .selection-actions {
+        gap: 6px;
+    }
+}
+
+/* 터치 디바이스 최적화 */
+@media (hover: none) and (pointer: coarse) {
+    /* 헤더 터치 최적화 */
+    .back-btn {
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none;
+        min-width: 44px;
+        min-height: 44px;
+    }
+    
+    /* 이미지 편집 영역 터치 최적화 */
+    .image-edit-container,
+.card-3d-container,
+    .card-3d-wrapper,
+    .card-3d-front,
+    .card-3d-back {
+        touch-action: pan-y !important;
+        -webkit-touch-callout: none !important;
+        -webkit-user-select: none !important;
+        -moz-user-select: none !important;
+        -ms-user-select: none !important;
+        user-select: none !important;
+        -webkit-tap-highlight-color: transparent !important;
+    }
+    
+    .image-edit-container img {
+        touch-action: pan-y !important;
+        -webkit-touch-callout: none !important;
+        -webkit-user-select: none !important;
+        -moz-user-select: none !important;
+        -ms-user-select: none !important;
+        user-select: none !important;
+        -webkit-tap-highlight-color: transparent !important;
+        pointer-events: auto !important;
+    }
+    
+    .emoji-layer,
+    .emoji-layer .emoji {
+        touch-action: pan-y !important;
+        -webkit-touch-callout: none !important;
+        -webkit-user-select: none !important;
+        -moz-user-select: none !important;
+        -ms-user-select: none !important;
+        user-select: none !important;
+        -webkit-tap-highlight-color: transparent !important;
+    }
+    
+    .emoji-btn {
+        touch-action: manipulation !important;
+        -webkit-tap-highlight-color: transparent !important;
+        -webkit-touch-callout: none !important;
+        -webkit-user-select: none !important;
+        -khtml-user-select: none !important;
+        -moz-user-select: none !important;
+        -ms-user-select: none !important;
+        user-select: none !important;
+        min-height: 45px !important;
+        min-width: 45px !important;
+        position: relative !important;
+        z-index: 10 !important;
+        cursor: pointer !important;
+        pointer-events: auto !important;
+        background: rgba(255, 255, 255, 0.9) !important;
+        border: 2px solid rgba(102, 126, 234, 0.3) !important;
+        /* 추가 터치 최적화 */
+        -webkit-touch-callout: none !important;
+        -webkit-user-select: none !important;
+        -khtml-user-select: none !important;
+        -moz-user-select: none !important;
+        -ms-user-select: none !important;
+        user-select: none !important;
+        -webkit-tap-highlight-color: transparent !important;
+        touch-action: manipulation !important;
+    }
+    
+    .emoji-btn:active {
+        transform: scale(0.95);
+        background: #667eea !important;
+        border-color: #667eea !important;
+    }
+    
+    .btn-small:active,
+    .filter-btn:active,
+    .upload-btn:active {
+        transform: scale(0.95);
+        background: var(--primary-color-dark);
+    }
+    
+    .btn-small:hover,
+    .filter-btn:hover,
+    .emoji-btn:hover,
+    .upload-btn:hover {
+        transform: none;
+    }
+    
+    /* 터치 디바이스 이미지 선택 최적화 */
+    .image-selection-section {
+        touch-action: pan-y;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    .image-grid-item {
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none;
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    .image-grid-item:hover {
+        transform: none;
+    }
+    
+    .selection-actions .btn {
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none;
+        min-height: 44px;
+    }
+}
+
+/* 매우 작은 화면 최적화 */
+@media (max-width: 360px) {
+    .header {
+        padding: 6px 8px;
+    }
+    
+    .header-content {
+    gap: 4px;
+    }
+    
+    .back-btn {
+        width: 24px;
+        height: 24px;
+        min-width: 24px;
+        font-size: 1.1rem;
+        padding: 3px;
+    }
+    
+    .page-title {
+        font-size: 0.9rem;
+        line-height: 1;
+        text-align: left;
+        justify-self: flex-start;
+    }
+    
+    /* 편집 헤더 매우 작은 화면 최적화 */
+    .edit-header {
+        gap: 3px;
+        padding: 8px;
+    }
+    
+    .edit-header .header-content {
+        gap: 3px;
+    }
+    
+    .name-input-container {
+        gap: 3px;
+        margin-right: 3px;
+    }
+    
+    .name-input {
+        padding: 5px 6px;
+        font-size: 11px;
+    }
+    
+    .name-counter {
+        padding: 2px 3px;
+        font-size: 8px;
+        min-width: 20px;
+    }
+    
+    .btn-compact {
+        padding: 6px 8px !important;
+        font-size: 10px !important;
+        min-width: 50px !important;
+        height: 28px !important;
+    }
+    
+    /* 매우 작은 화면 이미지 선택 섹션 */
+    .image-selection-section {
+        padding: 6px 4px;
+        gap: 10px;
+    }
+    
+    .selection-header .section-title {
+        font-size: 1rem;
+    }
+    
+    .selection-header .section-description {
+        font-size: 0.75rem;
+    }
+    
+    .image-selection-container {
+        gap: 12px;
+    }
+    
+    .front-image-selection,
+    .back-image-selection {
+        padding: 8px;
+    }
+    
+    .selection-title {
+        font-size: 0.8rem;
+        margin-bottom: 6px;
+    }
+    
+    .image-grid {
+        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+        gap: 3px;
+    }
+    
+    .photo-card-name-section {
+        padding: 8px;
+    }
+    
+    .selection-actions {
+        gap: 4px;
+    }
+}
+
+/* 기존 스타일들 유지 */
+.image-container {
+    position: relative;
+    background: var(--surface-color);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-light);
+    margin-bottom: 20px;
+    min-height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--border-color);
+}
+
+#editImage {
+    max-width: 100%;
+    max-height: 700px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: var(--border-radius);
+    display: block;
+}
+
+/* 편집 도구 */
+.edit-tools {
+    background: var(--surface-color);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    box-shadow: var(--shadow-light);
+    border: 1px solid var(--border-color);
+}
+
+.tool-group {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.tool-group:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.tool-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+}
+
+/* 액션 섹션 */
+.actions-section {
+    margin-bottom: 32px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.action-buttons .btn {
+    flex: 1;
+    min-width: 120px;
+    max-width: 200px;
+}
+
+/* 애니메이션 */
+.image-container {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+    opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 반짝거리는 이펙트 애니메이션 */
+@keyframes sparkle-animation {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.3);
+    }
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.2);
+    }
+    100% {
+    opacity: 0;
+        transform: translate(-50%, -50%) scale(1.5);
+    }
+}
+
+.sparkle-effect {
+    pointer-events: none;
+    z-index: 200;
+}
+
+/* 최근 추가한 강제 CSS 제거 */
+/* PC: 가로 배치, 중앙 정렬 */
+@media (min-width: 769px) {
+  .app-container, .main-content {
+    max-width: 480px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+    display: block;
+  }
+  .image-selection-container {
+    flex-direction: row;
+    gap: 32px;
+  }
+}
+
+/* 모바일: 세로 배치 */
+@media (max-width: 768px) {
+  .app-container, .main-content {
+    max-width: 100vw;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+  }
+  .image-selection-container {
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+/* PC: 중앙정렬, 최대폭 제한, 여백 - 갤러리/메인과 동일하게 */
+@media (min-width: 769px) {
+  .app-container, .main-content {
+    max-width: 480px;
+    min-width: 320px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0;
+    padding-bottom: 120px;
+  }
+  .edit-section {
+    max-width: 100%;
+    margin: 0;
+    box-sizing: border-box;
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+  }
+  .photo-card-simultaneous-edit {
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+
+/* 모바일: 전체폭, 패딩 최소화 - 갤러리/메인과 동일하게 */
+@media (max-width: 768px) {
+  .app-container, .main-content {
+    max-width: 100vw;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    padding-bottom: 160px;
+    box-sizing: border-box;
+  }
+  .edit-section {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+  }
+  .photo-card-simultaneous-edit {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+
+/* 매우 작은 화면에서 하단 여백 추가 */
+@media (max-width: 480px) {
+  .app-container, .main-content {
+    padding-bottom: 140px;
+  }
+}
+
+@media (max-width: 360px) {
+  .app-container, .main-content {
+    padding-bottom: 120px;
+  }
+}
+
+/* 이미지 뷰어(.image-edit-container)와 부모(.front-image-selection, .back-image-selection 등)가 세로로 꽉 차도록 min-height, height, flex-grow, align-items: stretch 등을 추가하고, position: relative를 명확히 지정합니다. 모바일에서도 동일하게 적용합니다. */
+.front-image-selection,
+.back-image-selection {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: stretch;
+    height: 100%;
+    min-height: 0;
+    position: relative;
+}
+
+/* 편집 섹션, 메인 컨텐츠도 stretch */
+.edit-section,
+.main-content {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    height: 100%;
+    min-height: 0;
+    position: relative;
+}
+
+/* 이미지 편집 컨테이너 - 세로로 꽉 차게 */
+.image-edit-container {
+    flex: 1 1 0;
+    min-height: 0;
+    height: 100%;
+    max-height: 100%;
+    box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .front-image-selection,
+  .back-image-selection,
+  .edit-section,
+  .main-content {
+    height: 100%;
+    min-height: 0;
+    align-items: stretch;
+    position: relative;
+  }
+  .image-edit-container {
+    flex: 1 1 0;
+    min-height: 0;
+    height: 100%;
+    max-height: 100%;
+  }
+}
+
+/* 이미지 폴백(업로드 버튼 영역) - 항상 클릭 가능하게 */
+.image-fallback,
+.upload-options,
+.upload-btn {
+    z-index: 10 !important;
+    pointer-events: auto !important;
+}
+
+/* 이미지가 없는 경우 버튼이 항상 위에 보이도록 */
+.image-fallback {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(30,30,30,0.1) 0%, rgba(30,30,30,0.2) 100%);
+}
+
+/* 이미지와 이모지 레이어는 기본적으로 클릭 불가(버튼 클릭 방해 방지) */
+.image-edit-container img,
+.emoji-layer {
+    pointer-events: none;
+}
+
+/* 이미지 편집 컨테이너 - 10:19 비율로 고정 */
+.image-edit-container {
+    aspect-ratio: 10/19 !important;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    min-height: 0;
+    height: auto;
+    position: relative;
+    overflow: hidden;
+    background: #222 !important;
+    border-radius: 12px;
+    border: 2px dashed var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 8px auto;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    touch-action: pan-y;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    z-index: 1;
+}
+
+/* 내부 이미지 - 드래그 이동 가능, absolute 배치 */
+.image-edit-container img {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    cursor: move;
+    z-index: 2;
+    pointer-events: auto;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    background: transparent !important;
+    background-color: transparent !important;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    touch-action: pan-y;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* 이미지가 없을 때는 이모지 레이어를 숨김 */
+.image-fallback:not([style*="display: none"]) ~ .emoji-layer {
+    pointer-events: none;
+    z-index: 1;
+}
+
+.emoji-layer .emoji {
+    position: absolute !important;
+    font-size: 28px !important;
+    cursor: move !important;
+    pointer-events: auto !important;
+    user-select: none !important;
+    z-index: 150 !important;
+    transition: all 0.3s ease !important;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3)) !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    border: none !important;
+    min-width: auto !important;
+    min-height: auto !important;
+    display: block !important;
+    align-items: unset !important;
+    justify-content: unset !important;
+    box-shadow: none !important;
+    touch-action: pan-y !important;
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+}
+
+/* 크기 조정 중에는 transition 비활성화 */
+.emoji-layer .emoji.resizing {
+    transition: none !important;
+}
+
+.emoji-layer .emoji:hover {
+    transform: scale(1.1);
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+}
+
+/* 이모지 선택 상태 */
+.emoji-layer .emoji.selected {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+    filter: drop-shadow(0 4px 8px rgba(102, 126, 234, 0.4));
+}
+
+/* 이모지 크기 조정 핸들 */
+.emoji-resize-handle {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: #667eea;
+    border: 2px solid white;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 250;
+    display: none;
+    opacity: 0.8;
+    transition: all 0.2s ease;
+    touch-action: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.emoji-resize-handle:hover {
+    opacity: 1;
+    transform: scale(1.2);
+}
+
+.emoji-resize-handle.top-left {
+    top: -6px;
+    left: -6px;
+    cursor: nw-resize;
+}
+
+.emoji-resize-handle.top-right {
+    top: -6px;
+    right: -6px;
+    cursor: ne-resize;
+}
+
+.emoji-resize-handle.bottom-left {
+    bottom: -6px;
+    left: -6px;
+    cursor: sw-resize;
+}
+
+.emoji-resize-handle.bottom-right {
+    bottom: -6px;
+    right: -6px;
+    cursor: se-resize;
+}
+
+/* 이모지 회전 핸들 */
+.emoji-rotate-handle {
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 20px;
+    background: #667eea;
+    border: 2px solid white;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 200;
+    display: none;
+    opacity: 0.8;
+    transition: all 0.2s ease;
+    touch-action: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.emoji-rotate-handle:hover {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.2);
+}
+
+.emoji-rotate-handle::before {
+    content: '↻';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* 이모지 삭제 버튼 */
+.emoji-delete-btn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 20px;
+    height: 20px;
+    background: #ff4757;
+    border: 2px solid white;
+    border-radius: 50%;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 300;
+    display: none;
+    opacity: 0.9;
+    transition: all 0.2s ease;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    padding: 0;
+    touch-action: manipulation;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.emoji-delete-btn:hover {
+    opacity: 1;
+    transform: scale(1.1);
+    background: #ff3742;
+}
+
+.emoji-delete-btn:active {
+    opacity: 1;
+    transform: scale(0.95);
+    background: #ff2e3a;
+}
+
+/* 선택된 이모지에서 핸들들 표시 */
+.emoji.selected .emoji-resize-handle,
+.emoji.selected .emoji-rotate-handle,
+.emoji.selected .emoji-delete-btn {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* 모바일 터치 최적화 */
+@media (hover: none) and (pointer: coarse) {
+    .emoji-resize-handle {
+        width: 20px;
+        height: 20px;
+        min-width: 20px;
+        min-height: 20px;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    .emoji-resize-handle.top-left {
+        top: -10px;
+        left: -10px;
+    }
+    
+    .emoji-resize-handle.top-right {
+        top: -10px;
+        right: -10px;
+    }
+    
+    .emoji-resize-handle.bottom-left {
+        bottom: -10px;
+        left: -10px;
+    }
+    
+    .emoji-resize-handle.bottom-right {
+        bottom: -10px;
+        right: -10px;
+    }
+    
+    .emoji-rotate-handle {
+        width: 28px;
+        height: 28px;
+        min-width: 28px;
+        min-height: 28px;
+        top: -35px;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    .emoji-rotate-handle::before {
+        font-size: 16px;
+    }
+    
+    .emoji-delete-btn {
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+        min-height: 32px;
+        font-size: 20px;
+        top: -16px;
+        right: -16px;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        border-width: 3px;
+    }
+    
+    .emoji-delete-btn:active {
+        transform: scale(0.9);
+        background: #ff2e3a;
+        opacity: 1;
+    }
+}
+
+/* 탭 방식 편집 도구 */
+.edit-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 5px;
+    background: rgba(240, 242, 245, 0.9);
+    border-radius: 12px;
+    padding: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.tab-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 16px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    color: #666;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 80px;
+    justify-content: center;
+}
+
+.tab-btn:hover {
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+}
+
+.tab-btn.active {
+    background: #667eea;
+    color: white;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.tab-icon {
+    font-size: 18px;
+}
+
+.tab-text {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.tab-content {
+    background: rgba(235, 238, 242, 0.95);
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(220, 225, 230, 0.8);
+}
+
+.tab-panel {
+    display: none;
+}
+
+.tab-panel.active {
+    display: block;
+}
+
+/* 탭 내용 내부 컨트롤 스타일 */
+.tab-panel .emoji-controls,
+.tab-panel .filter-controls,
+.tab-panel .rotation-controls {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 10px;
+    min-height: 60px;
+}
+
+/* 통합 편집 도구 */
+.unified-edit-controls {
+    margin-top: 25px;
+    padding: 25px;
+    background: transparent;
+    border-radius: 15px;
+    border: none;
+    box-shadow: none;
+    backdrop-filter: none;
+}
+
+.controls-row {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    align-items: stretch;
+}
+
+.unified-edit-controls .control-group {
+    width: 100%;
+    padding: 15px;
+    background: transparent;
+    border-radius: 12px;
+    border: none;
+}
+
+.control-group label {
+    display: block;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 12px;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* 회전 컨트롤 */
+.rotation-controls {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* 필터 컨트롤 */
+.filter-controls {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* 이모지 컨트롤 - 모바일 터치 최적화 */
+.emoji-controls {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 10px;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    padding: 25px 20px !important;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(102, 126, 234, 0.3) transparent;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    cursor: grab;
+    will-change: scroll-position;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    touch-action: pan-x;
+    min-height: 80px !important;
+    justify-content: flex-start !important;
+    align-items: center;
+}
+
+.emoji-controls:active {
+    cursor: grabbing;
+}
+
+.emoji-controls::-webkit-scrollbar {
+    height: 8px;
+}
+
+.emoji-controls::-webkit-scrollbar-track {
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 4px;
+}
+
+.emoji-controls::-webkit-scrollbar-thumb {
+    background: rgba(102, 126, 234, 0.5);
+    border-radius: 4px;
+}
+
+.emoji-controls::-webkit-scrollbar-thumb:hover {
+    background: rgba(102, 126, 234, 0.7);
+}
+
+/* 이모지 버튼 - 모바일 터치 최적화 */
+.emoji-btn {
+    padding: 12px !important;
+    font-size: 24px !important;
+    border-radius: 12px !important;
+    border: 2px solid rgba(102, 126, 234, 0.3);
+    background: rgba(255, 255, 255, 0.9);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 50px !important;
+    min-height: 50px !important;
+    width: 50px !important;
+    height: 50px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0 !important;
+    margin: 0 3px !important;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    pointer-events: auto;
+    touch-action: manipulation;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+    z-index: 10;
+    box-sizing: border-box;
+    /* 모바일 터치 최적화 */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+.emoji-btn:hover {
+    background: #667eea;
+    border-color: #667eea;
+    transform: translateY(-2px) scale(1.1);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+}
+
+/* 버튼 스타일 */
+.btn-small {
+    padding: 12px !important;
+    font-size: 18px !important;
+    border-radius: 12px !important;
+    border: 2px solid rgba(102, 126, 234, 0.3);
+    background: rgba(255, 255, 255, 0.95);
+    color: #667eea;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    min-width: 50px !important;
+    min-height: 50px !important;
+    width: 50px !important;
+    height: 50px !important;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+    flex-shrink: 0 !important;
+    margin: 0 2px !important;
+}
+
+.btn-small:hover {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+    transform: translateY(-2px) scale(1.1);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.3);
+}
+
+.filter-btn {
+    padding: 8px 12px;
+    font-size: 11px;
+    border-radius: 6px;
+    border: 2px solid rgba(102, 126, 234, 0.3);
+    background: rgba(255, 255, 255, 0.9);
+    color: #667eea;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.filter-btn:hover {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.filter-btn.active {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    /* 헤더 모바일 최적화 */
+    .header {
+        padding: 10px 12px;
+    }
+    
+    .header-content {
+        gap: 8px;
+        padding: 0;
+    }
+    
+    .back-btn {
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+        font-size: 1.3rem;
+        padding: 6px;
+    }
+    
+    .page-title {
+        font-size: 1.1rem;
+        line-height: 1.1;
+        text-align: left;
+        justify-self: flex-start;
+    }
+    
+    /* 편집 헤더 모바일 최적화 */
+    .edit-header {
+        flex-direction: row;
+        gap: 6px;
+        padding: 12px;
+        align-items: center;
+        flex-wrap: nowrap;
+        width: 100%;
+    }
+    
+    .edit-header .header-content {
+        flex-direction: row;
+        gap: 6px;
+        align-items: center;
+        flex-wrap: nowrap;
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    /* 이름 입력 컨테이너 모바일 최적화 */
+    .name-input-container {
+        flex-direction: row;
+        gap: 6px;
+        align-items: center;
+        min-width: 0;
+        flex: 1;
+        max-width: none;
+        margin-right: 6px;
+    }
+    
+    .name-input {
+        flex: 1;
+        min-width: 0;
+        max-width: none;
+        padding: 8px 10px;
+        font-size: 13px;
+    width: 100%;
+    }
+    
+    .name-counter {
+        flex-shrink: 0;
+        margin-top: 0;
+        padding: 4px 6px;
+        font-size: 10px;
+        min-width: 30px;
+        white-space: nowrap;
+    }
+    
+    /* 저장 버튼 모바일 최적화 */
+    .btn-compact {
+        padding: 8px 12px !important;
+        font-size: 12px !important;
+        min-width: 60px !important;
+        height: 32px !important;
+        flex-shrink: 0;
+    }
+    
+    /* 이미지 사이드 선택 버튼 모바일 최적화 */
+    .image-side-selector {
+        gap: 4px;
+        padding: 10px;
+        flex-wrap: nowrap;
+    }
+    
+    .side-btn {
+        padding: 8px 12px;
+        font-size: 12px;
+        min-width: 80px;
+        flex: 1;
+    }
+    
+    /* 컴팩트 버튼 모바일 최적화 */
+    .btn-compact {
+        padding: 6px 8px !important;
+        font-size: 12px !important;
+        min-width: 28px !important;
+        height: 28px !important;
+    }
+    
+    /* 3D 카드 컨테이너 모바일 최적화 */
+    .card-3d-container {
+        height: 500px;
+        min-height: 450px;
+    }
+    
+    /* 이미지 편집 컨테이너 모바일 최적화 */
+    .image-edit-container {
+        max-width: 100%;
+        aspect-ratio: 3/5; /* 포토카드 화면과 동일한 3:5 비율 */
+        margin-bottom: 15px;
+    }
+    
+    /* 탭 버튼 모바일 최적화 */
+    .edit-tabs {
+        gap: 4px;
+        padding: 4px;
+        margin-bottom: 3px;
+    }
+    
+    .tab-btn {
+        padding: 8px 10px;
+        min-width: 60px;
+        font-size: 10px;
+    }
+    
+    .tab-icon {
+    font-size: 14px;
+    }
+    
+    .tab-text {
+        font-size: 9px;
+    }
+    
+    .tab-content {
+        padding: 8px;
+    }
+    
+    /* 이모지 컨트롤 모바일 최적화 */
+.emoji-controls {
+        padding: 15px 10px !important;
+        gap: 8px;
+        justify-content: flex-start !important;
+    align-items: center;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+}
+
+    /* 이모지 버튼 모바일 최적화 */
+.emoji-btn {
+        padding: 10px !important;
+        font-size: 20px !important;
+        min-width: 45px !important;
+        min-height: 45px !important;
+        width: 45px !important;
+        height: 45px !important;
+        margin: 0 2px !important;
+        touch-action: manipulation !important;
+        -webkit-touch-callout: none !important;
+        -webkit-tap-highlight-color: transparent !important;
+        position: relative !important;
+        z-index: 10 !important;
+        pointer-events: auto !important;
+        background: rgba(255, 255, 255, 0.9) !important;
+        border: 2px solid rgba(102, 126, 234, 0.3) !important;
+        box-sizing: border-box !important;
+    }
+    
+    /* 버튼 모바일 최적화 */
+    .btn-small {
+        padding: 10px !important;
+        font-size: 16px !important;
+        min-width: 40px !important;
+        min-height: 40px !important;
+        width: 40px !important;
+        height: 40px !important;
+    }
+    
+    /* 필터 버튼 모바일 최적화 */
+    .filter-btn {
+        padding: 8px 10px;
+        font-size: 10px;
+        min-width: 60px;
+    }
+    
+    /* 통합 편집 도구 모바일 최적화 */
+    .unified-edit-controls {
+        padding: 15px;
+    }
+    
+    .controls-row {
+        gap: 15px;
+    }
+    
+    .unified-edit-controls .control-group {
+        padding: 12px;
+    }
+    
+    /* 회전/필터 컨트롤 모바일 최적화 */
+    .rotation-controls,
+    .filter-controls {
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        align-items: center;
+    }
+    
+    /* 모바일 이미지 선택 섹션 */
+    .image-selection-section {
+        padding: 12px 8px;
+        gap: 16px;
+    }
+    
+    .selection-header .section-title {
+        font-size: 1.2rem;
+    }
+    
+    .selection-header .section-description {
+        font-size: 0.85rem;
+    }
+    
+    .image-selection-container {
+        gap: 20px;
+    }
+    
+    .front-image-selection,
+    .back-image-selection {
+        padding: 12px;
+    }
+    
+    .selection-title {
+        font-size: 1rem;
+        margin-bottom: 10px;
+    }
+    
+    .image-grid {
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        gap: 6px;
+    }
+    
+    .photo-card-name-section {
+        padding: 12px;
+    }
+    
+    .selection-actions {
+        gap: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    /* 헤더 더 작은 모바일 최적화 */
+    .header {
+        padding: 8px 10px;
+    }
+    
+    .header-content {
+        gap: 6px;
+    }
+    
+    .back-btn {
+        width: 28px;
+        height: 28px;
+        min-width: 28px;
+        font-size: 1.2rem;
+        padding: 4px;
+    }
+    
+    .page-title {
+        font-size: 1rem;
+        line-height: 1;
+        text-align: left;
+        justify-self: flex-start;
+    }
+    
+    /* 초기화/삭제 버튼 가로 크기 조정 */
+.btn-compact {
+        padding: 4px 6px !important;
+        font-size: 11px !important;
+        min-width: 24px !important;
+        height: 24px !important;
+    }
+    
+    /* 편집 헤더 더 작은 모바일 최적화 */
+    .edit-header {
+        gap: 4px;
+        padding: 10px;
+    }
+    
+    .edit-header .header-content {
+        gap: 4px;
+    }
+    
+    /* 이름 입력 더 작게 */
+    .name-input-container {
+        gap: 4px;
+        margin-right: 4px;
+    }
+    
+    .name-input {
+        min-width: 0;
+        max-width: none;
+        padding: 6px 8px;
+        font-size: 12px;
+    width: 100%;
+    }
+    
+    .name-counter {
+        padding: 3px 4px;
+        font-size: 9px;
+        min-width: 25px;
+    }
+    
+    /* 이미지 사이드 선택 버튼 더 작게 */
+    .side-btn {
+        padding: 6px 8px;
+        font-size: 11px;
+        min-width: 60px;
+    }
+    
+    /* 3D 카드 컨테이너 더 작게 */
+    .card-3d-container {
+        height: 400px;
+        min-height: 350px;
+    }
+    
+    /* 이모지 버튼 더 작게 */
+    .emoji-btn {
+        padding: 8px !important;
+        font-size: 18px !important;
+        min-width: 40px !important;
+        min-height: 40px !important;
+        width: 40px !important;
+        height: 40px !important;
+        touch-action: manipulation !important;
+        -webkit-touch-callout: none !important;
+        -webkit-tap-highlight-color: transparent !important;
+        pointer-events: auto !important;
+        background: rgba(255, 255, 255, 0.9) !important;
+        border: 2px solid rgba(102, 126, 234, 0.3) !important;
+        box-sizing: border-box !important;
+        z-index: 10 !important;
+    }
+    
+    /* 버튼 더 작게 */
+    .btn-small {
+        padding: 8px !important;
+        font-size: 14px !important;
+        min-width: 35px !important;
+        min-height: 35px !important;
+        width: 35px !important;
+        height: 35px !important;
+    }
+    
+    /* 필터 버튼 더 작게 */
+    .filter-btn {
+        padding: 6px 8px;
+        font-size: 9px;
+        min-width: 50px;
+    }
+    
+    /* 모바일 이미지 선택 섹션 */
+    .image-selection-section {
+        padding: 8px 6px;
+        gap: 12px;
+    }
+    
+    .selection-header .section-title {
+        font-size: 1.1rem;
+    }
+    
+    .selection-header .section-description {
+        font-size: 0.8rem;
+    }
+    
+    .image-selection-container {
+        gap: 16px;
+    }
+    
+    .front-image-selection,
+    .back-image-selection {
+        padding: 10px;
+    }
+    
+    .selection-title {
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+    }
+    
+    .image-grid {
+        grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+        gap: 4px;
+    }
+    
+    .photo-card-name-section {
+        padding: 10px;
+    }
+    
+    .selection-actions {
+        gap: 6px;
+    }
+}
+
+/* 터치 디바이스 최적화 */
+@media (hover: none) and (pointer: coarse) {
+    /* 헤더 터치 최적화 */
+    .back-btn {
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none;
+        min-width: 44px;
+        min-height: 44px;
+    }
+    
+    /* 이미지 편집 영역 터치 최적화 */
+    .image-edit-container,
+.card-3d-container,
+    .card-3d-wrapper,
+    .card-3d-front,
+    .card-3d-back {
+        touch-action: pan-y !important;
+        -webkit-touch-callout: none !important;
+        -webkit-user-select: none !important;
+        -moz-user-select: none !important;
+        -ms-user-select: none !important;
+        user-select: none !important;
+        -webkit-tap-highlight-color: transparent !important;
+    }
+    
+    .image-edit-container img {
+        touch-action: pan-y !important;
+        -webkit-touch-callout: none !important;
+        -webkit-user-select: none !important;
+        -moz-user-select: none !important;
+        -ms-user-select: none !important;
+        user-select: none !important;
+        -webkit-tap-highlight-color: transparent !important;
+        pointer-events: auto !important;
+    }
+    
+    .emoji-layer,
+    .emoji-layer .emoji {
+        touch-action: pan-y !important;
+        -webkit-touch-callout: none !important;
+        -webkit-user-select: none !important;
+        -moz-user-select: none !important;
+        -ms-user-select: none !important;
+        user-select: none !important;
+        -webkit-tap-highlight-color: transparent !important;
+    }
+    
+    .emoji-btn {
+        touch-action: manipulation !important;
+        -webkit-tap-highlight-color: transparent !important;
+        -webkit-touch-callout: none !important;
+        -webkit-user-select: none !important;
+        -khtml-user-select: none !important;
+        -moz-user-select: none !important;
+        -ms-user-select: none !important;
+        user-select: none !important;
+        min-height: 45px !important;
+        min-width: 45px !important;
+        position: relative !important;
+        z-index: 10 !important;
+        cursor: pointer !important;
+        pointer-events: auto !important;
+        background: rgba(255, 255, 255, 0.9) !important;
+        border: 2px solid rgba(102, 126, 234, 0.3) !important;
+        /* 추가 터치 최적화 */
+        -webkit-touch-callout: none !important;
+        -webkit-user-select: none !important;
+        -khtml-user-select: none !important;
+        -moz-user-select: none !important;
+        -ms-user-select: none !important;
+        user-select: none !important;
+        -webkit-tap-highlight-color: transparent !important;
+        touch-action: manipulation !important;
+    }
+    
+    .emoji-btn:active {
+        transform: scale(0.95);
+        background: #667eea !important;
+        border-color: #667eea !important;
+    }
+    
+    .btn-small:active,
+    .filter-btn:active,
+    .upload-btn:active {
+        transform: scale(0.95);
+        background: var(--primary-color-dark);
+    }
+    
+    .btn-small:hover,
+    .filter-btn:hover,
+    .emoji-btn:hover,
+    .upload-btn:hover {
+        transform: none;
+    }
+    
+    /* 터치 디바이스 이미지 선택 최적화 */
+    .image-selection-section {
+        touch-action: pan-y;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    .image-grid-item {
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none;
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    .image-grid-item:hover {
+        transform: none;
+    }
+    
+    .selection-actions .btn {
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none;
+        min-height: 44px;
+    }
+}
+
+/* 매우 작은 화면 최적화 */
+@media (max-width: 360px) {
+    .header {
+        padding: 6px 8px;
+    }
+    
+    .header-content {
+    gap: 4px;
+    }
+    
+    .back-btn {
+        width: 24px;
+        height: 24px;
+        min-width: 24px;
+        font-size: 1.1rem;
+        padding: 3px;
+    }
+    
+    .page-title {
+        font-size: 0.9rem;
+        line-height: 1;
+        text-align: left;
+        justify-self: flex-start;
+    }
+    
+    /* 편집 헤더 매우 작은 화면 최적화 */
+    .edit-header {
+        gap: 3px;
+        padding: 8px;
+    }
+    
+    .edit-header .header-content {
+        gap: 3px;
+    }
+    
+    .name-input-container {
+        gap: 3px;
+        margin-right: 3px;
+    }
+    
+    .name-input {
+        padding: 5px 6px;
+        font-size: 11px;
+    }
+    
+    .name-counter {
+        padding: 2px 3px;
+        font-size: 8px;
+        min-width: 20px;
+    }
+    
+    .btn-compact {
+        padding: 6px 8px !important;
+        font-size: 10px !important;
+        min-width: 50px !important;
+        height: 28px !important;
+    }
+    
+    /* 매우 작은 화면 이미지 선택 섹션 */
+    .image-selection-section {
+        padding: 6px 4px;
+        gap: 10px;
+    }
+    
+    .selection-header .section-title {
+        font-size: 1rem;
+    }
+    
+    .selection-header .section-description {
+        font-size: 0.75rem;
+    }
+    
+    .image-selection-container {
+        gap: 12px;
+    }
+    
+    .front-image-selection,
+    .back-image-selection {
+        padding: 8px;
+    }
+    
+    .selection-title {
+        font-size: 0.8rem;
+        margin-bottom: 6px;
+    }
+    
+    .image-grid {
+        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+        gap: 3px;
+    }
+    
+    .photo-card-name-section {
+        padding: 8px;
+    }
+    
+    .selection-actions {
+        gap: 4px;
+    }
+}
+
+/* 이미지 크기 조정 핸들 - 편집모드(선택)일 때 항상 보이게 */
+.image-edit-container .image-resize-handle {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    z-index: 1002 !important;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    border: 3px solid #00d4ff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+    transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.image-edit-container .image-resize-handle:hover {
+    border-color: #0078ff;
+    box-shadow: 0 4px 16px rgba(0, 120, 255, 0.25);
+    background: #e6f7ff;
+}
+
+/* 이미지가 선택(편집) 상태일 때만 핸들 표시 (JS에서 .selected 클래스 부여) */
+.image-edit-container img.selected ~ .image-resize-handle {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* 비선택 상태일 때는 핸들 숨김 (JS에서 .selected 제거) */
+.image-edit-container img:not(.selected) ~ .image-resize-handle {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
 }

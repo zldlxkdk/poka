@@ -3850,6 +3850,9 @@ function makeImageDraggable(imageElement, side) {
             imageElement.style.top = constrainedTop + 'px';
             imageElement.style.transform = 'none';
             
+            // 드래그 중 핸들 위치 실시간 업데이트
+            updateImageHandlePositions(imageElement);
+            
             console.log('이미지 드래그 중:', { newLeft: constrainedLeft, newTop: constrainedTop });
         }
         
@@ -3908,6 +3911,26 @@ function addImageResizeHandles(imageElement, side) {
     
     // 핸들 위치 업데이트
     updateImageHandlePositions(imageElement);
+    
+    // 이미지 드래그 시 핸들 위치도 함께 업데이트
+    function updateHandlesOnDrag() {
+        updateImageHandlePositions(imageElement);
+    }
+    
+    // 이미지 위치 변경 감지 (MutationObserver 사용)
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.type === 'attributes' && 
+                (mutation.attributeName === 'style' || mutation.attributeName === 'class')) {
+                updateHandlesOnDrag();
+            }
+        });
+    });
+    
+    observer.observe(imageElement, {
+        attributes: true,
+        attributeFilter: ['style', 'class']
+    });
     
     function startImageResize(e) {
         e.preventDefault();
@@ -4204,6 +4227,55 @@ document.addEventListener('DOMContentLoaded', function() {
     checkPOKA();
     
     setupPhotoCardNameInput();
+
+    // 이미지 편집 뷰어(앞면/뒷면) 클릭 시 이미지 선택 해제/진입
+    const frontImageEditContainer = document.getElementById('frontImageEditContainer');
+    const backImageEditContainer = document.getElementById('backImageEditContainer');
+    const frontEditImage = document.getElementById('frontEditImage');
+    const backEditImage = document.getElementById('backEditImage');
+
+    if (frontImageEditContainer && frontEditImage) {
+        // 빈 공간 클릭 시 선택 해제 (모바일 터치 이벤트 포함)
+        frontImageEditContainer.addEventListener('mousedown', function(e) {
+            if (e.target === frontImageEditContainer) {
+                frontEditImage.classList.remove('selected');
+            }
+        });
+        frontImageEditContainer.addEventListener('touchstart', function(e) {
+            if (e.target === frontImageEditContainer) {
+                frontEditImage.classList.remove('selected');
+            }
+        });
+        // 이미지를 클릭하면 다시 선택(편집모드 진입) - 모바일 터치 이벤트 포함
+        frontEditImage.addEventListener('mousedown', function(e) {
+            e.stopPropagation();
+            frontEditImage.classList.add('selected');
+        });
+        frontEditImage.addEventListener('touchstart', function(e) {
+            e.stopPropagation();
+            frontEditImage.classList.add('selected');
+        });
+    }
+    if (backImageEditContainer && backEditImage) {
+        backImageEditContainer.addEventListener('mousedown', function(e) {
+            if (e.target === backImageEditContainer) {
+                backEditImage.classList.remove('selected');
+            }
+        });
+        backImageEditContainer.addEventListener('touchstart', function(e) {
+            if (e.target === backImageEditContainer) {
+                backEditImage.classList.remove('selected');
+            }
+        });
+        backEditImage.addEventListener('mousedown', function(e) {
+            e.stopPropagation();
+            backEditImage.classList.add('selected');
+        });
+        backEditImage.addEventListener('touchstart', function(e) {
+            e.stopPropagation();
+            backEditImage.classList.add('selected');
+        });
+    }
 });
 
 // 이모지 컨트롤 스크롤 드래그 설정
