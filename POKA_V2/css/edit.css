@@ -9,6 +9,126 @@
     --is-desktop: 1;
 }
 
+/* 이미지 선택 섹션 */
+.image-selection-section {
+    padding: 20px 16px;
+    background: var(--background-color);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.selection-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.selection-header .section-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.selection-header .section-description {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.image-selection-container {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.front-image-selection,
+.back-image-selection {
+    background: var(--surface-color);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    box-shadow: var(--shadow-light);
+    border: 1px solid var(--border-color);
+}
+
+.selection-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.image-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.image-grid-item {
+    aspect-ratio: 1;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: var(--transition);
+    position: relative;
+    background: var(--background-color);
+}
+
+.image-grid-item:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
+}
+
+.image-grid-item.selected {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.2);
+}
+
+.image-grid-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.image-grid-item .image-fallback {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--background-color);
+    color: var(--text-light);
+    font-size: 2rem;
+    border: 2px dashed var(--border-color);
+    border-radius: var(--border-radius);
+}
+
+.photo-card-name-section {
+    background: var(--surface-color);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    box-shadow: var(--shadow-light);
+    border: 1px solid var(--border-color);
+}
+
+.selection-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.selection-actions .btn {
+    width: 100%;
+    justify-content: center;
+}
+
 /* 모바일 감지 */
 @media (max-width: 768px) {
     :root {
@@ -1317,6 +1437,47 @@
         justify-content: flex-start;
         align-items: center;
     }
+    
+    /* 모바일 이미지 선택 섹션 */
+    .image-selection-section {
+        padding: 12px 8px;
+        gap: 16px;
+    }
+    
+    .selection-header .section-title {
+        font-size: 1.2rem;
+    }
+    
+    .selection-header .section-description {
+        font-size: 0.85rem;
+    }
+    
+    .image-selection-container {
+        gap: 20px;
+    }
+    
+    .front-image-selection,
+    .back-image-selection {
+        padding: 12px;
+    }
+    
+    .selection-title {
+        font-size: 1rem;
+        margin-bottom: 10px;
+    }
+    
+    .image-grid {
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        gap: 6px;
+    }
+    
+    .photo-card-name-section {
+        padding: 12px;
+    }
+    
+    .selection-actions {
+        gap: 8px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -1429,6 +1590,47 @@
         font-size: 9px;
         min-width: 50px;
     }
+    
+    /* 모바일 이미지 선택 섹션 */
+    .image-selection-section {
+        padding: 8px 6px;
+        gap: 12px;
+    }
+    
+    .selection-header .section-title {
+        font-size: 1.1rem;
+    }
+    
+    .selection-header .section-description {
+        font-size: 0.8rem;
+    }
+    
+    .image-selection-container {
+        gap: 16px;
+    }
+    
+    .front-image-selection,
+    .back-image-selection {
+        padding: 10px;
+    }
+    
+    .selection-title {
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+    }
+    
+    .image-grid {
+        grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+        gap: 4px;
+    }
+    
+    .photo-card-name-section {
+        padding: 10px;
+    }
+    
+    .selection-actions {
+        gap: 6px;
+    }
 }
 
 /* 터치 디바이스 최적화 */
@@ -1526,6 +1728,36 @@
     .upload-btn:hover {
         transform: none;
     }
+    
+    /* 터치 디바이스 이미지 선택 최적화 */
+    .image-selection-section {
+        touch-action: pan-y;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    .image-grid-item {
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none;
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    .image-grid-item:hover {
+        transform: none;
+    }
+    
+    .selection-actions .btn {
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none;
+        min-height: 44px;
+    }
 }
 
 /* 매우 작은 화면 최적화 */
@@ -1584,6 +1816,47 @@
         font-size: 10px !important;
         min-width: 50px !important;
         height: 28px !important;
+    }
+    
+    /* 매우 작은 화면 이미지 선택 섹션 */
+    .image-selection-section {
+        padding: 6px 4px;
+        gap: 10px;
+    }
+    
+    .selection-header .section-title {
+        font-size: 1rem;
+    }
+    
+    .selection-header .section-description {
+        font-size: 0.75rem;
+    }
+    
+    .image-selection-container {
+        gap: 12px;
+    }
+    
+    .front-image-selection,
+    .back-image-selection {
+        padding: 8px;
+    }
+    
+    .selection-title {
+        font-size: 0.8rem;
+        margin-bottom: 6px;
+    }
+    
+    .image-grid {
+        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+        gap: 3px;
+    }
+    
+    .photo-card-name-section {
+        padding: 8px;
+    }
+    
+    .selection-actions {
+        gap: 4px;
     }
 }
 

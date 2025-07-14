@@ -51,7 +51,7 @@
             <!-- 로그인된 사용자 컨텐츠 -->
             <div id="userContent" style="display: none;">
                 <!-- 사용자 정보 -->
-                <section class="user-section">
+                <section class="user-section profile-section" data-section="account-info">
                     <div class="user-card">
                         <div class="user-avatar">
                             <div class="avatar-placeholder">👤</div>
@@ -69,7 +69,7 @@
                 </section>
 
                 <!-- 쿠폰 관리 -->
-                <section class="coupon-section">
+                <section class="coupon-section profile-section" data-section="coupon-management">
                     <h3 class="section-title">🎫 쿠폰 관리</h3>
                     <div class="coupon-overview">
                         <div class="coupon-summary">
@@ -87,7 +87,7 @@
                 </section>
 
                 <!-- 통계 -->
-                <section class="stats-section">
+                <section class="stats-section profile-section" data-section="usage-stats">
                     <h3 class="section-title">📊 사용 통계</h3>
                     <div class="stats-grid">
                         <div class="stat-card">
@@ -125,7 +125,7 @@
                 </section>
 
                 <!-- 데이터 관리 -->
-                <section class="actions-section">
+                <section class="actions-section profile-section" data-section="data-management">
                     <h3 class="section-title">💾 데이터 관리</h3>
                     <div class="actions-grid">
                         <button class="action-btn" onclick="exportData()">
@@ -143,7 +143,7 @@
 
 
                 <!-- 계정 관리 -->
-                <section class="account-section">
+                <section class="account-section profile-section" data-section="account-management">
                     <h3 class="section-title">🔧 계정 관리</h3>
                     <div class="account-actions">
                         <button class="btn btn-secondary" onclick="logout()">
@@ -165,7 +165,7 @@
             </div>
 
             <!-- 설정 (항상 표시) -->
-            <section class="settings-section">
+            <section class="settings-section profile-section" data-section="settings">
                 <h3 class="section-title">⚙️ 설정</h3>
                 <div class="settings-list">
                     <div class="setting-item">
@@ -213,7 +213,7 @@
             </section>
 
             <!-- 정보 (항상 표시) -->
-            <section class="info-section">
+            <section class="info-section profile-section" data-section="info">
                 <h3 class="section-title">ℹ️ 정보</h3>
                 <div class="info-list">
                     <div class="info-item">

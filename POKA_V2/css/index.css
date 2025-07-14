@@ -18,6 +18,22 @@
     margin: 0 auto;
 }
 
+.welcome-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, 
+        rgba(0, 0, 0, 0.1) 0%, 
+        rgba(0, 0, 0, 0.05) 50%, 
+        rgba(0, 0, 0, 0.1) 100%
+    );
+    pointer-events: none;
+    z-index: 1;
+}
+
 .welcome-card::before {
     content: '';
     position: absolute;
@@ -411,7 +427,16 @@
     font-size: 1.5rem;
     font-weight: bold;
     margin-bottom: 12px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    color: #ffffff;
+    text-shadow: 
+        0 2px 4px rgba(0, 0, 0, 0.4),
+        0 4px 8px rgba(0, 0, 0, 0.3),
+        0 0 20px rgba(0, 0, 0, 0.2),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+    letter-spacing: 0.5px;
+    position: relative;
+    z-index: 2;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.1));
 }
 
 .welcome-card p {
@@ -691,6 +716,13 @@
     
     .welcome-card h2 {
         font-size: 1.3rem;
+        text-shadow: 
+            0 1px 3px rgba(0, 0, 0, 0.5),
+            0 2px 6px rgba(0, 0, 0, 0.4),
+            0 0 15px rgba(0, 0, 0, 0.3),
+            0 0 0 1px rgba(255, 255, 255, 0.1);
+        letter-spacing: 0.3px;
+        filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.1));
     }
     
     .feature-grid {

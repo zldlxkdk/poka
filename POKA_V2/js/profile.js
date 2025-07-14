@@ -21,6 +21,14 @@ const autoSaveToggle = document.getElementById('autoSaveToggle');
 document.addEventListener('DOMContentLoaded', () => {
     console.log('POKA V2 Profile page loaded');
     
+    // 페이지 최상단으로 스크롤 (즉시 실행)
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    
+    // 프로필 섹션 애니메이션 초기화
+    initializeProfileAnimations();
+    
     // 로그인 상태 확인
     checkLoginStatus();
     
@@ -35,7 +43,78 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 쿠폰 데이터 로드
     loadCouponData();
+    
+    // 페이지 포커스 시 최상단으로 스크롤
+    window.addEventListener('focus', () => {
+        window.scrollTo(0, 0);
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+    });
+    
+    // 페이지 가시성 변경 시에도 최상단으로 스크롤
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+            window.scrollTo(0, 0);
+            document.documentElement.scrollTop = 0;
+            document.body.scrollTop = 0;
+        }
+    });
+    
+    // 추가 스크롤 보장 (약간의 지연 후)
+    setTimeout(() => {
+        window.scrollTo(0, 0);
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+    }, 100);
+    
+    // 애니메이션 완료 후에도 스크롤 확인
+    setTimeout(() => {
+        window.scrollTo(0, 0);
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+    }, 1500);
 });
+
+// 프로필 섹션 애니메이션 초기화
+function initializeProfileAnimations() {
+    // 모든 프로필 섹션을 초기에 숨김
+    const profileSections = document.querySelectorAll('.profile-section');
+    profileSections.forEach(section => {
+        section.style.opacity = '0';
+        section.style.transform = 'translateY(20px)';
+        section.style.filter = 'blur(1px)';
+    });
+    
+    // 개별 항목들도 초기에 숨김
+    const animatedElements = document.querySelectorAll('.user-card, .stat-card, .coupon-overview, .action-btn, .setting-item, .info-item');
+    animatedElements.forEach(element => {
+        element.style.opacity = '0';
+        element.style.transform = 'translateY(10px)';
+        element.style.filter = 'none';
+    });
+    
+    // 순서대로 애니메이션 시작
+    const animationOrder = [
+        'account-info',
+        'coupon-management', 
+        'usage-stats',
+        'data-management',
+        'account-management',
+        'settings',
+        'info'
+    ];
+    
+    animationOrder.forEach((sectionName, index) => {
+        const section = document.querySelector(`[data-section="${sectionName}"]`);
+        if (section) {
+            setTimeout(() => {
+                section.style.animation = `profileSectionRefresh 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards`;
+            }, index * 100 + 50); // 0.1초 간격으로 시작
+        }
+    });
+    
+    // 개별 항목들의 애니메이션은 CSS에서 자동으로 처리됨
+}
 
 // 로그인 상태 확인
 function checkLoginStatus() {
