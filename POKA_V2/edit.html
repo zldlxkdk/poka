@@ -193,10 +193,55 @@
                             <!-- 필터 탭 -->
                             <div class="tab-panel" id="filter-tab">
                                 <div class="filter-controls">
-                                    <button class="filter-btn" onclick="applyFilterEdit(currentSelectedSide, 'none')">원본</button>
-                                    <button class="filter-btn" onclick="applyFilterEdit(currentSelectedSide, 'grayscale')">흑백</button>
-                                    <button class="filter-btn" onclick="applyFilterEdit(currentSelectedSide, 'sepia')">세피아</button>
-                                    <button class="filter-btn" onclick="applyFilterEdit(currentSelectedSide, 'brightness')">밝기</button>
+                                    <div class="filter-category">
+                                        <h4 class="filter-category-title">기본 필터</h4>
+                                        <div class="filter-buttons-row">
+                                            <button class="filter-btn" onclick="applyFilterEdit(currentSelectedSide, 'none')">원본</button>
+                                            <button class="filter-btn" onclick="applyFilterEdit(currentSelectedSide, 'grayscale')">흑백</button>
+                                            <button class="filter-btn" onclick="applyFilterEdit(currentSelectedSide, 'sepia')">세피아</button>
+                                            <button class="filter-btn" onclick="applyFilterEdit(currentSelectedSide, 'brightness')">밝기</button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="filter-category">
+                                        <h4 class="filter-category-title">색상 필터</h4>
+                                        <div class="filter-buttons-row">
+                                            <button class="filter-btn" onclick="applyFilterEdit(currentSelectedSide, 'warm')">따뜻한</button>
+                                            <button class="filter-btn" onclick="applyFilterEdit(currentSelectedSide, 'cool')">차가운</button>
+                                            <button class="filter-btn" onclick="applyFilterEdit(currentSelectedSide, 'vintage')">빈티지</button>
+                                            <button class="filter-btn" onclick="applyFilterEdit(currentSelectedSide, 'dramatic')">드라마틱</button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="filter-category">
+                                        <h4 class="filter-category-title">효과 필터</h4>
+                                        <div class="filter-buttons-row">
+                                            <button class="filter-btn" onclick="applyFilterEdit(currentSelectedSide, 'blur')">블러</button>
+                                            <button class="filter-btn" onclick="applyFilterEdit(currentSelectedSide, 'sharpen')">선명</button>
+                                            <button class="filter-btn" onclick="applyFilterEdit(currentSelectedSide, 'contrast')">대비</button>
+                                            <button class="filter-btn" onclick="applyFilterEdit(currentSelectedSide, 'saturation')">채도</button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="filter-category">
+                                        <h4 class="filter-category-title">특수 효과</h4>
+                                        <div class="filter-buttons-row">
+                                            <button class="filter-btn" onclick="applyFilterEdit(currentSelectedSide, 'invert')">반전</button>
+                                            <button class="filter-btn" onclick="applyFilterEdit(currentSelectedSide, 'posterize')">포스터</button>
+                                            <button class="filter-btn" onclick="applyFilterEdit(currentSelectedSide, 'emboss')">엠보스</button>
+                                            <button class="filter-btn" onclick="applyFilterEdit(currentSelectedSide, 'edge')">엣지</button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="filter-category">
+                                        <h4 class="filter-category-title">아트 필터</h4>
+                                        <div class="filter-buttons-row">
+                                            <button class="filter-btn" onclick="applyFilterEdit(currentSelectedSide, 'cartoon')">만화</button>
+                                            <button class="filter-btn" onclick="applyFilterEdit(currentSelectedSide, 'sketch')">스케치</button>
+                                            <button class="filter-btn" onclick="applyFilterEdit(currentSelectedSide, 'oil')">유화</button>
+                                            <button class="filter-btn" onclick="applyFilterEdit(currentSelectedSide, 'watercolor')">수채화</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             
@@ -230,11 +275,55 @@
                         <div class="tool-group">
                             <h3 class="tool-title">🎨 필터</h3>
                             <div class="filter-buttons">
-                                <button class="filter-btn" onclick="resetImage()">원본</button>
-                                <button class="filter-btn" onclick="applyFilter('grayscale')">흑백</button>
-                                <button class="filter-btn" onclick="applyFilter('sepia')">세피아</button>
-                                <button class="filter-btn" onclick="applyFilter('blur')">블러</button>
-                                <button class="filter-btn" onclick="applyFilter('brightness')">밝기</button>
+                                <div class="filter-category">
+                                    <h4 class="filter-category-title">기본 필터</h4>
+                                    <div class="filter-buttons-row">
+                                        <button class="filter-btn" onclick="resetImage()">원본</button>
+                                        <button class="filter-btn" onclick="applyFilter('grayscale')">흑백</button>
+                                        <button class="filter-btn" onclick="applyFilter('sepia')">세피아</button>
+                                        <button class="filter-btn" onclick="applyFilter('brightness')">밝기</button>
+                                    </div>
+                                </div>
+                                
+                                <div class="filter-category">
+                                    <h4 class="filter-category-title">색상 필터</h4>
+                                    <div class="filter-buttons-row">
+                                        <button class="filter-btn" onclick="applyFilter('warm')">따뜻한</button>
+                                        <button class="filter-btn" onclick="applyFilter('cool')">차가운</button>
+                                        <button class="filter-btn" onclick="applyFilter('vintage')">빈티지</button>
+                                        <button class="filter-btn" onclick="applyFilter('dramatic')">드라마틱</button>
+                                    </div>
+                                </div>
+                                
+                                <div class="filter-category">
+                                    <h4 class="filter-category-title">효과 필터</h4>
+                                    <div class="filter-buttons-row">
+                                        <button class="filter-btn" onclick="applyFilter('blur')">블러</button>
+                                        <button class="filter-btn" onclick="applyFilter('sharpen')">선명</button>
+                                        <button class="filter-btn" onclick="applyFilter('contrast')">대비</button>
+                                        <button class="filter-btn" onclick="applyFilter('saturation')">채도</button>
+                                    </div>
+                                </div>
+                                
+                                <div class="filter-category">
+                                    <h4 class="filter-category-title">특수 효과</h4>
+                                    <div class="filter-buttons-row">
+                                        <button class="filter-btn" onclick="applyFilter('invert')">반전</button>
+                                        <button class="filter-btn" onclick="applyFilter('posterize')">포스터</button>
+                                        <button class="filter-btn" onclick="applyFilter('emboss')">엠보스</button>
+                                        <button class="filter-btn" onclick="applyFilter('edge')">엣지</button>
+                                    </div>
+                                </div>
+                                
+                                <div class="filter-category">
+                                    <h4 class="filter-category-title">아트 필터</h4>
+                                    <div class="filter-buttons-row">
+                                        <button class="filter-btn" onclick="applyFilter('cartoon')">만화</button>
+                                        <button class="filter-btn" onclick="applyFilter('sketch')">스케치</button>
+                                        <button class="filter-btn" onclick="applyFilter('oil')">유화</button>
+                                        <button class="filter-btn" onclick="applyFilter('watercolor')">수채화</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         

@@ -802,6 +802,42 @@ function applyFilter(filterType) {
             }
             break;
             
+        case 'warm':
+            for (let i = 0; i < data.length; i += 4) {
+                data[i] = Math.min(255, data[i] * 1.2); // 빨간색 증가
+                data[i + 1] = Math.min(255, data[i + 1] * 1.1); // 초록색 약간 증가
+                data[i + 2] = Math.max(0, data[i + 2] * 0.9); // 파란색 감소
+            }
+            break;
+            
+        case 'cool':
+            for (let i = 0; i < data.length; i += 4) {
+                data[i] = Math.max(0, data[i] * 0.9); // 빨간색 감소
+                data[i + 1] = Math.min(255, data[i + 1] * 1.1); // 초록색 약간 증가
+                data[i + 2] = Math.min(255, data[i + 2] * 1.2); // 파란색 증가
+            }
+            break;
+            
+        case 'vintage':
+            for (let i = 0; i < data.length; i += 4) {
+                const r = data[i];
+                const g = data[i + 1];
+                const b = data[i + 2];
+                
+                data[i] = Math.min(255, (r * 0.393) + (g * 0.769) + (b * 0.189) + 20);
+                data[i + 1] = Math.min(255, (r * 0.349) + (g * 0.686) + (b * 0.168) + 10);
+                data[i + 2] = Math.min(255, (r * 0.272) + (g * 0.534) + (b * 0.131) + 5);
+            }
+            break;
+            
+        case 'dramatic':
+            for (let i = 0; i < data.length; i += 4) {
+                data[i] = Math.min(255, data[i] * 1.4);
+                data[i + 1] = Math.max(0, data[i + 1] * 0.8);
+                data[i + 2] = Math.max(0, data[i + 2] * 0.7);
+            }
+            break;
+            
         case 'blur':
             // 간단한 블러 효과 (가우시안 블러 대신 박스 블러)
             const blurRadius = 2;
@@ -818,6 +854,127 @@ function applyFilter(filterType) {
             ctx.filter = `blur(${blurRadius}px)`;
             ctx.drawImage(tempCanvas, 0, 0);
             ctx.filter = 'none';
+            break;
+            
+        case 'sharpen':
+            // 샤프닝 필터
+            const sharpenKernel = [
+                0, -1, 0,
+                -1, 5, -1,
+                0, -1, 0
+            ];
+            applyConvolutionFilter(data, canvas.width, canvas.height, sharpenKernel);
+            break;
+            
+        case 'contrast':
+            for (let i = 0; i < data.length; i += 4) {
+                const factor = 1.5;
+                data[i] = Math.min(255, Math.max(0, ((data[i] - 128) * factor) + 128));
+                data[i + 1] = Math.min(255, Math.max(0, ((data[i + 1] - 128) * factor) + 128));
+                data[i + 2] = Math.min(255, Math.max(0, ((data[i + 2] - 128) * factor) + 128));
+            }
+            break;
+            
+        case 'saturation':
+            for (let i = 0; i < data.length; i += 4) {
+                const gray = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
+                const factor = 1.5;
+                data[i] = Math.min(255, gray + (data[i] - gray) * factor);
+                data[i + 1] = Math.min(255, gray + (data[i + 1] - gray) * factor);
+                data[i + 2] = Math.min(255, gray + (data[i + 2] - gray) * factor);
+            }
+            break;
+            
+        case 'invert':
+            for (let i = 0; i < data.length; i += 4) {
+                data[i] = 255 - data[i];
+                data[i + 1] = 255 - data[i + 1];
+                data[i + 2] = 255 - data[i + 2];
+            }
+            break;
+            
+        case 'posterize':
+            const levels = 4;
+            for (let i = 0; i < data.length; i += 4) {
+                data[i] = Math.floor(data[i] / 255 * levels) * (255 / levels);
+                data[i + 1] = Math.floor(data[i + 1] / 255 * levels) * (255 / levels);
+                data[i + 2] = Math.floor(data[i + 2] / 255 * levels) * (255 / levels);
+            }
+            break;
+            
+        case 'emboss':
+            const embossKernel = [
+                -2, -1, 0,
+                -1, 1, 1,
+                0, 1, 2
+            ];
+            applyConvolutionFilter(data, canvas.width, canvas.height, embossKernel);
+            break;
+            
+        case 'edge':
+            const edgeKernel = [
+                -1, -1, -1,
+                -1, 8, -1,
+                -1, -1, -1
+            ];
+            applyConvolutionFilter(data, canvas.width, canvas.height, edgeKernel);
+            break;
+            
+        case 'cartoon':
+            // 만화 효과: 엣지 검출 + 색상 단순화
+            const edgeData = new Uint8ClampedArray(data);
+            const edgeKernel2 = [-1, -1, -1, -1, 8, -1, -1, -1, -1];
+            applyConvolutionFilter(edgeData, canvas.width, canvas.height, edgeKernel2);
+            
+            for (let i = 0; i < data.length; i += 4) {
+                const gray = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
+                const levels = 8;
+                const quantized = Math.floor(gray / 255 * levels) * (255 / levels);
+                
+                if (edgeData[i] > 50) {
+                    data[i] = data[i + 1] = data[i + 2] = 0; // 엣지는 검은색
+                } else {
+                    data[i] = data[i + 1] = data[i + 2] = quantized;
+                }
+            }
+            break;
+            
+        case 'sketch':
+            // 스케치 효과: 엣지 검출 + 반전
+            const sketchKernel = [-1, -1, -1, -1, 8, -1, -1, -1, -1];
+            applyConvolutionFilter(data, canvas.width, canvas.height, sketchKernel);
+            
+            for (let i = 0; i < data.length; i += 4) {
+                const gray = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
+                data[i] = data[i + 1] = data[i + 2] = 255 - gray;
+            }
+            break;
+            
+        case 'oil':
+            // 유화 효과: 색상 단순화 + 노이즈 추가
+            for (let i = 0; i < data.length; i += 4) {
+                const levels = 6;
+                data[i] = Math.floor(data[i] / 255 * levels) * (255 / levels);
+                data[i + 1] = Math.floor(data[i + 1] / 255 * levels) * (255 / levels);
+                data[i + 2] = Math.floor(data[i + 2] / 255 * levels) * (255 / levels);
+                
+                // 약간의 노이즈 추가
+                const noise = (Math.random() - 0.5) * 20;
+                data[i] = Math.min(255, Math.max(0, data[i] + noise));
+                data[i + 1] = Math.min(255, Math.max(0, data[i + 1] + noise));
+                data[i + 2] = Math.min(255, Math.max(0, data[i + 2] + noise));
+            }
+            break;
+            
+        case 'watercolor':
+            // 수채화 효과: 블러 + 채도 증가
+            for (let i = 0; i < data.length; i += 4) {
+                const gray = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
+                const factor = 1.3;
+                data[i] = Math.min(255, gray + (data[i] - gray) * factor);
+                data[i + 1] = Math.min(255, gray + (data[i + 1] - gray) * factor);
+                data[i + 2] = Math.min(255, gray + (data[i + 2] - gray) * factor);
+            }
             break;
             
         case 'brightness':
@@ -850,6 +1007,39 @@ function applyFilter(filterType) {
     }
     
     POKA.Toast.success('필터가 적용되었습니다');
+}
+
+// 컨볼루션 필터 적용 함수
+function applyConvolutionFilter(data, width, height, kernel) {
+    const side = Math.round(Math.sqrt(kernel.length));
+    const halfSide = Math.floor(side / 2);
+    const src = new Uint8ClampedArray(data);
+    
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+            let r = 0, g = 0, b = 0;
+            
+            for (let cy = 0; cy < side; cy++) {
+                for (let cx = 0; cx < side; cx++) {
+                    const scy = y + cy - halfSide;
+                    const scx = x + cx - halfSide;
+                    
+                    if (scy >= 0 && scy < height && scx >= 0 && scx < width) {
+                        const srcIdx = (scy * width + scx) * 4;
+                        const wt = kernel[cy * side + cx];
+                        r += src[srcIdx] * wt;
+                        g += src[srcIdx + 1] * wt;
+                        b += src[srcIdx + 2] * wt;
+                    }
+                }
+            }
+            
+            const dstIdx = (y * width + x) * 4;
+            data[dstIdx] = Math.min(255, Math.max(0, r));
+            data[dstIdx + 1] = Math.min(255, Math.max(0, g));
+            data[dstIdx + 2] = Math.min(255, Math.max(0, b));
+        }
+    }
 }
 
 // 이미지 회전
@@ -2235,6 +2425,54 @@ function applyImageEditState(side) {
         case 'sepia':
             filter = 'sepia(100%)';
             break;
+        case 'warm':
+            filter = 'sepia(30%) hue-rotate(30deg) saturate(120%)';
+            break;
+        case 'cool':
+            filter = 'sepia(20%) hue-rotate(-30deg) saturate(110%)';
+            break;
+        case 'vintage':
+            filter = 'sepia(80%) contrast(120%) brightness(110%)';
+            break;
+        case 'dramatic':
+            filter = 'contrast(150%) saturate(120%) brightness(110%)';
+            break;
+        case 'blur':
+            filter = 'blur(2px)';
+            break;
+        case 'sharpen':
+            filter = 'contrast(150%) saturate(120%)';
+            break;
+        case 'contrast':
+            filter = 'contrast(150%)';
+            break;
+        case 'saturation':
+            filter = 'saturate(150%)';
+            break;
+        case 'invert':
+            filter = 'invert(100%)';
+            break;
+        case 'posterize':
+            filter = 'contrast(200%) saturate(150%) brightness(110%)';
+            break;
+        case 'emboss':
+            filter = 'contrast(200%) brightness(90%) saturate(80%)';
+            break;
+        case 'edge':
+            filter = 'contrast(300%) brightness(50%) saturate(0%)';
+            break;
+        case 'cartoon':
+            filter = 'contrast(200%) saturate(150%) brightness(110%)';
+            break;
+        case 'sketch':
+            filter = 'contrast(300%) brightness(50%) saturate(0%) invert(100%)';
+            break;
+        case 'oil':
+            filter = 'contrast(120%) saturate(130%) brightness(105%)';
+            break;
+        case 'watercolor':
+            filter = 'saturate(130%) brightness(105%) contrast(110%)';
+            break;
         case 'brightness':
             filter = 'brightness(150%)';
             break;
@@ -2298,14 +2536,41 @@ function applyFilterEdit(side, filter) {
     applyImageEditState(side);
     
     // 필터 버튼 활성화 상태 업데이트
-    const container = document.getElementById(side === 'front' ? 'frontImageEditContainer' : 'backImageEditContainer');
-    const filterButtons = container.parentElement.querySelectorAll('.filter-btn');
+    const filterButtons = document.querySelectorAll('.filter-btn');
     filterButtons.forEach(btn => {
         btn.classList.remove('active');
-        if (btn.textContent === filter || (filter === 'none' && btn.textContent === '원본')) {
+        const btnText = btn.textContent.trim();
+        const filterMap = {
+            '원본': 'none',
+            '흑백': 'grayscale',
+            '세피아': 'sepia',
+            '밝기': 'brightness',
+            '따뜻한': 'warm',
+            '차가운': 'cool',
+            '빈티지': 'vintage',
+            '드라마틱': 'dramatic',
+            '블러': 'blur',
+            '선명': 'sharpen',
+            '대비': 'contrast',
+            '채도': 'saturation',
+            '반전': 'invert',
+            '포스터': 'posterize',
+            '엠보스': 'emboss',
+            '엣지': 'edge',
+            '만화': 'cartoon',
+            '스케치': 'sketch',
+            '유화': 'oil',
+            '수채화': 'watercolor'
+        };
+        
+        if (filterMap[btnText] === filter || (filter === 'none' && btnText === '원본')) {
             btn.classList.add('active');
         }
     });
+    
+    if (typeof POKA !== 'undefined' && POKA.Toast) {
+        POKA.Toast.success('필터가 적용되었습니다');
+    }
 }
 
 // 반짝거리는 이펙트 함수들

@@ -1057,13 +1057,37 @@
 /* 필터 컨트롤 */
 .filter-controls {
     display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+    max-height: 400px;
+    overflow-y: auto;
     width: 100%;
     max-width: 800px;
     margin: 0 auto;
+}
+
+.filter-category {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.filter-category-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+    padding: 4px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.filter-buttons-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
 }
 
 /* 이모지 컨트롤 - 모바일 터치 최적화 */
@@ -1582,6 +1606,38 @@
         padding: 6px 8px;
         font-size: 9px;
         min-width: 50px;
+    }
+    
+    /* 필터 카테고리 작은 화면 최적화 */
+    .filter-category-title {
+        font-size: 0.75rem;
+        padding: 2px 0;
+    }
+    
+    .filter-buttons-row {
+        gap: 4px;
+    }
+    
+    .filter-controls {
+        max-height: 250px;
+        padding: 8px;
+        gap: 8px;
+    }
+    
+    /* 필터 카테고리 모바일 최적화 */
+    .filter-category-title {
+        font-size: 0.8rem;
+        padding: 2px 0;
+    }
+    
+    .filter-buttons-row {
+        gap: 6px;
+    }
+    
+    .filter-controls {
+        max-height: 300px;
+        padding: 12px;
+        gap: 12px;
     }
     
     /* 모바일 이미지 선택 섹션 */
