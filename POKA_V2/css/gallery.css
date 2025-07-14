@@ -10,7 +10,7 @@
     }
 }
 
-/* 모바일에서 세로 정렬 방지 전역 규칙 */
+/* 모바일에서 세로 정렬 방지 전역 규칙 - 강화된 버전 */
 @media (max-width: 768px) {
     .modal-dual-images {
         flex-direction: row !important;
@@ -21,6 +21,8 @@
         flex-flow: row wrap !important;
         height: auto !important;
         min-height: auto !important;
+        gap: 12px !important;
+        padding: 16px !important;
     }
     
     .modal-image-side-wrapper {
@@ -52,6 +54,8 @@
         position: relative !important;
         overflow: hidden !important;
         background: #f0f0f0 !important;
+        border-radius: 12px !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
     }
     
     .modal-image-side img {
@@ -60,12 +64,14 @@
         max-height: 100% !important;
         min-height: 0 !important;
         object-fit: cover !important;
+        object-position: center !important;
         width: 100% !important;
         position: absolute !important;
         top: 0 !important;
         left: 0 !important;
         right: 0 !important;
         bottom: 0 !important;
+        border-radius: 12px !important;
     }
     
     .modal-image-side .modal-fallback {
@@ -77,27 +83,35 @@
         width: 100% !important;
         height: 100% !important;
         aspect-ratio: 10/19 !important;
+        border-radius: 12px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: #f0f0f0 !important;
+        font-size: 2rem !important;
+        color: #999 !important;
     }
     
     .image-side-label {
         display: block !important;
         position: static !important;
-        margin-bottom: 6px !important;
+        margin-bottom: 8px !important;
         margin-top: 0 !important;
-        z-index: 1 !important;
-        background: var(--surface-color, rgba(255,255,255,0.85)) !important;
-        color: var(--text-primary, #222) !important;
+        z-index: 10 !important;
+        background: rgba(255, 255, 255, 0.95) !important;
+        color: #222 !important;
         font-size: 0.9rem !important;
-        font-weight: 600 !important;
+        font-weight: 700 !important;
         border-radius: 12px !important;
-        padding: 4px 12px !important;
-        border: 1px solid rgba(0, 212, 255, 0.15) !important;
+        padding: 6px 12px !important;
+        border: 2px solid rgba(0, 212, 255, 0.3) !important;
         min-width: 48px !important;
         max-width: 80% !important;
         pointer-events: none !important;
         text-align: center !important;
         align-self: center !important;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.15) !important;
+        text-shadow: none !important;
     }
 }
 
@@ -1385,22 +1399,23 @@
     
     .modal-dual-images {
         flex-direction: row !important;
-        gap: 12px;
-        flex-wrap: wrap;
-        justify-content: center;
+        gap: 10px !important;
+        flex-wrap: wrap !important;
+        justify-content: center !important;
         display: flex !important;
         align-items: flex-start !important;
+        padding: 12px !important;
     }
     
     .modal-image-side-wrapper {
         flex: 1 !important;
-        min-width: 140px !important;
-        max-width: calc(50% - 6px) !important;
-        width: calc(50% - 6px) !important;
+        min-width: 130px !important;
+        max-width: calc(50% - 5px) !important;
+        width: calc(50% - 5px) !important;
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
-        margin: 0 0 8px 0 !important;
+        margin: 0 0 6px 0 !important;
     }
     
     .modal-image-side {
@@ -1409,13 +1424,15 @@
         width: 100% !important;
         height: 0 !important;
         padding-bottom: 190% !important; /* 10:19 비율 강제 적용 (10/19 * 100 = 190%) */
-        min-width: 120px !important;
+        min-width: 110px !important;
         max-width: 100% !important;
         max-height: none !important;
         display: block !important;
         position: relative !important;
         overflow: hidden !important;
         background: #f0f0f0 !important;
+        border-radius: 10px !important;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12) !important;
     }
     
     .modal-image-side img {
@@ -1424,12 +1441,14 @@
         height: 100% !important;
         width: 100% !important;
         object-fit: cover !important;
+        object-position: center !important;
         display: block !important;
         position: absolute !important;
         top: 0 !important;
         left: 0 !important;
         right: 0 !important;
         bottom: 0 !important;
+        border-radius: 10px !important;
     }
     
     .modal-image-side .modal-fallback {
@@ -1441,6 +1460,13 @@
         width: 100% !important;
         height: 100% !important;
         aspect-ratio: 10/19 !important;
+        border-radius: 10px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: #f0f0f0 !important;
+        font-size: 1.8rem !important;
+        color: #999 !important;
     }
     
     .image-side-label {
@@ -1448,20 +1474,21 @@
         position: static !important;
         margin-bottom: 6px !important;
         margin-top: 0 !important;
-        z-index: 1 !important;
-        background: var(--surface-color, rgba(255,255,255,0.85)) !important;
-        color: var(--text-primary, #222) !important;
+        z-index: 10 !important;
+        background: rgba(255, 255, 255, 0.95) !important;
+        color: #222 !important;
         font-size: 0.8rem !important;
-        font-weight: 600 !important;
-        border-radius: 12px !important;
-        padding: 3px 8px !important;
-        border: 1px solid rgba(0, 212, 255, 0.15) !important;
-        min-width: 48px !important;
-        max-width: 80% !important;
+        font-weight: 700 !important;
+        border-radius: 10px !important;
+        padding: 4px 8px !important;
+        border: 2px solid rgba(0, 212, 255, 0.3) !important;
+        min-width: 40px !important;
+        max-width: 85% !important;
         pointer-events: none !important;
         text-align: center !important;
         align-self: center !important;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.12) !important;
+        text-shadow: none !important;
     }
     
 
@@ -1674,20 +1701,35 @@
         align-items: flex-start !important;
         justify-content: space-between !important;
         flex-flow: row wrap !important;
+        padding: 16px !important;
     }
     
-    .modal-image-side {
+    .modal-image-side-wrapper {
         flex: 1 !important;
         min-width: 140px !important;
         max-width: calc(50% - 6px) !important;
         width: calc(50% - 6px) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        margin: 0 0 8px 0 !important;
+    }
+    
+    .modal-image-side {
+        flex: 0 0 auto !important;
         aspect-ratio: 10/19 !important;
+        width: 100% !important;
+        height: 0 !important;
+        padding-bottom: 190% !important; /* 10:19 비율 강제 적용 (10/19 * 100 = 190%) */
+        min-width: 120px !important;
+        max-width: 100% !important;
+        max-height: none !important;
         display: block !important;
-        flex-basis: calc(50% - 6px) !important;
-        flex-grow: 1 !important;
-        flex-shrink: 1 !important;
         position: relative !important;
         overflow: hidden !important;
+        background: #f0f0f0 !important;
+        border-radius: 12px !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
     }
     
     .modal-image-side img {
@@ -1696,12 +1738,14 @@
         min-height: 0 !important;
         width: 100% !important;
         object-fit: cover !important;
+        object-position: center !important;
         display: block !important;
         position: absolute !important;
         top: 0 !important;
         left: 0 !important;
         right: 0 !important;
         bottom: 0 !important;
+        border-radius: 12px !important;
     }
     
     .modal-image-side .modal-fallback {
@@ -1713,6 +1757,35 @@
         width: 100% !important;
         height: 100% !important;
         aspect-ratio: 10/19 !important;
+        border-radius: 12px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: #f0f0f0 !important;
+        font-size: 2rem !important;
+        color: #999 !important;
+    }
+    
+    .image-side-label {
+        display: block !important;
+        position: static !important;
+        margin-bottom: 8px !important;
+        margin-top: 0 !important;
+        z-index: 10 !important;
+        background: rgba(255, 255, 255, 0.95) !important;
+        color: #222 !important;
+        font-size: 0.9rem !important;
+        font-weight: 700 !important;
+        border-radius: 12px !important;
+        padding: 6px 12px !important;
+        border: 2px solid rgba(0, 212, 255, 0.3) !important;
+        min-width: 48px !important;
+        max-width: 80% !important;
+        pointer-events: none !important;
+        text-align: center !important;
+        align-self: center !important;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.15) !important;
+        text-shadow: none !important;
     }
 } 
 
@@ -2126,22 +2199,23 @@
     /* 모달 이미지 가로 정렬 강제 적용 */
     .modal-dual-images {
         flex-direction: row !important;
-        gap: 8px;
-        flex-wrap: wrap;
+        gap: 6px !important;
+        flex-wrap: wrap !important;
         display: flex !important;
         align-items: flex-start !important;
         justify-content: space-between !important;
+        padding: 8px !important;
     }
     
     .modal-image-side-wrapper {
         flex: 1 !important;
-        min-width: 120px !important;
-        max-width: calc(50% - 4px) !important;
-        width: calc(50% - 4px) !important;
+        min-width: 110px !important;
+        max-width: calc(50% - 3px) !important;
+        width: calc(50% - 3px) !important;
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
-        margin: 0 0 6px 0 !important;
+        margin: 0 0 4px 0 !important;
     }
     
     .modal-image-side {
@@ -2150,13 +2224,15 @@
         width: 100% !important;
         height: 0 !important;
         padding-bottom: 190% !important; /* 10:19 비율 강제 적용 (10/19 * 100 = 190%) */
-        min-width: 100px !important;
+        min-width: 90px !important;
         max-width: 100% !important;
         max-height: none !important;
         display: block !important;
         position: relative !important;
         overflow: hidden !important;
         background: #f0f0f0 !important;
+        border-radius: 8px !important;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
     }
     
     .modal-image-side img {
@@ -2164,12 +2240,14 @@
         width: 100% !important;
         height: 100% !important;
         object-fit: cover !important;
+        object-position: center !important;
         display: block !important;
         position: absolute !important;
         top: 0 !important;
         left: 0 !important;
         right: 0 !important;
         bottom: 0 !important;
+        border-radius: 8px !important;
     }
     
     .modal-image-side .modal-fallback {
@@ -2181,11 +2259,35 @@
         width: 100% !important;
         height: 100% !important;
         aspect-ratio: 10/19 !important;
+        border-radius: 8px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: #f0f0f0 !important;
+        font-size: 1.5rem !important;
+        color: #999 !important;
     }
     
     .image-side-label {
-        font-size: 0.7rem;
-        padding: 2px 6px;
+        display: block !important;
+        position: static !important;
+        margin-bottom: 4px !important;
+        margin-top: 0 !important;
+        z-index: 10 !important;
+        background: rgba(255, 255, 255, 0.95) !important;
+        color: #222 !important;
+        font-size: 0.7rem !important;
+        font-weight: 700 !important;
+        border-radius: 8px !important;
+        padding: 3px 6px !important;
+        border: 2px solid rgba(0, 212, 255, 0.3) !important;
+        min-width: 36px !important;
+        max-width: 90% !important;
+        pointer-events: none !important;
+        text-align: center !important;
+        align-self: center !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+        text-shadow: none !important;
     }
     
     .photo-card-name {
@@ -2394,10 +2496,38 @@
 
 /* 모든 모바일 환경에서 이미지 홀더 맞춤 보장 */
 @media (max-width: 1024px) {
+    .modal-dual-images {
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+        display: flex !important;
+        align-items: flex-start !important;
+        justify-content: center !important;
+        gap: 16px !important;
+        padding: 20px !important;
+    }
+    
+    .modal-image-side-wrapper {
+        flex: 1 !important;
+        min-width: 150px !important;
+        max-width: calc(50% - 8px) !important;
+        width: calc(50% - 8px) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        margin: 0 0 10px 0 !important;
+    }
+    
     .modal-image-side {
         position: relative !important;
         overflow: hidden !important;
         aspect-ratio: 10/19 !important;
+        width: 100% !important;
+        height: 0 !important;
+        padding-bottom: 190% !important; /* 10:19 비율 강제 적용 (10/19 * 100 = 190%) */
+        display: block !important;
+        background: #f0f0f0 !important;
+        border-radius: 12px !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
     }
     
     .modal-image-side img {
@@ -2412,6 +2542,7 @@
         object-position: center !important;
         -webkit-object-fit: cover !important;
         -webkit-object-position: center !important;
+        border-radius: 12px !important;
     }
     
     .modal-image-side .modal-fallback {
@@ -2423,6 +2554,35 @@
         width: 100% !important;
         height: 100% !important;
         aspect-ratio: 10/19 !important;
+        border-radius: 12px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: #f0f0f0 !important;
+        font-size: 2rem !important;
+        color: #999 !important;
+    }
+    
+    .image-side-label {
+        display: block !important;
+        position: static !important;
+        margin-bottom: 8px !important;
+        margin-top: 0 !important;
+        z-index: 10 !important;
+        background: rgba(255, 255, 255, 0.95) !important;
+        color: #222 !important;
+        font-size: 0.95rem !important;
+        font-weight: 700 !important;
+        border-radius: 12px !important;
+        padding: 6px 12px !important;
+        border: 2px solid rgba(0, 212, 255, 0.3) !important;
+        min-width: 48px !important;
+        max-width: 80% !important;
+        pointer-events: none !important;
+        text-align: center !important;
+        align-self: center !important;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.15) !important;
+        text-shadow: none !important;
     }
 }
 
