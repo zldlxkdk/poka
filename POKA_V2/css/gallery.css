@@ -26,7 +26,7 @@
         min-width: 140px !important;
         max-width: calc(50% - 6px) !important;
         width: calc(50% - 6px) !important;
-        min-height: 300px !important;
+        aspect-ratio: 10/19 !important;
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
@@ -49,6 +49,17 @@
         left: 0 !important;
         right: 0 !important;
         bottom: 0 !important;
+    }
+    
+    .modal-image-side .modal-fallback {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        aspect-ratio: 10/19 !important;
     }
 }
 
@@ -916,9 +927,9 @@
     background: var(--surface-color);
     border-radius: var(--border-radius-large);
     max-width: 90vw;
-    max-height: 75vh;
+    max-height: 80vh;
     width: 90vw;
-    height: 75vh;
+    height: auto;
     overflow: hidden;
     box-shadow: var(--shadow-heavy);
     animation: modalSlideIn 0.3s ease-out;
@@ -998,6 +1009,7 @@
     justify-content: flex-start;
     min-height: 0;
     padding-bottom: 0;
+    height: auto;
 }
 
 .modal-image-container {
@@ -1005,6 +1017,7 @@
     width: 100%;
     max-width: 600px;
     margin-bottom: 20px;
+    height: auto;
 }
 
 /* 모달 이중 이미지 레이아웃 */
@@ -1015,40 +1028,67 @@
     width: 100%;
     justify-content: center;
     align-items: flex-start !important;
-    flex-wrap: wrap;
+    height: auto !important;
+    min-height: auto !important;
+    padding: 20px;
 }
 
 .modal-image-side {
-    flex: 1 !important;
+    flex: 0 0 auto;
+    aspect-ratio: 10/19 !important;
+    width: 200px;
+    height: auto;
+    min-width: 120px;
     max-width: 280px;
-    min-height: 0;
-    aspect-ratio: 10/19;
     display: flex !important;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    background: #f0f0f0;
 }
 
 .image-side-label {
-    font-size: 0.9rem;
+    position: static !important;
+    margin-bottom: 6px;
+    margin-top: 0;
+    z-index: 1;
+    background: var(--surface-color, rgba(255,255,255,0.85));
+    color: var(--text-primary, #222) !important;
+    font-size: 0.95rem;
     font-weight: 600;
-    color: var(--text-primary);
-    margin: 0;
-    text-align: center;
-    background: rgba(0, 212, 255, 0.1);
-    padding: 4px 12px;
     border-radius: 12px;
-    border: 1px solid rgba(0, 212, 255, 0.2);
+    padding: 4px 16px;
+    border: 1px solid rgba(0, 212, 255, 0.15);
+    min-width: 48px;
+    max-width: 80%;
+    pointer-events: none;
+    text-align: center;
+    align-self: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: background 0.2s, color 0.2s;
 }
 
-.modal-image-side img {
+@media (prefers-color-scheme: dark) {
+  .image-side-label {
+    background: rgba(255, 255, 255, 0.95) !important;
+    color: #000 !important;
+    border: 2px solid rgba(0, 212, 255, 0.4);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.1);
+    font-weight: 700;
+    text-shadow: none;
+  }
+}
+
+.modal-image-side img,
+.modal-image-side .modal-fallback {
     width: 100%;
     height: 100%;
-    max-height: 100%;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     object-fit: cover;
-    border: 2px solid rgba(255, 255, 255, 0.8);
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    border-radius: 12px;
 }
 
 .modal-image-side .modal-fallback {
@@ -1064,6 +1104,11 @@
     font-size: 2rem;
     color: var(--text-secondary);
     border: 2px dashed var(--border-color);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 }
 
 
@@ -1314,17 +1359,35 @@
         min-width: 140px !important;
         max-width: calc(50% - 6px) !important;
         width: calc(50% - 6px) !important;
-        aspect-ratio: 10/19;
+        aspect-ratio: 10/19 !important;
         display: block !important;
+        position: relative !important;
+        overflow: hidden !important;
     }
     
     .modal-image-side img {
         max-height: 100% !important;
         min-height: 0 !important;
-        height: 100%;
-        width: 100%;
+        height: 100% !important;
+        width: 100% !important;
         object-fit: cover !important;
         display: block !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+    }
+    
+    .modal-image-side .modal-fallback {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        aspect-ratio: 10/19 !important;
     }
     
     .image-side-label {
@@ -1549,7 +1612,7 @@
         min-width: 140px !important;
         max-width: calc(50% - 6px) !important;
         width: calc(50% - 6px) !important;
-        aspect-ratio: 10/19;
+        aspect-ratio: 10/19 !important;
         display: block !important;
         flex-basis: calc(50% - 6px) !important;
         flex-grow: 1 !important;
@@ -1562,7 +1625,7 @@
         height: 100% !important;
         max-height: 100% !important;
         min-height: 0 !important;
-        width: 100%;
+        width: 100% !important;
         object-fit: cover !important;
         display: block !important;
         position: absolute !important;
@@ -1570,6 +1633,17 @@
         left: 0 !important;
         right: 0 !important;
         bottom: 0 !important;
+    }
+    
+    .modal-image-side .modal-fallback {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        aspect-ratio: 10/19 !important;
     }
 } 
 
@@ -1995,23 +2069,34 @@
         min-width: 120px !important;
         max-width: calc(50% - 4px) !important;
         width: calc(50% - 4px) !important;
-        aspect-ratio: 10/19;
+        aspect-ratio: 10/19 !important;
         display: block !important;
         position: relative !important;
         overflow: hidden !important;
     }
     
     .modal-image-side img {
-        max-height: 100%;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
+        max-height: 100% !important;
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
         display: block !important;
         position: absolute !important;
         top: 0 !important;
         left: 0 !important;
         right: 0 !important;
         bottom: 0 !important;
+    }
+    
+    .modal-image-side .modal-fallback {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        aspect-ratio: 10/19 !important;
     }
     
     .image-side-label {
@@ -2093,13 +2178,13 @@
         flex: 1;
         min-width: 120px;
         max-width: calc(50% - 4px);
+        aspect-ratio: 10/19 !important;
         position: relative !important;
         overflow: hidden !important;
         background: #f0f0f0 !important;
     }
     
     .modal-image-side img {
-        max-height: 150px;
         position: absolute !important;
         top: 0 !important;
         left: 0 !important;
@@ -2111,6 +2196,17 @@
         object-position: center !important;
         -webkit-object-fit: cover !important;
         -webkit-object-position: center !important;
+    }
+    
+    .modal-image-side .modal-fallback {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        aspect-ratio: 10/19 !important;
     }
     
     .image-side-label {
@@ -2152,7 +2248,7 @@
 
 /* 팝업 이미지 최대화 레이아웃 */
 .modal-content {
-    height: 90vh;
+    height: auto;
     max-height: 90vh;
     display: flex;
     flex-direction: column;
@@ -2164,6 +2260,7 @@
         position: relative !important;
         overflow: hidden !important;
         background: #f0f0f0 !important;
+        aspect-ratio: 10/19 !important;
     }
     
     .modal-image-side img {
@@ -2178,6 +2275,17 @@
         object-position: center !important;
         -webkit-object-fit: cover !important;
         -webkit-object-position: center !important;
+    }
+    
+    .modal-image-side .modal-fallback {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        aspect-ratio: 10/19 !important;
     }
     
     /* 이미지가 로드되지 않은 경우를 위한 플레이스홀더 */
@@ -2202,6 +2310,7 @@
     .modal-image-side {
         position: relative !important;
         overflow: hidden !important;
+        aspect-ratio: 10/19 !important;
     }
     
     .modal-image-side img {
@@ -2217,6 +2326,17 @@
         -webkit-object-fit: cover !important;
         -webkit-object-position: center !important;
     }
+    
+    .modal-image-side .modal-fallback {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        aspect-ratio: 10/19 !important;
+    }
 }
 
 .modal-body {
@@ -2225,6 +2345,7 @@
     display: flex;
     flex-direction: column;
     padding: 0;
+    height: auto;
 }
 
 .modal-image-container {
@@ -2234,25 +2355,27 @@
     align-items: center;
     justify-content: center;
     padding: 0;
+    height: auto;
 }
 
 .modal-dual-images {
     width: 100%;
-    height: 100%;
-    min-height: 0;
+    height: auto !important;
+    min-height: auto !important;
     display: flex !important;
-    align-items: stretch !important;
+    align-items: flex-start !important;
     justify-content: center !important;
     gap: 20px;
     padding: 20px;
 }
 
 .modal-image-side {
-    flex: 1;
+    flex: 0 0 auto;
     min-width: 0;
     min-height: 0;
-    height: 100%;
-    aspect-ratio: 10/19;
+    height: auto;
+    aspect-ratio: 10/19 !important;
+    width: 200px;
     display: flex !important;
     flex-direction: column;
     align-items: center;
@@ -2277,6 +2400,17 @@
     left: 0;
     right: 0;
     bottom: 0;
+}
+
+.modal-image-side .modal-fallback {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 10/19 !important;
 }
 
 .image-side-label {
@@ -2320,4 +2454,29 @@
 .btn.btn-print:active {
     background: linear-gradient(90deg, #00b3cc 0%, #e04848 100%);
     transform: scale(0.98);
+}
+
+.modal-image-side-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 0 12px 0;
+}
+
+.image-side-label {
+    position: static !important;
+    margin-bottom: 6px;
+    margin-top: 0;
+    z-index: 1;
+    background: rgba(0, 212, 255, 0.08);
+    color: #222 !important;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 12px;
+    padding: 4px 12px;
+    border: 1px solid rgba(0, 212, 255, 0.15);
+    min-width: 48px;
+    max-width: 80%;
+    pointer-events: none;
+    text-align: center;
 }
