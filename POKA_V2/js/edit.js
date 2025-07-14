@@ -1735,22 +1735,7 @@ function renderImageGrids() {
         backImageGrid.appendChild(gridItem);
     });
     
-    // 이미지가 없을 경우 안내 메시지
-    if (uploadedImages.length === 0) {
-        frontImageGrid.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 20px;">업로드된 이미지가 없습니다</p>';
-        backImageGrid.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 20px;">업로드된 이미지가 없습니다</p>';
-        
-        // 업로드 페이지로 이동하는 버튼 추가
-        const uploadButton = document.createElement('button');
-        uploadButton.className = 'btn btn-primary';
-        uploadButton.innerHTML = '<span class="btn-icon">📤</span>이미지 업로드하기';
-        uploadButton.onclick = () => POKA.Navigation.navigateTo('upload.html');
-        uploadButton.style.marginTop = '10px';
-        
-        frontImageGrid.appendChild(uploadButton);
-    }
-    
-    console.log('이미지 그리드 렌더링 완료');
+    // 안내문구, 업로드 버튼 등은 렌더링하지 않음 (빈 그리드만 유지)
 }
 
 // 이미지 그리드 아이템 생성
@@ -3646,7 +3631,7 @@ function takePhoto(side) {
             
             reader.onerror = function() {
                 console.error('파일 읽기 실패');
-                POKA.Toast.error('파일을 읽을 수 없습니다.');
+                POKA.Toast.error('파일을 읽을 수 없습니다');
             };
             
             reader.readAsDataURL(file);
