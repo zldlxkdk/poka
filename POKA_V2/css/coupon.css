@@ -714,8 +714,32 @@
     -webkit-transform: translate3d(0, 0, 0);
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
+    /* 애니메이션 안정성 강화 */
+    animation-fill-mode: both;
+    -webkit-animation-fill-mode: both;
+    animation-play-state: running;
+    -webkit-animation-play-state: running;
 }
 
+/* 가이드 항목별 애니메이션 딜레이 - 고유 클래스 사용 */
+.guide-step-1 { 
+    animation-delay: 0.5s !important; 
+    -webkit-animation-delay: 0.5s !important;
+}
+.guide-step-2 { 
+    animation-delay: 0.6s !important; 
+    -webkit-animation-delay: 0.6s !important;
+}
+.guide-step-3 { 
+    animation-delay: 0.7s !important; 
+    -webkit-animation-delay: 0.7s !important;
+}
+.guide-step-4 { 
+    animation-delay: 0.8s !important; 
+    -webkit-animation-delay: 0.8s !important;
+}
+
+/* 기존 nth-child 선택자도 유지 (호환성) */
 .guide-step:nth-child(1) { 
     animation-delay: 0.5s; 
     -webkit-animation-delay: 0.5s;
@@ -815,6 +839,25 @@
         -webkit-perspective: 1000px;
     }
     
+    /* 모바일에서 고유 클래스 기반 애니메이션 딜레이 강제 적용 */
+    .guide-step-1 { 
+        animation-delay: 0.5s !important; 
+        -webkit-animation-delay: 0.5s !important;
+    }
+    .guide-step-2 { 
+        animation-delay: 0.6s !important; 
+        -webkit-animation-delay: 0.6s !important;
+    }
+    .guide-step-3 { 
+        animation-delay: 0.7s !important; 
+        -webkit-animation-delay: 0.7s !important;
+    }
+    .guide-step-4 { 
+        animation-delay: 0.8s !important; 
+        -webkit-animation-delay: 0.8s !important;
+    }
+    
+    /* 기존 nth-child 선택자도 유지 */
     .guide-step:nth-child(1) { 
         animation-delay: 0.5s; 
         -webkit-animation-delay: 0.5s;
