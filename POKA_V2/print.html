@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>POKA V2 - 포토카드 인쇄</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/print.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#00d4ff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 헤더 -->
+        <header class="header">
+            <div class="header-content">
+                <button class="back-btn" onclick="POKA.Navigation.goBack()">←</button>
+                <h1 class="page-title">포토카드 인쇄</h1>
+            </div>
+        </header>
+
+        <!-- 메인 컨텐츠 -->
+        <main class="main-content">
+            <!-- 포토카드 미리보기 -->
+            <section class="preview-section">
+                <div class="preview-header">
+                    <h3 class="section-title">인쇄할 포토카드</h3>
+                </div>
+                
+                <div class="photo-card-preview" id="photoCardPreview">
+                    <div class="card-name-display" id="previewCardName">포토카드 이름</div>
+                    <div class="card-container">
+                        <div class="card-front">
+                            <img id="previewFrontImage" src="" alt="앞면">
+                        </div>
+                        <div class="card-back">
+                            <img id="previewBackImage" src="" alt="뒷면">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 쿠폰 적용 섹션 -->
+            <section class="coupon-section">
+                <div class="coupon-header">
+                    <h3 class="section-title">쿠폰 적용</h3>
+                </div>
+                
+                <div class="coupon-container">
+                    <div class="coupon-selection">
+                        <button class="btn btn-secondary" onclick="openCouponList()">
+                            <span class="btn-icon">🎫</span>
+                            <span class="btn-text">내 쿠폰에서 선택</span>
+                        </button>
+                    </div>
+                    
+                    <!-- 로그인 안내 문구 -->
+                    <div class="login-notice" id="loginNotice" style="display: none;">
+                        <div class="notice-icon">🔒</div>
+                        <div class="notice-content">
+                            <div class="notice-title">로그인 후 사용할 수 있습니다</div>
+                            <div class="notice-description">쿠폰을 사용하려면 프로필에서 로그인해주세요</div>
+                            <button class="btn btn-primary" onclick="goToProfile()">
+                                <span class="btn-icon">👤</span>
+                                <span class="btn-text">프로필로 이동</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="coupon-status" id="couponStatus" style="display: none;">
+                        <div class="coupon-info">
+                            <span class="coupon-name" id="appliedCouponName"></span>
+                            <span class="coupon-discount" id="couponDiscount"></span>
+                        </div>
+                        <button class="btn btn-small" onclick="removeCoupon()">
+                            <span class="btn-icon">✕</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 가격 정보 -->
+            <section class="price-section">
+                <div class="price-container">
+                    <div class="price-row">
+                        <span class="price-label">기본 가격:</span>
+                        <span class="price-value" id="basePrice">₩3,000</span>
+                    </div>
+                    <div class="price-row discount-row" id="discountRow" style="display: none;">
+                        <span class="price-label">할인:</span>
+                        <span class="price-value discount-value" id="discountAmount">-₩0</span>
+                    </div>
+                    <div class="price-row total-row">
+                        <span class="price-label">총 금액:</span>
+                        <span class="price-value total-value" id="totalPrice">₩3,000</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- QR코드 촬영 섹션 -->
+            <section class="qr-section">
+                <div class="qr-header">
+                    <h3 class="section-title">키오스크 QR코드 촬영</h3>
+                </div>
+                
+                <div class="qr-container">
+                    <div class="qr-instruction">
+                        <div class="instruction-icon">📱</div>
+                        <p class="instruction-text">
+                            키오스크 화면의 QR코드를 촬영하여<br>
+                            인쇄 정보를 전송하세요
+                        </p>
+                    </div>
+                    
+                    <div class="qr-camera-container" id="qrCameraContainer" style="display: none;">
+                        <video id="qrVideo" autoplay playsinline></video>
+                        <canvas id="qrCanvas" style="display: none;"></canvas>
+                        <div class="qr-overlay">
+                            <div class="qr-frame"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="qr-actions">
+                        <button class="btn btn-primary" onclick="startQRScan()" id="startQRBtn">
+                            <span class="btn-icon">📷</span>
+                            <span class="btn-text">QR코드 촬영</span>
+                        </button>
+                        <button class="btn btn-secondary" onclick="stopQRScan()" id="stopQRBtn" style="display: none;">
+                            <span class="btn-icon">⏹️</span>
+                            <span class="btn-text">촬영 중지</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 인쇄 진행 상태 -->
+            <section class="print-status-section" id="printStatusSection" style="display: none;">
+                <div class="print-status-container">
+                    <div class="status-icon" id="statusIcon">⏳</div>
+                    <h3 class="status-title" id="statusTitle">인쇄 준비 중...</h3>
+                    <p class="status-message" id="statusMessage">키오스크로 정보를 전송하고 있습니다</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 액션 버튼 -->
+            <section class="actions-section">
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" onclick="POKA.Navigation.goBack()">
+                        <span class="btn-icon">←</span>
+                        <span class="btn-text">돌아가기</span>
+                    </button>
+                    <button class="btn btn-primary" onclick="confirmPrint()" id="confirmPrintBtn">
+                        <span class="btn-icon">🖨️</span>
+                        <span class="btn-text">인쇄 확인</span>
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <!-- 네비게이션 바 -->
+        <nav class="bottom-nav">
+            <a href="index.html" class="nav-item">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-text">홈</span>
+            </a>
+            <a href="gallery.html" class="nav-item">
+                <span class="nav-icon">🎴</span>
+                <span class="nav-text">포토카드</span>
+            </a>
+            <a href="map.html" class="nav-item">
+                <span class="nav-icon">🗺️</span>
+                <span class="nav-text">지도</span>
+            </a>
+            <a href="profile.html" class="nav-item">
+                <span class="nav-icon">👤</span>
+                <span class="nav-text">프로필</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- 쿠폰 리스트 모달 -->
+    <div class="coupon-modal" id="couponModal" style="display: none;">
+        <div class="modal-overlay" onclick="closeCouponModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>내 쿠폰</h3>
+                <button class="modal-close" onclick="closeCouponModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="coupon-search">
+                    <input type="text" id="couponSearchInput" class="search-input" placeholder="쿠폰 검색...">
+                </div>
+                <div class="coupon-list" id="couponList">
+                    <!-- 쿠폰 리스트가 여기에 동적으로 추가됩니다 -->
+                </div>
+                <div class="empty-coupons" id="emptyCoupons" style="display: none;">
+                    <div class="empty-icon">🎫</div>
+                    <p>사용 가능한 쿠폰이 없습니다</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QR코드 결과 모달 -->
+    <div class="qr-modal" id="qrModal" style="display: none;">
+        <div class="modal-overlay" onclick="closeQRModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>QR코드 인식 결과</h3>
+                <button class="modal-close" onclick="closeQRModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="qr-result" id="qrResult">
+                    <!-- QR코드 인식 결과가 여기에 표시됩니다 -->
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeQRModal()">
+                    <span class="btn-text">취소</span>
+                </button>
+                <button class="btn btn-primary" onclick="sendToKiosk()">
+                    <span class="btn-icon">🖨️</span>
+                    <span class="btn-text">키오스크로 전송</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/print.js"></script>
+    <script>
+        // QR코드 스캔 라이브러리 로드
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('포토카드 인쇄 페이지 로드 완료');
+            
+            // POKA 객체가 로드될 때까지 대기
+            const checkPOKA = () => {
+                if (typeof POKA !== 'undefined' && POKA.AppState) {
+                    console.log('POKA 객체 로드됨, 초기화 시작');
+                    initializePrintPage();
+                } else {
+                    console.log('POKA 객체 대기 중...');
+                    setTimeout(checkPOKA, 100);
+                }
+            };
+            
+            checkPOKA();
+        });
+    </script>
+</body>
+</html> 

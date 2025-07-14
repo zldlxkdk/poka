@@ -765,7 +765,19 @@ function deleteCurrentPhotoCard() {
 } 
 
 function printPhotoCard() {
-    alert('인쇄기능 작업 예정입니다.');
+    if (currentModalPhotoCard) {
+        const { photoCard } = currentModalPhotoCard;
+        
+        // 인쇄용 포토카드 데이터를 세션에 저장
+        if (typeof POKA !== 'undefined' && POKA.AppState) {
+            POKA.AppState.saveToStorage('printPhotoCard', photoCard);
+        }
+        
+        // 인쇄 페이지로 이동
+        POKA.Navigation.navigateTo('print.html');
+    } else {
+        POKA.Toast.error('인쇄할 포토카드가 없습니다');
+    }
 }
 
 // 디바운스 함수

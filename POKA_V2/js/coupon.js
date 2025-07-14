@@ -40,48 +40,246 @@ class CouponManager {
     // 쿠폰 데이터 로드
     loadCoupons() {
         const savedCoupons = localStorage.getItem('poka_coupons');
+        console.log('저장된 쿠폰 데이터:', savedCoupons);
+        
         if (savedCoupons) {
             this.coupons = JSON.parse(savedCoupons);
+            console.log('로드된 쿠폰 개수:', this.coupons.length);
+            console.log('쿠폰 상태별 개수:', {
+                available: this.coupons.filter(c => c.status === 'available').length,
+                used: this.coupons.filter(c => c.status === 'used').length,
+                expired: this.coupons.filter(c => c.status === 'expired').length
+            });
         } else {
+            // 개발 중 테스트를 위해 기존 데이터 초기화 (필요시 주석 해제)
+            // localStorage.removeItem('poka_coupons');
+            // this.coupons = [];
+            // this.saveCoupons();
+            // return;
             // 샘플 쿠폰 데이터 (테스트용)
+            console.log('샘플 쿠폰 데이터 생성 중...');
             this.coupons = [
+                // 사용 가능한 쿠폰 8개
                 {
                     id: '1',
-                    code: 'WELCOME2024',
-                    name: '신규 가입 쿠폰',
-                    discount: 2000,
-                    discountType: 'fixed', // fixed: 고정 할인, percent: 퍼센트 할인
-                    minAmount: 5000,
-                    expiryDate: '2024-12-31',
-                    status: 'available', // available, used, expired
+                    code: 'WELCOME10',
+                    name: '신규 고객 할인',
+                    discount: 300,
+                    discountType: 'fixed',
+                    minAmount: 3000,
+                    expiryDate: '2025-12-31',
+                    status: 'available',
                     registeredAt: '2024-01-15',
                     usedAt: null
                 },
                 {
                     id: '2',
                     code: 'SUMMER20',
-                    name: '여름 할인 쿠폰',
+                    name: '여름 특별 할인',
                     discount: 20,
                     discountType: 'percent',
-                    minAmount: 10000,
-                    expiryDate: '2024-08-31',
+                    minAmount: 5000,
+                    expiryDate: '2025-08-31',
                     status: 'available',
                     registeredAt: '2024-06-01',
                     usedAt: null
                 },
                 {
                     id: '3',
+                    code: 'FRIEND15',
+                    name: '친구 추천 할인',
+                    discount: 15,
+                    discountType: 'percent',
+                    minAmount: 3000,
+                    expiryDate: '2025-12-31',
+                    status: 'available',
+                    registeredAt: '2024-03-01',
+                    usedAt: null
+                },
+                {
+                    id: '4',
+                    code: 'HAPPY500',
+                    name: '행복 쿠폰',
+                    discount: 500,
+                    discountType: 'fixed',
+                    minAmount: 2000,
+                    expiryDate: '2025-12-31',
+                    status: 'available',
+                    registeredAt: '2024-02-15',
+                    usedAt: null
+                },
+                {
+                    id: '5',
+                    code: 'NEWYEAR30',
+                    name: '새해 특별 할인',
+                    discount: 30,
+                    discountType: 'percent',
+                    minAmount: 5000,
+                    expiryDate: '2025-12-31',
+                    status: 'available',
+                    registeredAt: '2024-01-01',
+                    usedAt: null
+                },
+                {
+                    id: '6',
+                    code: 'BIRTHDAY25',
+                    name: '생일 축하 할인',
+                    discount: 25,
+                    discountType: 'percent',
+                    minAmount: 3000,
+                    expiryDate: '2025-12-31',
+                    status: 'available',
+                    registeredAt: '2024-04-15',
+                    usedAt: null
+                },
+                {
+                    id: '7',
+                    code: 'VIP1000',
+                    name: 'VIP 고객 할인',
+                    discount: 1000,
+                    discountType: 'fixed',
+                    minAmount: 5000,
+                    expiryDate: '2025-12-31',
+                    status: 'available',
+                    registeredAt: '2024-05-01',
+                    usedAt: null
+                },
+                {
+                    id: '8',
+                    code: 'STUDENT25',
+                    name: '학생 할인',
+                    discount: 25,
+                    discountType: 'percent',
+                    minAmount: 2000,
+                    expiryDate: '2025-12-31',
+                    status: 'available',
+                    registeredAt: '2024-05-01',
+                    usedAt: null
+                },
+                // 사용 완료된 쿠폰 5개
+                {
+                    id: '9',
                     code: 'FIRSTORDER',
                     name: '첫 주문 할인',
                     discount: 1000,
                     discountType: 'fixed',
                     minAmount: 3000,
-                    expiryDate: '2024-05-15',
+                    expiryDate: '2025-05-15',
                     status: 'used',
                     registeredAt: '2024-03-01',
                     usedAt: '2024-04-20'
+                },
+                {
+                    id: '10',
+                    code: 'SPRING15',
+                    name: '봄맞이 할인',
+                    discount: 15,
+                    discountType: 'percent',
+                    minAmount: 4000,
+                    expiryDate: '2025-06-30',
+                    status: 'used',
+                    registeredAt: '2024-03-15',
+                    usedAt: '2024-05-10'
+                },
+                {
+                    id: '11',
+                    code: 'WEEKEND20',
+                    name: '주말 특별 할인',
+                    discount: 20,
+                    discountType: 'percent',
+                    minAmount: 3000,
+                    expiryDate: '2025-12-31',
+                    status: 'used',
+                    registeredAt: '2024-04-01',
+                    usedAt: '2024-05-15'
+                },
+                {
+                    id: '12',
+                    code: 'MORNING300',
+                    name: '아침 할인',
+                    discount: 300,
+                    discountType: 'fixed',
+                    minAmount: 2000,
+                    expiryDate: '2025-12-31',
+                    status: 'used',
+                    registeredAt: '2024-04-10',
+                    usedAt: '2024-05-20'
+                },
+                {
+                    id: '13',
+                    code: 'EVENING500',
+                    name: '저녁 할인',
+                    discount: 500,
+                    discountType: 'fixed',
+                    minAmount: 3000,
+                    expiryDate: '2025-12-31',
+                    status: 'used',
+                    registeredAt: '2024-04-15',
+                    usedAt: '2024-05-25'
+                },
+                // 만료된 쿠폰 5개
+                {
+                    id: '14',
+                    code: 'OLD2023',
+                    name: '2023년 특별 할인',
+                    discount: 1000,
+                    discountType: 'fixed',
+                    minAmount: 3000,
+                    expiryDate: '2023-12-31',
+                    status: 'expired',
+                    registeredAt: '2023-10-01',
+                    usedAt: null
+                },
+                {
+                    id: '15',
+                    code: 'WINTER2023',
+                    name: '겨울 시즌 할인',
+                    discount: 25,
+                    discountType: 'percent',
+                    minAmount: 4000,
+                    expiryDate: '2023-02-28',
+                    status: 'expired',
+                    registeredAt: '2023-01-15',
+                    usedAt: null
+                },
+                {
+                    id: '16',
+                    code: 'SPRING2023',
+                    name: '봄 시즌 할인',
+                    discount: 20,
+                    discountType: 'percent',
+                    minAmount: 3000,
+                    expiryDate: '2023-05-31',
+                    status: 'expired',
+                    registeredAt: '2023-03-01',
+                    usedAt: null
+                },
+                {
+                    id: '17',
+                    code: 'SUMMER2023',
+                    name: '여름 시즌 할인',
+                    discount: 30,
+                    discountType: 'percent',
+                    minAmount: 5000,
+                    expiryDate: '2023-08-31',
+                    status: 'expired',
+                    registeredAt: '2023-06-01',
+                    usedAt: null
+                },
+                {
+                    id: '18',
+                    code: 'AUTUMN2023',
+                    name: '가을 시즌 할인',
+                    discount: 15,
+                    discountType: 'percent',
+                    minAmount: 3000,
+                    expiryDate: '2023-11-30',
+                    status: 'expired',
+                    registeredAt: '2023-09-01',
+                    usedAt: null
                 }
             ];
+            console.log('생성된 샘플 쿠폰 개수:', this.coupons.length);
             this.saveCoupons();
         }
     }
@@ -110,40 +308,61 @@ class CouponManager {
 
         // 쿠폰 유효성 검증 (실제로는 서버에서 검증)
         const validCoupons = {
-            'WELCOME2024': {
-                name: '신규 가입 쿠폰',
-                discount: 2000,
-                discountType: 'fixed',
-                minAmount: 5000,
-                expiryDate: '2024-12-31'
-            },
-            'SUMMER20': {
-                name: '여름 할인 쿠폰',
-                discount: 20,
-                discountType: 'percent',
-                minAmount: 10000,
-                expiryDate: '2024-08-31'
-            },
-            'FIRSTORDER': {
-                name: '첫 주문 할인',
-                discount: 1000,
+            'WELCOME10': {
+                name: '신규 고객 할인',
+                discount: 300,
                 discountType: 'fixed',
                 minAmount: 3000,
-                expiryDate: '2024-05-15'
+                expiryDate: '2025-12-31'
             },
-            'NEWUSER10': {
-                name: '신규 사용자 10% 할인',
-                discount: 10,
+            'SUMMER20': {
+                name: '여름 특별 할인',
+                discount: 20,
                 discountType: 'percent',
                 minAmount: 5000,
-                expiryDate: '2024-12-31'
+                expiryDate: '2025-08-31'
+            },
+            'FRIEND15': {
+                name: '친구 추천 할인',
+                discount: 15,
+                discountType: 'percent',
+                minAmount: 3000,
+                expiryDate: '2025-12-31'
             },
             'HAPPY500': {
-                name: '행복한 500원 할인',
+                name: '행복 쿠폰',
                 discount: 500,
                 discountType: 'fixed',
                 minAmount: 2000,
-                expiryDate: '2024-12-31'
+                expiryDate: '2025-12-31'
+            },
+            'NEWYEAR30': {
+                name: '새해 특별 할인',
+                discount: 30,
+                discountType: 'percent',
+                minAmount: 5000,
+                expiryDate: '2025-12-31'
+            },
+            'BIRTHDAY25': {
+                name: '생일 축하 할인',
+                discount: 25,
+                discountType: 'percent',
+                minAmount: 3000,
+                expiryDate: '2025-12-31'
+            },
+            'VIP1000': {
+                name: 'VIP 고객 할인',
+                discount: 1000,
+                discountType: 'fixed',
+                minAmount: 5000,
+                expiryDate: '2025-12-31'
+            },
+            'STUDENT25': {
+                name: '학생 할인',
+                discount: 25,
+                discountType: 'percent',
+                minAmount: 2000,
+                expiryDate: '2025-12-31'
             }
         };
 
@@ -196,15 +415,30 @@ class CouponManager {
 
         // 현재 탭에 맞는 쿠폰 필터링
         const filteredCoupons = this.coupons.filter(coupon => {
+            console.log(`쿠폰 ${coupon.code} 필터링:`, {
+                status: coupon.status,
+                isExpired: this.isExpired(coupon),
+                currentTab: this.currentTab
+            });
+            
             if (this.currentTab === 'available') {
-                return coupon.status === 'available' && !this.isExpired(coupon);
+                const isAvailable = coupon.status === 'available' && !this.isExpired(coupon);
+                console.log(`쿠폰 ${coupon.code} 사용가능 여부:`, isAvailable);
+                return isAvailable;
             } else if (this.currentTab === 'used') {
-                return coupon.status === 'used';
+                const isUsed = coupon.status === 'used';
+                console.log(`쿠폰 ${coupon.code} 사용완료 여부:`, isUsed);
+                return isUsed;
             } else if (this.currentTab === 'expired') {
-                return this.isExpired(coupon) || coupon.status === 'expired';
+                const isExpired = coupon.status === 'expired' || (coupon.status === 'available' && this.isExpired(coupon));
+                console.log(`쿠폰 ${coupon.code} 만료 여부:`, isExpired);
+                return isExpired;
             }
             return false;
         });
+
+        console.log(`현재 탭: ${this.currentTab}, 필터링된 쿠폰 개수: ${filteredCoupons.length}`);
+        console.log('필터링된 쿠폰들:', filteredCoupons);
 
         if (filteredCoupons.length === 0) {
             couponList.innerHTML = '';
@@ -288,8 +522,18 @@ class CouponManager {
     // 쿠폰 만료 확인
     isExpired(coupon) {
         const today = new Date();
+        // 날짜만 비교하기 위해 시간을 제거
+        const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
         const expiryDate = new Date(coupon.expiryDate);
-        return today > expiryDate;
+        const expiryDateOnly = new Date(expiryDate.getFullYear(), expiryDate.getMonth(), expiryDate.getDate());
+        
+        const isExpired = todayDate > expiryDateOnly;
+        console.log(`쿠폰 ${coupon.code} 만료 확인:`, {
+            today: todayDate.toISOString(),
+            expiryDate: expiryDateOnly.toISOString(),
+            isExpired: isExpired
+        });
+        return isExpired;
     }
 
     // 쿠폰 개수 업데이트
@@ -408,6 +652,242 @@ class CouponManager {
             coupon.status === 'available' && !this.isExpired(coupon)
         );
     }
+
+    // 쿠폰 데이터 초기화 (개발용)
+    resetCoupons() {
+        console.log('쿠폰 데이터 초기화 시작...');
+        localStorage.removeItem('poka_coupons');
+        console.log('localStorage에서 poka_coupons 삭제됨');
+        
+        // 샘플 데이터로 다시 초기화
+        this.coupons = [
+            // 사용 가능한 쿠폰 8개
+            {
+                id: '1',
+                code: 'WELCOME10',
+                name: '신규 고객 할인',
+                discount: 300,
+                discountType: 'fixed',
+                minAmount: 3000,
+                expiryDate: '2025-12-31',
+                status: 'available',
+                registeredAt: '2024-01-15',
+                usedAt: null
+            },
+            {
+                id: '2',
+                code: 'SUMMER20',
+                name: '여름 특별 할인',
+                discount: 20,
+                discountType: 'percent',
+                minAmount: 5000,
+                expiryDate: '2025-08-31',
+                status: 'available',
+                registeredAt: '2024-06-01',
+                usedAt: null
+            },
+            {
+                id: '3',
+                code: 'FRIEND15',
+                name: '친구 추천 할인',
+                discount: 15,
+                discountType: 'percent',
+                minAmount: 3000,
+                expiryDate: '2025-12-31',
+                status: 'available',
+                registeredAt: '2024-03-01',
+                usedAt: null
+            },
+            {
+                id: '4',
+                code: 'HAPPY500',
+                name: '행복 쿠폰',
+                discount: 500,
+                discountType: 'fixed',
+                minAmount: 2000,
+                expiryDate: '2025-12-31',
+                status: 'available',
+                registeredAt: '2024-02-15',
+                usedAt: null
+            },
+            {
+                id: '5',
+                code: 'NEWYEAR30',
+                name: '새해 특별 할인',
+                discount: 30,
+                discountType: 'percent',
+                minAmount: 5000,
+                expiryDate: '2025-12-31',
+                status: 'available',
+                registeredAt: '2024-01-01',
+                usedAt: null
+            },
+            {
+                id: '6',
+                code: 'BIRTHDAY25',
+                name: '생일 축하 할인',
+                discount: 25,
+                discountType: 'percent',
+                minAmount: 3000,
+                expiryDate: '2025-12-31',
+                status: 'available',
+                registeredAt: '2024-04-15',
+                usedAt: null
+            },
+            {
+                id: '7',
+                code: 'VIP1000',
+                name: 'VIP 고객 할인',
+                discount: 1000,
+                discountType: 'fixed',
+                minAmount: 5000,
+                expiryDate: '2025-12-31',
+                status: 'available',
+                registeredAt: '2024-05-01',
+                usedAt: null
+            },
+            {
+                id: '8',
+                code: 'STUDENT25',
+                name: '학생 할인',
+                discount: 25,
+                discountType: 'percent',
+                minAmount: 2000,
+                expiryDate: '2025-12-31',
+                status: 'available',
+                registeredAt: '2024-05-01',
+                usedAt: null
+            },
+            // 사용 완료된 쿠폰 5개
+            {
+                id: '9',
+                code: 'FIRSTORDER',
+                name: '첫 주문 할인',
+                discount: 1000,
+                discountType: 'fixed',
+                minAmount: 3000,
+                expiryDate: '2025-05-15',
+                status: 'used',
+                registeredAt: '2024-03-01',
+                usedAt: '2024-04-20'
+            },
+            {
+                id: '10',
+                code: 'SPRING15',
+                name: '봄맞이 할인',
+                discount: 15,
+                discountType: 'percent',
+                minAmount: 4000,
+                expiryDate: '2025-06-30',
+                status: 'used',
+                registeredAt: '2024-03-15',
+                usedAt: '2024-05-10'
+            },
+            {
+                id: '11',
+                code: 'WEEKEND20',
+                name: '주말 특별 할인',
+                discount: 20,
+                discountType: 'percent',
+                minAmount: 3000,
+                expiryDate: '2025-12-31',
+                status: 'used',
+                registeredAt: '2024-04-01',
+                usedAt: '2024-05-15'
+            },
+            {
+                id: '12',
+                code: 'MORNING300',
+                name: '아침 할인',
+                discount: 300,
+                discountType: 'fixed',
+                minAmount: 2000,
+                expiryDate: '2025-12-31',
+                status: 'used',
+                registeredAt: '2024-04-10',
+                usedAt: '2024-05-20'
+            },
+            {
+                id: '13',
+                code: 'EVENING500',
+                name: '저녁 할인',
+                discount: 500,
+                discountType: 'fixed',
+                minAmount: 3000,
+                expiryDate: '2025-12-31',
+                status: 'used',
+                registeredAt: '2024-04-15',
+                usedAt: '2024-05-25'
+            },
+            // 만료된 쿠폰 5개
+            {
+                id: '14',
+                code: 'OLD2023',
+                name: '2023년 특별 할인',
+                discount: 1000,
+                discountType: 'fixed',
+                minAmount: 3000,
+                expiryDate: '2023-12-31',
+                status: 'expired',
+                registeredAt: '2023-10-01',
+                usedAt: null
+            },
+            {
+                id: '15',
+                code: 'WINTER2023',
+                name: '겨울 시즌 할인',
+                discount: 25,
+                discountType: 'percent',
+                minAmount: 4000,
+                expiryDate: '2023-02-28',
+                status: 'expired',
+                registeredAt: '2023-01-15',
+                usedAt: null
+            },
+            {
+                id: '16',
+                code: 'SPRING2023',
+                name: '봄 시즌 할인',
+                discount: 20,
+                discountType: 'percent',
+                minAmount: 3000,
+                expiryDate: '2023-05-31',
+                status: 'expired',
+                registeredAt: '2023-03-01',
+                usedAt: null
+            },
+            {
+                id: '17',
+                code: 'SUMMER2023',
+                name: '여름 시즌 할인',
+                discount: 30,
+                discountType: 'percent',
+                minAmount: 5000,
+                expiryDate: '2023-08-31',
+                status: 'expired',
+                registeredAt: '2023-06-01',
+                usedAt: null
+            },
+            {
+                id: '18',
+                code: 'AUTUMN2023',
+                name: '가을 시즌 할인',
+                discount: 15,
+                discountType: 'percent',
+                minAmount: 3000,
+                expiryDate: '2023-11-30',
+                status: 'expired',
+                registeredAt: '2023-09-01',
+                usedAt: null
+            }
+        ];
+        
+        console.log('샘플 데이터로 초기화 완료, 쿠폰 개수:', this.coupons.length);
+        this.saveCoupons();
+        this.renderCoupons();
+        this.updateCouponCount();
+        this.showMessage('쿠폰 데이터가 초기화되었습니다.', 'success');
+    }
 }
 
 // 전역 함수들
@@ -423,8 +903,28 @@ function showCouponInfo() {
 - 등록된 쿠폰은 자동으로 저장됩니다
 
 📱 쿠폰 사용
-- 포토카드 제작 시 쿠폰을 선택할 수 있습니다
-- 결제 시 자동으로 할인이 적용됩니다
+- 포토카드 인쇄 시 쿠폰을 선택할 수 있습니다
+- 인쇄 시 자동으로 할인이 적용됩니다
+
+🎫 사용 가능한 쿠폰
+- WELCOME10: 신규 고객 300원 할인
+- SUMMER20: 여름 특별 20% 할인
+- FRIEND15: 친구 추천 15% 할인
+- HAPPY500: 행복 쿠폰 500원 할인
+- NEWYEAR30: 새해 특별 30% 할인
+- BIRTHDAY25: 생일 축하 25% 할인
+- VIP1000: VIP 고객 1000원 할인
+- NEWUSER10: 신규 사용자 10% 할인
+- SPRING15: 봄맞이 15% 할인
+- WEEKEND20: 주말 특별 20% 할인
+- MORNING300: 아침 300원 할인
+- EVENING500: 저녁 500원 할인
+- STUDENT25: 학생 25% 할인
+- SENIOR30: 시니어 30% 할인
+- FAMILY40: 가족 40% 할인
+- LOYALTY800: 충성 고객 800원 할인
+- FLASH50: 플래시 세일 50% 할인
+- HOLIDAY1000: 휴일 특별 1000원 할인
 
 ⚠️ 주의사항
 - 쿠폰은 1회만 사용 가능합니다
@@ -438,6 +938,13 @@ function registerCoupon() {
 
 function switchTab(tab) {
     couponManager.switchTab(tab);
+}
+
+// 쿠폰 데이터 초기화 (개발용)
+function resetCouponData() {
+    if (couponManager) {
+        couponManager.resetCoupons();
+    }
 }
 
 // 페이지 로드 시 초기화

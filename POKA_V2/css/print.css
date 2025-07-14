@@ -1,0 +1,1101 @@
+/* POKA V2 - 포토카드 인쇄 페이지 스타일 */
+
+/* 반응형 해상도 체크를 위한 CSS 변수 */
+:root {
+    --screen-width: 100vw;
+    --screen-height: 100vh;
+    --is-mobile: 0;
+    --is-tablet: 0;
+    --is-desktop: 1;
+}
+
+/* 모바일 감지 */
+@media (max-width: 768px) {
+    :root {
+        --is-mobile: 1;
+        --is-tablet: 0;
+        --is-desktop: 0;
+    }
+}
+
+/* 태블릿 감지 */
+@media (min-width: 769px) and (max-width: 1024px) {
+    :root {
+        --is-mobile: 0;
+        --is-tablet: 1;
+        --is-desktop: 0;
+    }
+}
+
+/* 헤더 스타일 */
+.header {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: white;
+    padding: 20px 16px;
+    text-align: center;
+    box-shadow: var(--shadow-medium);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 44px;
+}
+
+.back-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: var(--transition);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    min-width: 36px;
+}
+
+.back-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.page-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin: 0;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    flex: 1;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 메인 컨텐츠 */
+.main-content {
+    padding: 20px 16px;
+    background: var(--background-color);
+    min-height: calc(100vh - 120px);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    /* 하단 네비게이션 바 높이만큼 여백 추가 (네비게이션 바 높이 + 추가 여백) */
+    padding-bottom: 140px;
+}
+
+/* 섹션 공통 스타일 */
+.preview-section,
+.coupon-section,
+.price-section,
+.qr-section,
+.print-status-section {
+    background: var(--surface-color);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    box-shadow: var(--shadow-light);
+    border: 1px solid var(--border-color);
+}
+
+.section-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--text-primary);
+    margin: 0 0 16px 0;
+}
+
+/* 포토카드 미리보기 */
+.photo-card-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0;
+    gap: 16px;
+}
+
+.card-name-display {
+    font-size: 1.2rem;
+    font-weight: bold;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-align: center;
+    margin-bottom: 8px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    letter-spacing: 0.5px;
+}
+
+.card-container {
+    position: relative;
+    width: 200px;
+    height: 380px; /* 10:19 비율 */
+    perspective: 1000px;
+    transform-style: preserve-3d;
+    cursor: pointer;
+    transition: transform 0.6s ease-in-out;
+}
+
+.card-container:hover {
+    transform: scale(1.05);
+}
+
+.card-container.rotating {
+    animation: card-rotate 3s ease-in-out infinite;
+}
+
+@keyframes card-rotate {
+    0%, 100% {
+        transform: rotateY(0deg);
+    }
+    50% {
+        transform: rotateY(180deg);
+    }
+}
+
+.card-front,
+.card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    transition: transform 0.6s ease-in-out;
+}
+
+.card-front {
+    transform: rotateY(0deg);
+    z-index: 2;
+}
+
+.card-back {
+    transform: rotateY(180deg);
+    z-index: 1;
+}
+
+.card-front img,
+.card-back img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* 쿠폰 섹션 */
+.coupon-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* 로그인 안내 문구 */
+.login-notice {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+    border: 2px solid #4caf50;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-light);
+}
+
+.notice-icon {
+    font-size: 2rem;
+    color: #2e7d32;
+    flex-shrink: 0;
+}
+
+.notice-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    text-align: center;
+}
+
+.notice-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #1b5e20;
+    margin: 0;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.notice-description {
+    font-size: 0.9rem;
+    color: #2e7d32;
+    margin: 0;
+    line-height: 1.4;
+    font-weight: 500;
+}
+
+.notice-content .btn {
+    align-self: center;
+    margin-top: 12px;
+    background: linear-gradient(135deg, #4caf50, #45a049);
+    border: none;
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+}
+
+.notice-content .btn:hover {
+    background: linear-gradient(135deg, #45a049, #388e3c);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+}
+
+.coupon-selection {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    text-align: center;
+}
+
+.coupon-selection .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 200px;
+    margin: 0 auto;
+}
+
+.coupon-status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-light);
+}
+
+.coupon-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.coupon-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.coupon-discount {
+    font-size: 0.8rem;
+    opacity: 0.9;
+}
+
+/* 가격 섹션 */
+.price-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+}
+
+.price-row.total-row {
+    border-top: 2px solid var(--border-color);
+    padding-top: 16px;
+    margin-top: 8px;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.price-label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.price-value {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.discount-value {
+    color: #4CAF50;
+}
+
+.total-value {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+}
+
+/* QR코드 섹션 */
+.qr-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.qr-instruction {
+    text-align: center;
+    padding: 20px;
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(102, 126, 234, 0.1));
+    border-radius: var(--border-radius);
+    border: 1px solid rgba(0, 212, 255, 0.2);
+}
+
+.instruction-icon {
+    font-size: 3rem;
+    margin-bottom: 12px;
+}
+
+.instruction-text {
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0;
+}
+
+.qr-camera-container {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    background: #000;
+}
+
+#qrVideo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.qr-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.qr-frame {
+    width: 200px;
+    height: 200px;
+    border: 3px solid rgba(0, 212, 255, 0.8);
+    border-radius: 12px;
+    box-shadow: 0 0 0 2000px rgba(0, 0, 0, 0.5);
+    animation: qr-pulse 2s infinite;
+}
+
+@keyframes qr-pulse {
+    0%, 100% {
+        border-color: rgba(0, 212, 255, 0.8);
+        transform: scale(1);
+    }
+    50% {
+        border-color: rgba(0, 212, 255, 1);
+        transform: scale(1.05);
+    }
+}
+
+.qr-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 인쇄 상태 섹션 */
+.print-status-container {
+    text-align: center;
+    padding: 20px;
+}
+
+.status-icon {
+    font-size: 3rem;
+    margin-bottom: 16px;
+    animation: status-spin 2s linear infinite;
+}
+
+@keyframes status-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.status-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: var(--text-primary);
+    margin: 0 0 8px 0;
+}
+
+.status-message {
+    color: var(--text-secondary);
+    margin: 0 0 20px 0;
+    line-height: 1.5;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
+    border-radius: 4px;
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
+/* 액션 버튼 */
+.actions-section {
+    margin-top: auto;
+    padding-top: 20px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    align-items: center;
+}
+
+.action-buttons .btn {
+    flex: 1;
+    max-width: 200px;
+    justify-content: center;
+}
+
+/* 쿠폰 모달 */
+.coupon-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.coupon-search {
+    margin-bottom: 16px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    background: var(--background-color);
+    color: var(--text-primary);
+    transition: var(--transition);
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+}
+
+.coupon-list {
+    max-height: 300px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.coupon-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.coupon-item:hover {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.coupon-item.selected {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.coupon-item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.coupon-item-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.coupon-item-desc {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+.coupon-item-discount {
+    font-weight: bold;
+    color: #4CAF50;
+}
+
+.coupon-item.selected .coupon-item-discount {
+    color: white;
+}
+
+.empty-coupons {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-secondary);
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+/* QR코드 모달 */
+.qr-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    position: relative;
+    background: var(--surface-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-heavy);
+    max-width: 400px;
+    width: 100%;
+    max-height: 80vh;
+    overflow: hidden;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--text-primary);
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    transition: var(--transition);
+}
+
+.modal-close:hover {
+    background: var(--border-color);
+    color: var(--text-primary);
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.qr-result {
+    text-align: center;
+    padding: 20px;
+    background: var(--background-color);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    padding: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.modal-actions .btn {
+    flex: 1;
+    justify-content: center;
+}
+
+/* 버튼 스타일 */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
+    min-height: 44px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: white;
+    box-shadow: var(--shadow-medium);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-heavy);
+}
+
+.btn-secondary {
+    background: var(--surface-color);
+    color: var(--text-primary);
+    border: 2px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    background: var(--border-color);
+    transform: translateY(-1px);
+}
+
+.btn-small {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    min-height: 36px;
+}
+
+.btn-icon {
+    font-size: 1.1em;
+}
+
+.btn-text {
+    white-space: nowrap;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .header {
+        padding: 10px 12px;
+    }
+    
+    .header-content {
+        gap: 8px;
+        padding: 0;
+    }
+    
+    .back-btn {
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+        font-size: 1.3rem;
+        padding: 6px;
+    }
+    
+    .page-title {
+        font-size: 1.1rem;
+        line-height: 1.1;
+        text-align: left;
+        justify-self: flex-start;
+    }
+    
+    .main-content {
+        padding: 16px 12px;
+        gap: 16px;
+        /* 하단 네비게이션 바 높이만큼 여백 추가 (네비게이션 바 높이 + 추가 여백) */
+        padding-bottom: 120px;
+    }
+    
+    .preview-section,
+    .coupon-section,
+    .price-section,
+    .qr-section,
+    .print-status-section {
+        padding: 16px;
+    }
+    
+    .section-title {
+        font-size: 1.1rem;
+        margin-bottom: 12px;
+    }
+
+    .login-notice {
+        padding: 16px;
+        gap: 12px;
+    }
+
+    .notice-icon {
+        font-size: 1.5rem;
+    }
+
+    .notice-title {
+        font-size: 1rem;
+    }
+
+    .notice-description {
+        font-size: 0.85rem;
+    }
+    
+    .card-container {
+        width: 160px;
+        height: 304px; /* 10:19 비율 */
+    }
+    
+    .card-name-display {
+        font-size: 1rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .coupon-input-group {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .coupon-input {
+        width: 100%;
+    }
+    
+    .coupon-selection .btn {
+        min-width: 100%;
+        width: 100%;
+    }
+    
+    .qr-camera-container {
+        height: 250px;
+    }
+    
+    .qr-frame {
+        width: 160px;
+        height: 160px;
+    }
+    
+    .qr-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .action-buttons .btn {
+        max-width: 100%;
+        width: 100%;
+    }
+    
+    .modal-content {
+        margin: 20px;
+        max-width: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        padding: 8px 10px;
+    }
+    
+    .back-btn {
+        width: 28px;
+        height: 28px;
+        min-width: 28px;
+        font-size: 1.2rem;
+        padding: 4px;
+    }
+    
+    .page-title {
+        font-size: 1rem;
+    }
+    
+    .main-content {
+        padding: 12px 10px;
+        gap: 12px;
+        /* 하단 네비게이션 바 높이만큼 여백 추가 (네비게이션 바 높이 + 추가 여백) */
+        padding-bottom: 110px;
+    }
+    
+    .preview-section,
+    .coupon-section,
+    .price-section,
+    .qr-section,
+    .print-status-section {
+        padding: 12px;
+    }
+    
+    .section-title {
+        font-size: 1rem;
+        margin-bottom: 10px;
+    }
+
+    .login-notice {
+        padding: 12px;
+        gap: 10px;
+    }
+
+    .notice-icon {
+        font-size: 1.3rem;
+    }
+
+    .notice-title {
+        font-size: 0.9rem;
+    }
+
+    .notice-description {
+        font-size: 0.8rem;
+    }
+    
+    .card-container {
+        width: 140px;
+        height: 266px; /* 10:19 비율 */
+    }
+    
+    .card-name-display {
+        font-size: 0.9rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .instruction-icon {
+        font-size: 2.5rem;
+    }
+    
+    .instruction-text {
+        font-size: 0.9rem;
+    }
+    
+    .coupon-selection .btn {
+        min-width: 100%;
+        width: 100%;
+        font-size: 0.9rem;
+    }
+    
+    .qr-camera-container {
+        height: 200px;
+    }
+    
+    .qr-frame {
+        width: 140px;
+        height: 140px;
+    }
+    
+    .status-icon {
+        font-size: 2.5rem;
+    }
+    
+    .status-title {
+        font-size: 1.1rem;
+    }
+    
+    .status-message {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .header {
+        padding: 6px 8px;
+    }
+    
+    .back-btn {
+        width: 24px;
+        height: 24px;
+        min-width: 24px;
+        font-size: 1.1rem;
+        padding: 3px;
+    }
+    
+    .page-title {
+        font-size: 0.9rem;
+    }
+    
+    .main-content {
+        padding: 10px 8px;
+        gap: 10px;
+        /* 하단 네비게이션 바 높이만큼 여백 추가 (네비게이션 바 높이 + 추가 여백) */
+        padding-bottom: 100px;
+    }
+    
+    .preview-section,
+    .coupon-section,
+    .price-section,
+    .qr-section,
+    .print-status-section {
+        padding: 10px;
+    }
+
+    .login-notice {
+        padding: 10px;
+        gap: 8px;
+    }
+
+    .notice-icon {
+        font-size: 1.2rem;
+    }
+
+    .notice-title {
+        font-size: 0.85rem;
+    }
+
+    .notice-description {
+        font-size: 0.75rem;
+    }
+    
+    .section-title {
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+    }
+    
+    .card-container {
+        width: 120px;
+        height: 228px; /* 10:19 비율 */
+    }
+    
+    .card-name-display {
+        font-size: 0.8rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .instruction-icon {
+        font-size: 2rem;
+    }
+    
+    .instruction-text {
+        font-size: 0.8rem;
+    }
+    
+    .coupon-selection .btn {
+        min-width: 100%;
+        width: 100%;
+        font-size: 0.85rem;
+        padding: 10px 16px;
+    }
+    
+    .qr-camera-container {
+        height: 180px;
+    }
+    
+    .qr-frame {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .status-icon {
+        font-size: 2rem;
+    }
+    
+    .status-title {
+        font-size: 1rem;
+    }
+    
+    .status-message {
+        font-size: 0.8rem;
+    }
+}
+
+/* 터치 디바이스 최적화 */
+@media (hover: none) and (pointer: coarse) {
+    .back-btn {
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none;
+        min-width: 44px;
+        min-height: 44px;
+    }
+    
+    .btn {
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none;
+        min-height: 44px;
+    }
+    
+    .btn:active {
+        transform: scale(0.98);
+    }
+    
+    .search-input {
+        -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none;
+    }
+    
+    .qr-camera-container {
+        touch-action: none;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+} 

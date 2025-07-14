@@ -775,6 +775,7 @@
 .guide-step:nth-child(1) { animation-delay: 0.5s; }
 .guide-step:nth-child(2) { animation-delay: 0.6s; }
 .guide-step:nth-child(3) { animation-delay: 0.7s; }
+.guide-step:nth-child(4) { animation-delay: 0.8s; }
 
 @keyframes fadeInUp {
     from {
