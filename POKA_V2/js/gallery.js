@@ -89,6 +89,16 @@ function loadPhotoCards() {
     // 포토카드 배열 설정
     photoCards = uniquePhotoCards;
     
+    // 디버깅: 로드된 포토카드 데이터 확인
+    console.log('로드된 포토카드 데이터:', photoCards.map(card => ({
+        id: card.id,
+        name: card.name,
+        hasFrontImage: !!card.frontImage,
+        hasBackImage: !!card.backImage,
+        frontImageLength: card.frontImage ? card.frontImage.length : 0,
+        backImageLength: card.backImage ? card.backImage.length : 0
+    })));
+    
     // 날짜순으로 정렬 (최신순)
     photoCards.sort((a, b) => {
         const dateA = new Date(a.createdAt || Date.now());
@@ -174,6 +184,18 @@ function renderGallery() {
 // 포토카드 아이템 생성
 function createPhotoCardItem(photoCard, index) {
     
+    // 디버깅: 포토카드 데이터 확인
+    console.log('포토카드 아이템 생성:', {
+        id: photoCard.id,
+        name: photoCard.name,
+        frontImage: photoCard.frontImage ? photoCard.frontImage.substring(0, 50) + '...' : '없음',
+        backImage: photoCard.backImage ? photoCard.backImage.substring(0, 50) + '...' : '없음',
+        frontImageLength: photoCard.frontImage ? photoCard.frontImage.length : 0,
+        backImageLength: photoCard.backImage ? photoCard.backImage.length : 0,
+        hasBackImage: !!photoCard.backImage,
+        backImageType: photoCard.backImage ? photoCard.backImage.substring(0, 30) : '없음'
+    });
+    
     const item = document.createElement('div');
     item.className = 'gallery-item photo-card-item';
     item.dataset.cardId = photoCard.id;
@@ -200,18 +222,6 @@ function createPhotoCardItem(photoCard, index) {
                     <img src="${photoCard.backImage}" alt="${photoCard.name || '뒷면'}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                     <div class="image-fallback">📷</div>
                 </div>
-                
-                <!-- 카드 측면들 (두께감 표현) -->
-                <div class="photo-card-side photo-card-side-top"></div>
-                <div class="photo-card-side photo-card-side-bottom"></div>
-                <div class="photo-card-side photo-card-side-left"></div>
-                <div class="photo-card-side photo-card-side-right"></div>
-                
-                <!-- 카드 내부 측면들 (앞면과 뒷면 사이) -->
-                <div class="photo-card-inner-side photo-card-inner-top"></div>
-                <div class="photo-card-inner-side photo-card-inner-bottom"></div>
-                <div class="photo-card-inner-side photo-card-inner-left"></div>
-                <div class="photo-card-inner-side photo-card-inner-right"></div>
             </div>
             <!-- 즐겨찾기 표시 -->
             ${photoCard.favorite ? '<div class="favorite-badge">⭐</div>' : ''}
@@ -228,15 +238,67 @@ function createPhotoCardItem(photoCard, index) {
     
     // 클릭 이벤트
     item.addEventListener('click', (e) => {
+        // 카드 회전 효과 시작
+        const photoCardContainer = item.querySelector('.photo-card-container');
+        if (photoCardContainer) {
+            photoCardContainer.classList.add('rotating');
+            
+            // 3초 후 회전 효과 제거
+            setTimeout(() => {
+                photoCardContainer.classList.remove('rotating');
+            }, 3000);
+        }
+        
+        // 모달 열기
         openPhotoCardModal(photoCard, index);
     });
     
     // 애니메이션 지연 설정
     item.style.animationDelay = `${index * 0.1}s`;
     
-
-    
-
+    // 이미지 로드 상태 확인 및 CSS 디버깅
+    setTimeout(() => {
+        const frontImg = item.querySelector('.photo-card-front img');
+        const backImg = item.querySelector('.photo-card-back img');
+        const photoCard = item.querySelector('.photo-card');
+        const photoCardBack = item.querySelector('.photo-card-back');
+        
+        console.log(`포토카드 ${photoCard.id} 이미지 상태:`, {
+            frontImgSrc: frontImg ? frontImg.src.substring(0, 50) + '...' : '없음',
+            backImgSrc: backImg ? backImg.src.substring(0, 50) + '...' : '없음',
+            frontImgComplete: frontImg ? frontImg.complete : false,
+            backImgComplete: backImg ? backImg.complete : false,
+            frontImgNaturalWidth: frontImg ? frontImg.naturalWidth : 0,
+            backImgNaturalWidth: backImg ? backImg.naturalWidth : 0
+        });
+        
+        // CSS 속성 디버깅
+        if (photoCard && photoCardBack) {
+            const computedStyle = window.getComputedStyle(photoCard);
+            const backComputedStyle = window.getComputedStyle(photoCardBack);
+            
+            console.log(`포토카드 ${photoCard.id} CSS 상태:`, {
+                transformStyle: computedStyle.transformStyle,
+                perspective: computedStyle.perspective,
+                backfaceVisibility: backComputedStyle.backfaceVisibility,
+                transform: backComputedStyle.transform,
+                display: backComputedStyle.display,
+                visibility: backComputedStyle.visibility,
+                opacity: backComputedStyle.opacity
+            });
+        }
+        
+        // 이미지 로드 이벤트 추가
+        if (frontImg) {
+            frontImg.onload = () => console.log(`포토카드 ${photoCard.id} 앞면 이미지 로드 완료`);
+            frontImg.onerror = () => console.error(`포토카드 ${photoCard.id} 앞면 이미지 로드 실패`);
+        }
+        
+        if (backImg) {
+            backImg.onload = () => console.log(`포토카드 ${photoCard.id} 뒷면 이미지 로드 완료`);
+            backImg.onerror = () => console.error(`포토카드 ${photoCard.id} 뒷면 이미지 로드 실패`);
+        }
+    }, 100);
     
     return item;
 }

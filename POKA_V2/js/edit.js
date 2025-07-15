@@ -1567,6 +1567,18 @@ async function savePhotoCard() {
         const backCanvas = await captureImageWithEmojis('back');
         
         console.log('캡처 완료, 이미지 압축 시작');
+        console.log('캡처된 캔버스 정보:', {
+            frontCanvas: {
+                width: frontCanvas.width,
+                height: frontCanvas.height,
+                toDataURL: frontCanvas.toDataURL().substring(0, 100) + '...'
+            },
+            backCanvas: {
+                width: backCanvas.width,
+                height: backCanvas.height,
+                toDataURL: backCanvas.toDataURL().substring(0, 100) + '...'
+            }
+        });
         
         // 이미지 압축
         const frontImageData = await compressImage(frontCanvas, 0.7); // 70% 품질
@@ -1574,7 +1586,10 @@ async function savePhotoCard() {
         
         console.log('이미지 압축 완료:', {
             frontImageLength: frontImageData.length,
-            backImageLength: backImageData.length
+            backImageLength: backImageData.length,
+            frontImageStart: frontImageData.substring(0, 100) + '...',
+            backImageStart: backImageData.substring(0, 100) + '...',
+            areSameImage: frontImageData === backImageData
         });
         
         // 저장 전 용량 체크
@@ -1606,6 +1621,16 @@ async function savePhotoCard() {
             id: photoCardId,
             type: 'photoCard'
         };
+        
+        // 디버깅: 저장할 포토카드 데이터 확인
+        console.log('저장할 포토카드 데이터:', {
+            name: photoCardData.name,
+            id: photoCardData.id,
+            frontImageLength: photoCardData.frontImage ? photoCardData.frontImage.length : 0,
+            backImageLength: photoCardData.backImage ? photoCardData.backImage.length : 0,
+            frontImageStart: photoCardData.frontImage ? photoCardData.frontImage.substring(0, 50) + '...' : '없음',
+            backImageStart: photoCardData.backImage ? photoCardData.backImage.substring(0, 50) + '...' : '없음'
+        });
         
         console.log('포토카드 데이터 생성 완료:', {
             name: photoCardData.name,
@@ -3690,6 +3715,14 @@ function captureImageWithEmojis(side) {
         const imageElement = document.getElementById(side === 'front' ? 'frontEditImage' : 'backEditImage');
         const emojiLayer = document.getElementById(side === 'front' ? 'frontEmojiLayer' : 'backEmojiLayer');
         
+        console.log(`${side} 면 캡처 시작:`, {
+            container: container,
+            imageElement: imageElement,
+            imageSrc: imageElement ? imageElement.src : '없음',
+            imageDisplay: imageElement ? imageElement.style.display : '없음',
+            emojiLayer: emojiLayer
+        });
+        
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
         
@@ -3699,12 +3732,20 @@ function captureImageWithEmojis(side) {
             canvas.width = img.naturalWidth;
             canvas.height = img.naturalHeight;
             
+            console.log(`${side} 면 이미지 로드됨:`, {
+                naturalWidth: img.naturalWidth,
+                naturalHeight: img.naturalHeight,
+                canvasWidth: canvas.width,
+                canvasHeight: canvas.height
+            });
+            
             // 배경을 흰색으로 설정
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
             // 이미지가 없는 경우 빈 캔버스 반환
             if (!imageElement.src || imageElement.style.display === 'none') {
+                console.log(`${side} 면 이미지 없음, 빈 캔버스 반환`);
                 resolve(canvas);
                 return;
             }
@@ -3713,6 +3754,8 @@ function captureImageWithEmojis(side) {
             ctx.imageSmoothingEnabled = true;
             ctx.imageSmoothingQuality = 'high';
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            
+            console.log(`${side} 면 기본 이미지 그리기 완료`);
             
             // 변환 적용
             ctx.save();
@@ -3739,9 +3782,20 @@ function captureImageWithEmojis(side) {
             ctx.drawImage(img, -canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
             ctx.restore();
             
+            console.log(`${side} 면 변환 적용 완료:`, {
+                rotation: photoCardEditState[side].rotation,
+                flip: photoCardEditState[side].flip,
+                filter: photoCardEditState[side].filter
+            });
+            
             // 이모지 그리기 - 저장된 상태에서 크기와 회전 정보 사용
             const emojis = photoCardEditState[side].emojis || [];
-            emojis.forEach(emojiData => {
+            console.log(`${side} 면 이모지 그리기 시작:`, {
+                emojiCount: emojis.length,
+                emojis: emojis
+            });
+            
+            emojis.forEach((emojiData, index) => {
                 // 컨테이너 대비 원본 이미지 비율 계산
                 const containerWidth = container.offsetWidth;
                 const containerHeight = container.offsetHeight;
@@ -3753,6 +3807,18 @@ function captureImageWithEmojis(side) {
                 
                 // 저장된 크기 정보 사용
                 const emojiSize = Math.max(12, Math.min(72, emojiData.size || 24));
+                
+                console.log(`${side} 면 이모지 ${index + 1} 그리기:`, {
+                    emoji: emojiData.emoji,
+                    originalX: emojiData.x,
+                    originalY: emojiData.y,
+                    scaledX: x,
+                    scaledY: y,
+                    size: emojiSize,
+                    rotation: emojiData.rotation || 0,
+                    containerSize: `${containerWidth}x${containerHeight}`,
+                    scale: `${scaleX}x${scaleY}`
+                });
                 
                 // 회전 적용
                 ctx.save();
@@ -3767,11 +3833,12 @@ function captureImageWithEmojis(side) {
                 ctx.restore();
             });
             
+            console.log(`${side} 면 캡처 완료`);
             resolve(canvas);
         };
         
         img.onerror = function() {
-            console.error('이미지 로드 실패:', imageElement.src);
+            console.error(`${side} 면 이미지 로드 실패:`, imageElement.src);
             resolve(canvas);
         };
         
